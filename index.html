@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Woordrijen Toets</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+    }
+    .page {
+      display: none;
+      height: 100vh;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .active {
+      display: flex;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .champion-title {
+      font-size: 48px;
+      color: #01689B;
+      margin-bottom: 30px;
+    }
+    #woord {
+      font-size: 120px;
+      font-weight: bold;
+      margin: 40px 0;
+    }
+    button {
+      font-size: 24px;
+      margin: 10px;
+      padding: 15px 40px;
+      border-radius: 10px;
+      background-color: #01689B;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #014f73;
+    }
+    input {
+      font-size: 20px;
+      padding: 5px;
+      text-align: center;
+      width: 80px;
+      margin: 10px;
+    }
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Pagina 1: Intro -->
+  <div id="page1" class="page active">
+    <h1>Welkom bij de Woordrijen Toets</h1>
+    <p>
+      Dit programma helpt je kind bij het oefenen van woordjes.<br>
+      Je ziet straks steeds een woord groot in beeld.<br>
+      Jij als ouder klikt of het woord <strong>juist</strong> of <strong>onjuist</strong> is gelezen.<br>
+      Aan het eind krijg je de score, de tijd en de snelheid te zien.
+    </p>
+    <label for="aantalInput">Aantal woorden:</label>
+    <input id="aantalInput" type="number" min="1" max="50" value="10">
+    <button onclick="startToets()">Start</button>
+  </div>
+
+  <!-- Pagina 2: Toets -->
+  <div id="page2" class="page">
+    <h1 class="champion-title">Oefenkampioen</h1>
+    <div id="woord">Woord</div>
+    <div>
+      <button onclick="antwoord(true)">Juist</button>
+      <button onclick="antwoord(false)">Onjuist</button>
+    </div>
+  </div>
+
+  <!-- Pagina 3: Resultaten -->
+  <div id="page3" class="page">
+    <h1 class="champion-title">Oefenkampioen</h1>
+    <div id="resultaat"></div>
+    <button onclick="opnieuw()">Nog een toetsje doen</button>
+  </div>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <script>
+    const woorden = [
+      'rek','maak','sik','aas','baas','meer','sip','been','vis','vaar','boon','paar',
+      'roos','kook','bek','rook','voor','boor','naar','peer','kaak','oom','mis','ree',
+      'naam','mes','raam','kaas','saar','beer','sep','nep','meen','ik','ui','aai','ooi'
+    ];
+
+    const kleuren = ['red','green','blue'];
+    const combinaties = ['aa','ee','oo','uu','ei','ui','oe','ai','ooi','aai'];
+    const klinkers = ['a','e','i','o','u'];
+
+    let toetswoorden = [];
+    let index = 0;
+    let score = 0;
+    let startTijd = null;
+
+    function showPage(nr) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page' + nr).classList.add('active');
+    }
+
+    function kleurWoord(woord) {
+      let i = 0;
+      let html = '';
+      while (i < woord.length) {
+        let gevonden = null;
+        for (let comb of combinaties) {
+          if (woord.substring(i, i + comb.length).toLowerCase() === comb) {
+            gevonden = comb;
+            break;
+          }
+        }
+        if (gevonden) {
+          let kleur = kleuren[Math.floor(Math.random() * kleuren.length)];
+          html += `<span style="color:${kleur}">${woord.substr(i, gevonden.length)}</span>`;
+          i += gevonden.length;
+        } else {
+          let letter = woord[i];
+          if (klinkers.includes(letter.toLowerCase())) {
+            let kleur = kleuren[Math.floor(Math.random() * kleuren.length)];
+            html += `<span style="color:${kleur}">${letter}</span>`;
+          } else {
+            html += `<span style="color:black">${letter}</span>`;
+          }
+          i++;
+        }
+      }
+      return html;
+    }
+
+    function shuffle(array) {
+      return [...array].sort(() => Math.random() - 0.5);
+    }
+
+    function startToets() {
+      const aantal = parseInt(document.getElementById('aantalInput').value, 10) || 10;
+      toetswoorden = shuffle(woorden).slice(0, aantal);
+      index = 0;
+      score = 0;
+      startTijd = Date.now();
+      showPage(2);
+      toonWoord();
+    }
+
+    function toonWoord() {
+      if (index < toetswoorden.length) {
+        document.getElementById('woord').innerHTML = kleurWoord(toetswoorden[index]);
+      } else {
+        eindeToets();
+      }
+    }
+
+    function antwoord(correct) {
+      if (correct) score++;
+      index++;
+      toonWoord();
+    }
+
+    function eindeToets() {
+      const duurSec = Math.round((Date.now() - startTijd) / 1000);
+      const wpm = Math.round((toetswoorden.length / duurSec) * 60);
+      document.getElementById('resultaat').innerHTML =
+        `Goed gelezen: ${score} van de ${toetswoorden.length}<br>` +
+        `Tijd: ${duurSec} seconden<br>` +
+        `Snelheid: ${wpm} woorden per minuut`;
+      showPage(3);
+      startConfetti();
+      setTimeout(stopConfetti, 3000);
+    }
+
+    function opnieuw() {
+      stopConfetti();
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      showPage(1);
+    }
+
+    // Confetti effect
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    const ctx = confettiCanvas.getContext('2d');
+    let confettiParticles = [];
+    let confettiActive = false;
+
+    function resizeCanvas() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function ConfettiParticle() {
+      this.x = random(0, confettiCanvas.width);
+      this.y = random(-confettiCanvas.height, 0);
+      this.color = `hsl(${random(0, 360)}, 100%, 50%)`;
+      this.size = random(5, 10);
+      this.speed = random(2, 5);
+      this.tilt = random(-10, 10);
+    }
+
+    function startConfetti() {
+      confettiParticles = [];
+      for (let i = 0; i < 150; i++) {
+        confettiParticles.push(new ConfettiParticle());
+      }
+      confettiActive = true;
+      requestAnimationFrame(updateConfetti);
+    }
+
+    function stopConfetti() {
+      confettiActive = false;
+    }
+
+    function updateConfetti() {
+      if (!confettiActive) return;
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      for (let p of confettiParticles) {
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, 2 * Math.PI);
+        ctx.fill();
+        p.y += p.speed;
+        p.x += Math.sin(p.tilt / 20);
+        if (p.y > confettiCanvas.height) {
+          p.y = random(-20, 0);
+          p.x = random(0, confettiCanvas.width);
+        }
+      }
+      requestAnimationFrame(updateConfetti);
+    }
+  </script>
+</body>
+</html>
