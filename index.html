@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow">
-  <title>Woordrijen Toets - Anker</title>
+  <title>Woordrijen oefenen - Anker</title>
   <style>
     body {
       margin: 0;
@@ -112,10 +112,16 @@
         <label><input type="radio" name="anker" value="2" disabled> Anker 2 (komt binnenkort)</label>
         <label><input type="radio" name="anker" value="3" disabled> Anker 3 (komt binnenkort)</label>
       </fieldset>
-      <div>
-        <label for="aantalInput">Aantal woorden:</label>
-        <input id="aantalInput" type="number" min="1" max="50" value="10" aria-label="Aantal woorden">
-      </div>
+		<div>
+		  <label for="aantalInput">Aantal woorden:</label>
+		  <input id="aantalInput" 
+		         type="number" 
+		         min="1" max="50" 
+		         value="15" 
+		         aria-label="Aantal woorden"
+		         oninput="checkAantal(this.value)">
+		</div>
+		<div id="errorMsg" style="color:red; font-size:14px; margin-top:5px;"></div>
       <button class="btn" onclick="startToets()">Start</button>
     </div>
   </div>
@@ -146,12 +152,12 @@
   <script>
     const ankers = {
       1: [
-        "rek","maak","sik","aas","baas","meer","sip","been","vis","vaar",
-        "boon","paar","roos","kook","bek","rook",
-        "voor","boor","been","naar","peer","kaak","bek","rek","oom","mis",
-        "paar","ree","naam","mis","ik","aas",
-        "mes","maak","raam","kaas","saar","beer","sep","bek","nep","meen",
-        "beer","sip","mis","bek","naam","oom"
+    	  "rek","maak","sik","aas","baas","meer","sip","been","vis","vaar",
+    	  "boon","paar","roos","kook","bek","rook",
+    	  "voor","boor","been","naar","peer","kaak","bek","rek","oom","mis",
+    	  "paar","ree","naam","mis","ik","aas",
+    	  "mes","maak","raam","kaas","saar","beer","sep","bek","nep","meen",
+    	  "beer","sip","mis","bek","naam","oom"
       ],
       2: [],
       3: []
@@ -245,6 +251,28 @@
       }
       requestAnimationFrame(updateConfetti);
     }
+    
+    //Check aantal
+function checkAantal(val) {
+  const errorMsg = document.getElementById('errorMsg');
+  errorMsg.textContent = "";
+
+  if (val.trim() === "") return;
+
+  // Controle: alleen hele getallen
+  if (!/^\d+$/.test(val)) {
+    errorMsg.textContent = "Voer een heel getal in tussen 1 en 50.";
+    return;
+  }
+
+  const getal = parseInt(val, 10);
+  if (getal < 1 || getal > 50) {
+    errorMsg.textContent = "Het getal moet tussen 1 en 50 liggen.";
+  }
+}
+
+
+    
   </script>
 </body>
 </html>
