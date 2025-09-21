@@ -3,172 +3,435 @@
 <head>
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Woordrijen oefenen - Anker</title>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="6d304186-567b-4d15-bccd-a492bd415b15"></script>
   <style>
+    :root{
+      --ebx-blauw:#01689B;
+      --ebx-blauw-dark:#014f73;
+      --groen:#16a34a;
+      --rood:#dc2626;
+      --ring:#cbd5e1;
+      --ink:#0f172a;
+    }
+    * { box-sizing: border-box; }
     body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       font-family: Arial, sans-serif;
-      text-align: center;
       background: url('achtergrond.png') no-repeat center center fixed;
       background-size: cover;
     }
     .page {
-      display: none;
-      min-height: 100vh;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      display: none; min-height: 100vh;
+      flex-direction: column; justify-content: center; align-items: center;
       padding: 24px;
     }
     .active { display: flex; }
     .card {
-      background: white;
-      border: 3px solid #01689B;
-      border-radius: 18px;
-      padding: 30px 40px;
+      background: white; border: 3px solid var(--ebx-blauw);
+      border-radius: 18px; padding: 30px 40px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      max-width: 760px;
-      width: calc(100% - 48px);
-      z-index: 5;
+      max-width: 860px; width: calc(100% - 48px); z-index: 5;
+      text-align: left;
+      position: relative;
     }
-    h1 {
-      font-size: 28px;
-      margin: 0 0 16px 0;
-    }
-    .champion-title {
-      font-size: 50px;
-      color: #01689B;
-      margin: 8px 0 12px 0;
-    }
+    h1 { font-size: 28px; margin: 0 0 16px 0; text-align:center; }
+    .champion-title { font-size: 50px; color: var(--ebx-blauw); margin: 8px 0 12px 0; text-align:center; }
     #woord {
-      font-size: clamp(72px, 14vw, 140px);
-      font-weight: 800;
-      margin: 28px 0 22px 0;
-      line-height: 1.05;
-      letter-spacing: 1px;
+      font-size: clamp(72px, 14vw, 140px); font-weight: 800;
+      margin: 12px 0 6px 0; line-height: 1.05; letter-spacing: 1px; text-align:center;
     }
+    .subline { color:#475569; margin-bottom: 10px; text-align:center; }
+
+    /* Eén knopstijl */
     .btn {
-      font-size: 22px;
-      margin: 10px;
-      padding: 12px 30px;
-      border-radius: 12px;
-      background-color: #01689B;
-      color: white;
-      border: none;
-      cursor: pointer;
+      font-size: 20px; margin: 10px; padding: 10px 26px;
+      border-radius: 12px; background-color: var(--ebx-blauw); color: white;
+      border: none; cursor: pointer;
+      transition: transform .08s ease, box-shadow .08s ease, background-color .15s ease;
+      user-select: none; -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 6px 0 rgba(0,0,0,.18); outline-offset: 4px;
     }
-    .btn:hover { background-color: #014f73; }
+    .btn:hover { background-color: var(--ebx-blauw-dark); }
+    .btn:active, .btn.is-pressed {
+      transform: translateY(2px) scale(.98);
+      box-shadow: 0 2px 0 rgba(0,0,0,.18), inset 0 0 0 2px rgba(255,255,255,.25);
+      filter: saturate(1.05);
+    }
+    .btn[disabled] { opacity:.6; cursor:not-allowed; }
+
+    /* Antwoordknoppen: 1 slag kleiner */
+    .btn-antwoord{
+      font-weight: 900; font-size: clamp(24px, 3.4vw, 36px);
+      padding: 16px 34px; border-radius: 16px;
+      min-width: min(40vw, 320px); min-height: 80px;
+      letter-spacing:.2px; display: inline-flex; align-items: center; justify-content: center; line-height: 1;
+    }
+    .answers{
+      display: grid; gap: 16px; grid-template-columns: 1fr; justify-items:center; margin-top: 6px;
+    }
+    @media (min-width:720px){
+      .answers{ grid-template-columns: 1fr 1fr; gap: 20px; }
+    }
+
+    /* Invoervelden (gelijke hoogte) */
     input[type=number] {
       font-size: 20px;
-      padding: 6px 10px;
+      height: 44px;
+      padding: 8px 12px;
       text-align: center;
-      width: 90px;
-      margin: 10px;
+      width: 100px;
+      margin: 0;
       border-radius: 8px;
       border: 2px solid #cbd5e1;
+      line-height: 1;
     }
-    .anker-keuze {
-      margin: 16px 0;
-      font-size: 18px;
-      text-align: left;
-      display: inline-block;
+
+    .groepen {
+      display: grid; gap: 16px; margin-top: 8px;
+      grid-template-columns: 1fr;
     }
-    .anker-keuze legend {
-      font-weight: bold;
-      margin-bottom: 6px;
+    @media (min-width: 820px){
+      .groepen{ grid-template-columns: 1fr 1fr; align-items:start; }
     }
-    .anker-keuze label {
-      display: block;
-      margin: 4px 0;
+    fieldset.optiegroep {
+      border: 2px solid var(--ring); border-radius: 12px; padding: 12px 14px;
+      max-width: 640px; width: 100%;
     }
-    #confetti-canvas {
+    fieldset.optiegroep legend { padding: 0 6px; font-weight: 700; }
+    .row { display:flex; align-items:center; gap:10px; margin:6px 0; }
+    .row > label { display:flex; align-items:center; gap:10px; cursor: pointer; }
+    .inline { display:flex; align-items:center; gap:8px; }
+
+    .intro { max-width: 640px; margin: 0 auto 10px; text-align: center; line-height:1.6; }
+
+    /* Subtiele afbreken (X) */
+    .quit {
+      position:absolute; top: 10px; right: 10px;
+      width: 32px; height: 32px; display: grid; place-items:center;
+      color:#64748b; border: 1px solid #e5e7eb; background:#fff;
+      border-radius: 10px; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+      transition: transform .08s ease, color .15s ease, background .15s ease;
+    }
+    .quit:hover{ color:#334155; background:#f8fafc; }
+    .quit:active{ transform: translateY(1px); }
+
+    /* Hover kaart met woordjes */
+    #hoverCard {
       position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
+      display: none;
+      z-index: 30;
+      background: #fff;
+      color: var(--ink);
+      border: 2px solid var(--ebx-blauw);
+      border-radius: 12px;
+      box-shadow: 0 16px 50px rgba(0,0,0,.25);
+      padding: 10px 12px;
+      max-width: min(520px, 92vw);
+      max-height: 60vh;
+      overflow: auto;
     }
+    #hoverCard.show { display: block; }
+    #hoverCard h3 { margin: 0 0 8px 0; font-size: 16px; }
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+    .chip{ padding:6px 10px; border-radius:999px; border:1px solid #e2e8f0; background:#f8fafc; }
+
+    /* Overlay feedback: alleen ✓ / ✗ */
+    #tapFeedback{
+      position: fixed; inset: 0; display: grid; place-items: center;
+      pointer-events: none; opacity: 0; transition: opacity .18s ease; z-index: 15;
+    }
+    #tapFeedback.show{ opacity: 1; }
+    #tapFeedback .badge{
+      font-weight: 900; font-size: clamp(48px, 7vw, 72px); padding: 10px 20px;
+      border-radius: 16px; color: white; box-shadow: 0 20px 40px rgba(0,0,0,.25);
+      transform: scale(1); animation: pop .24s ease; line-height: 1;
+    }
+    #tapFeedback .ok{ background: var(--groen); }
+    #tapFeedback .nok{ background: var(--rood); }
+    @keyframes pop{ from{ transform: scale(.85); } to{ transform: scale(1); } }
+
+    /* Toast */
+    #toast{
+      position: fixed;
+      left: 50%; top: 16px; transform: translateX(-50%);
+      background: rgba(15,23,42,.92);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      opacity: 0;
+      transition: opacity .15s ease;
+      z-index: 40;
+      pointer-events: none;
+    }
+    #toast.show{ opacity: 1; }
+  
+  /* --- Feestelijke resultaten --- */
+  .result-hero{
+    position: relative;
+    border: 0;
+    padding: 26px 20px 24px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 18%, #fdf2f8 55%, #fef3c7 100%);
+    overflow: hidden;
+  }
+  .result-hero .shine{
+    position:absolute; inset:-2px;
+    background: radial-gradient(600px 200px at var(--mx,50%) -10%,
+                rgba(255,255,255,.45), transparent 60%);
+    mix-blend-mode: screen;
+    pointer-events:none;
+  }
+  .trophy{
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: #fff;
+    display:grid; place-items:center;
+    box-shadow: 0 14px 40px rgba(0,0,0,.12);
+    margin: 0 auto 8px;
+    animation: bob 2.2s ease-in-out infinite;
+  }
+  .trophy span{ font-size: 48px; }
+  @keyframes bob{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-6px); }
+  }
+  .cele-title{
+    text-align:center;
+    font-size: 28px;
+    margin: 6px 0 8px;
+    color:#0f172a;
+  }
+  .cele-msg{
+    text-align:center;
+    font-size: 22px;
+    margin: 2px 0 8px;
+  }
+  .pill-wrap{
+    display:flex; gap:12px; flex-wrap:wrap;
+    justify-content:center; margin-top: 8px;
+  }
+  .pill{
+    border-radius:999px;
+    padding:10px 16px;
+    background:#0ea5e9;
+    color:#fff;
+    font-weight:800;
+    box-shadow: 0 10px 30px rgba(14,165,233,.35);
+    font-size: 18px;
+  }
+  .pill.secondary{ background:#22c55e; box-shadow: 0 10px 30px rgba(34,197,94,.35); }
+  /* Fireworks + Confetti canvases over results */
+  #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 45; }
+  #fireworks-canvas{ position: fixed; inset: 0; pointer-events: none; z-index: 46; }
+  /* Floating emojis */
+  .emoji{
+    position: fixed;
+    z-index: 47;
+    font-size: 28px;
+    pointer-events:none;
+    animation: floatUp 1.6s ease-in forwards;
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,.25));
+  }
+  @keyframes floatUp{
+    0%{ transform: translateY(0) scale(1); opacity: 0; }
+    10%{ opacity: 1; }
+    100%{ transform: translateY(-140px) scale(1.1); opacity: 0; }
+  }
   </style>
+
 </head>
 <body>
 
   <!-- Pagina 1: Intro -->
   <div id="page1" class="page active">
     <div class="card">
-		<h1>Welkom bij ankerwoordjes oefenen</h1>
-		<br>
-		<p style='max-width:640px;margin:0 auto 10px;text-align:center;line-height:1.6;'>
-		  ⚓️ Anker klaar? Oefenen maar!<br>
-		  Kies het juiste <strong>Anker</strong> — daarna verschijnen de <strong>woorden</strong> één voor één op het scherm<br>
-		  Jij bent de coach: <strong>klik</strong> steeds of het woord <strong>goed</strong> of <strong>fout</strong> gelezen is.<br>
-		  veel <strong>oefenplezier</strong>!<br>
-		  <br>
-		</p>
-      <fieldset class="anker-keuze">
-        <legend>Kies anker:</legend>
-        <label><input type="radio" name="anker" value="1" checked> Anker 1</label>
-        <label><input type="radio" name="anker" value="2" disabled> Anker 2 (komt binnenkort)</label>
-        <label><input type="radio" name="anker" value="3" disabled> Anker 3 (komt binnenkort)</label>
-      </fieldset>
-		<div>
-		  <label for="aantalInput">Aantal woorden:</label>
-		  <input id="aantalInput" 
-		         type="number" 
-		         min="1" max="50" 
-		         value="15" 
-		         aria-label="Aantal woorden"
-		         oninput="checkAantal(this.value)">
-		</div>
-		<div id="errorMsg" style="color:red; font-size:14px; margin-top:5px;"></div>
-      <button class="btn" onclick="startToets()">Start</button>
+      <h1>Welkom bij ankerwoordjes oefenen</h1>
+      <p class="intro">⚓️ Anker klaar? Oefenen maar!<br>
+      Kies het juiste <strong>Anker</strong> — daarna verschijnen de <strong>woorden</strong> één voor één op het scherm.<br>
+      Jij bent de coach: klik steeds of het woord goed of fout gelezen is.<br>
+      Veel oefenplezier!</p>
+
+      <div class="groepen">
+        <fieldset class="optiegroep" id="fieldset-anker">
+          <legend>Kies een anker</legend>
+          <div class="row anker-row" data-anker="1" tabindex="0">
+            <label><input type="radio" name="anker" value="1" checked> Anker 1</label>
+          </div>
+          <div class="row anker-row" data-anker="2" tabindex="0">
+            <label><input type="radio" name="anker" value="2" disabled> Anker 2</label>
+          </div>
+          <div class="row anker-row" data-anker="3" tabindex="0">
+            <label><input type="radio" name="anker" value="3" disabled> Anker 3</label>
+          </div>
+        </fieldset>
+
+        <fieldset class="optiegroep" id="fieldset-modus">
+          <legend>Oefenmodus</legend>
+          <div class="row">
+            <label class="inline">
+              <input type="radio" name="modus" value="woorden" checked onchange="wisselModus()">
+              <span>Aantal woorden</span>
+            </label>
+            <input id="aantalInput" type="number" min="1" max="50" value="15" oninput="checkAantal(this.value)">
+          </div>
+          <div class="row">
+            <label class="inline">
+              <input type="radio" name="modus" value="minuten" onchange="wisselModus()">
+              <span>Aantal minuten</span>
+            </label>
+            <input id="minutenInput" type="number" min="1" max="3" value="1" oninput="checkMinuten(this.value)" disabled>
+          </div>
+          <div id="errorMsg" style="color:red; font-size:14px; margin:4px 0 2px 0;"></div>
+        </fieldset>
+      </div>
+
+      <div style="text-align:center; margin-top:8px;">
+        <button class="btn" onclick="startToets()">Start</button>
+      </div>
     </div>
   </div>
 
   <!-- Pagina 2: Toets -->
   <div id="page2" class="page">
     <div class="card">
-      <h1 class="champion-title">Oefenkampioen</h1>
+      <!-- Subtiele afbreken (X) rechtsboven -->
+      <button class="quit" onclick="abortWithToast()" aria-label="Afbreken (terug naar start)" title="Afbreken">✕</button>
+
+      <h1 class="champion-title">Lees dit woordje hardop</h1>
       <div id="woord" aria-live="polite">Woord</div>
-      <div>
-        <button class="btn" onclick="antwoord(true)">Juist</button>
-        <button class="btn" onclick="antwoord(false)">Onjuist</button>
+      <div id="subInfo" class="subline"></div>
+      <div class="answers" style="text-align:center;">
+        <button id="btnJuist" class="btn btn-antwoord" onclick="klikAntwoord(true, this)" aria-label="Juist" title="Juist">Juist</button>
+        <button id="btnOnjuist" class="btn btn-antwoord" onclick="klikAntwoord(false, this)" aria-label="Onjuist" title="Onjuist">Onjuist</button>
       </div>
+      <div class="kb-hint" style="text-align:center;">Sneltoetsen: <kbd>J</kbd> = Juist, <kbd>F</kbd> = Fout, <kbd>Esc</kbd> = Afbreken</div>
     </div>
   </div>
 
   <!-- Pagina 3: Resultaten -->
   <div id="page3" class="page">
     <div class="card">
-      <h1 class="champion-title">Oefenkampioen</h1>
-      <div id="resultaat" style="font-size:22px;margin-bottom:10px;"></div>
-      <button class="btn" onclick="opnieuw()">Nog een toetsje doen</button>
+      <h1 class="champion-title">Resultaat</h1>
+      
+      <div class="result-hero" onmousemove="moveShine(event)">
+        <div class="shine"></div>
+        <div class="trophy"><span>🏆</span></div>
+        <div class="cele-title">Resultaat</div>
+        <div id="resultaat" class="cele-msg"></div>
+        <div class="pill-wrap">
+          <div id="pill-tijd" class="pill">Tijd: -- s</div>
+          <div id="pill-snel" class="pill secondary">Snelheid: -- wpm</div>
+        </div>
+      </div>
+  
+      <div style="text-align:center;">
+        <button class="btn" onclick="opnieuw()">Nog een toetsje doen</button>
+      </div>
     </div>
   </div>
 
+  <!-- Klik-feedback overlay -->
+  <div id="tapFeedback" aria-hidden="true"></div>
+
+  <!-- Toast -->
+  <div id="toast" role="status" aria-live="polite">Oefening afgebroken</div>
+
   <canvas id="confetti-canvas"></canvas>
+  <canvas id="fireworks-canvas"></canvas>
+
+  <!-- Hover card (global, reused) -->
+  <div id="hoverCard" role="dialog" aria-hidden="true">
+    <h3 id="hoverCardTitle">Woordjes bij anker</h3>
+    <div class="chips" id="hoverCardContent"></div>
+  </div>
 
   <script>
     const ankers = {
-      1: [
-    	  "rek","maak","sik","aas","baas","meer","sip","been","vis","vaar",
-    	  "boon","paar","roos","kook","bek","rook",
-    	  "voor","boor","been","naar","peer","kaak","bek","rek","oom","mis",
-    	  "paar","ree","naam","mis","ik","aas",
-    	  "mes","maak","raam","kaas","saar","beer","sep","bek","nep","meen",
-    	  "beer","sip","mis","bek","naam","oom"
-      ],
+      1: ['rek','maak','sik','aas','baas','meer','sip','been','vis','vaar','boon','paar','roos','kook','bek','rook','voor','boor','naar','peer','kaak','oom','mis','ree','naam','ik','mes','raam','kaas','saar','beer','sep','nep','meen'],
       2: [],
       3: []
     };
 
     let woorden = [];
-    let toetswoorden = [], index = 0, score = 0, startTijd = null;
+    let toetswoorden = [], idx = 0, score = 0, startTijd = null;
+    let modus = 'woorden';
+    let timerId = null, endTime = 0;
+    let getoond = 0;
+
     const kleuren = ['red','green','blue'];
     const combinaties = ['aa','ee','oo','uu','ei','ui','oe','ai','ooi','aai'];
     const klinkers = ['a','e','i','o','u'];
+
+    function wisselModus(){
+      modus = document.querySelector('input[name="modus"]:checked').value;
+      const a = document.getElementById('aantalInput');
+      const m = document.getElementById('minutenInput');
+      if(modus==='woorden'){ a.disabled=false; m.disabled=true; }
+      else { a.disabled=true; m.disabled=false; }
+      document.getElementById('errorMsg').textContent = '';
+    }
+
+    // Hover card logic
+    const hoverCard = document.getElementById('hoverCard');
+    const hoverTitle = document.getElementById('hoverCardTitle');
+    const hoverContent = document.getElementById('hoverCardContent');
+    let hoverHideId = null;
+
+    function showHoverCardFor(el){
+      const nr = el.getAttribute('data-anker');
+      const lijst = ankers[nr] || [];
+      // Title
+      hoverTitle.textContent = `Woordjes bij anker ${nr}`;
+      // Content depends on availability
+      if(lijst.length){
+        hoverContent.innerHTML = lijst.map(w => `<span class="chip">${w}</span>`).join('');
+      } else {
+        hoverContent.innerHTML = "<em>Woordjes voor dit anker komen binnenkort.</em>";
+      }
+      // Position near element
+      const r = el.getBoundingClientRect();
+      const pad = 8;
+      const cardWidth = Math.min(520, window.innerWidth*0.92);
+      let left = r.left + window.scrollX;
+      if(left + cardWidth > window.innerWidth - 10){
+        left = window.innerWidth - cardWidth - 10;
+      }
+      let top = r.bottom + window.scrollY + pad;
+      const cardHeight = Math.min(hoverCard.scrollHeight, window.innerHeight*0.6);
+      if(top + cardHeight > window.scrollY + window.innerHeight){
+        top = r.top + window.scrollY - cardHeight - pad;
+      }
+      hoverCard.style.left = left + 'px';
+      hoverCard.style.top = top + 'px';
+      hoverCard.classList.add('show');
+      hoverCard.setAttribute('aria-hidden','false');
+    }
+    function hideHoverCardSoon(){
+      clearTimeout(hoverHideId);
+      hoverHideId = setTimeout(()=>{
+        hoverCard.classList.remove('show');
+        hoverCard.setAttribute('aria-hidden','true');
+      }, 120);
+    }
+    function keepHoverCard(){
+      clearTimeout(hoverHideId);
+    }
+
+    function setupHoverRows(){
+      document.querySelectorAll('.anker-row').forEach(row=>{
+        row.addEventListener('mouseenter', ()=>{ keepHoverCard(); showHoverCardFor(row); });
+        row.addEventListener('mouseleave', hideHoverCardSoon);
+        row.addEventListener('focus', ()=>{ keepHoverCard(); showHoverCardFor(row); });
+        row.addEventListener('blur', hideHoverCardSoon);
+      });
+      hoverCard.addEventListener('mouseenter', keepHoverCard);
+      hoverCard.addEventListener('mouseleave', hideHoverCardSoon);
+    }
 
     function showPage(nr){
       document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -199,38 +462,161 @@
     function shuffle(array){return[...array].sort(()=>Math.random()-0.5);}
 
     function startToets(){
-      const gekozenAnker = document.querySelector('input[name="anker"]:checked').value;
+      const gekozenAnker = document.querySelector('input[name="anker"]:checked')?.value;
+      const err = document.getElementById('errorMsg');
+      err.textContent = "";
+      if(!gekozenAnker){
+        err.textContent = "Kies eerst een anker.";
+        return;
+      }
       woorden = ankers[gekozenAnker];
+      if(!woorden || woorden.length===0){
+        err.textContent = "Dit anker heeft nog geen woorden.";
+        return;
+      }
+      idx = 0; score = 0; getoond = 0; startTijd = Date.now();
+      toetswoorden = shuffle(woorden);
 
-      const aantal=parseInt(document.getElementById('aantalInput').value,10)||10;
-      toetswoorden=shuffle(woorden).slice(0,Math.min(aantal,woorden.length));
-      index=0;score=0;startTijd=Date.now();
-      showPage(2);toonWoord();
+      if(modus==='woorden'){
+        const aantal = parseInt(document.getElementById('aantalInput').value,10);
+        if(!Number.isFinite(aantal) || aantal<1 || aantal>50){
+          err.textContent = "Vul bij 'Aantal woorden' een getal tussen 1 en 50 in.";
+          return;
+        }
+        toetswoorden = toetswoorden.slice(0, Math.min(aantal, woorden.length));
+        document.getElementById('subInfo').innerHTML = `<span class="timer">${idx}/${toetswoorden.length}</span>`;
+        showPage(2); toonWoord(); focusJuist();
+      } else {
+        const minuten = parseInt(document.getElementById('minutenInput').value,10);
+        if(!Number.isFinite(minuten) || minuten<1 || minuten>3){
+          err.textContent = "Vul bij 'Aantal minuten' een getal tussen 1 en 3 in.";
+          return;
+        }
+        endTime = Date.now() + (minuten * 60 * 1000);
+        startTimer();
+        document.getElementById('subInfo').innerHTML = `<span class="timer" id="timerBadge"></span>`;
+        showPage(2); toonWoord(); focusJuist();
+      }
     }
+
+    function formatMMSS(msLeft){
+      const total = Math.max(0, Math.floor(msLeft/1000));
+      const m = Math.floor(total/60);
+      const s = total%60;
+      return `${m}:${String(s).padStart(2,'0')}`;
+    }
+
+    function startTimer(){
+      stopTimer();
+      timerId = setInterval(()=>{
+        const left = endTime - Date.now();
+        const badge = document.getElementById('timerBadge');
+        if(badge) badge.textContent = formatMMSS(left);
+        if(left<=0){ stopTimer(); eindeToets(true); }
+      }, 200);
+    }
+    function stopTimer(){ if(timerId){ clearInterval(timerId); timerId = null; } }
+
     function toonWoord(){
-      if(index<toetswoorden.length){
-        document.getElementById('woord').innerHTML=kleurWoord(toetswoorden[index]);
-      } else {eindeToets();}
+      if(modus==='woorden'){
+        if(idx < toetswoorden.length){
+          document.getElementById('woord').innerHTML = kleurWoord(toetswoorden[idx]);
+          document.getElementById('subInfo').innerHTML = `<span class="timer">${idx}/${toetswoorden.length}</span>`;
+        } else { eindeToets(false); }
+      } else {
+        if(idx >= toetswoorden.length){ toetswoorden = shuffle(woorden); idx = 0; }
+        document.getElementById('woord').innerHTML = kleurWoord(toetswoorden[idx]);
+      }
     }
-    function antwoord(correct){if(correct)score++;index++;toonWoord();}
-    function eindeToets(){
-      const duurSec=Math.max(1,Math.round((Date.now()-startTijd)/1000));
-      const wpm=Math.round((toetswoorden.length/duurSec)*60);
-      let percentage=(score/toetswoorden.length)*100;
-      let extraMelding="";
-      if(percentage<21){extraMelding="Je hebt alvast een begin gemaakt, ga zo door!";}
-      else if(percentage<41){extraMelding="Goed geprobeerd, elke keer gaat het beter!";}
-      else if(percentage<61){extraMelding="Mooi! Je bent al flink op weg.";}
-      else if(percentage<81){extraMelding="Top! Nog een klein beetje oefenen en je hebt alles goed.";}
-      else {extraMelding="Geweldig! Alles goed, jij bent een echte Oefenkampioen!";}
-      document.getElementById('resultaat').innerHTML=
-        `Goed gelezen: <strong>${score}</strong> van de <strong>${toetswoorden.length}</strong><br>`+
-        `Tijd: <strong>${duurSec}</strong> seconden<br>`+
-        `Snelheid: <strong>${wpm}</strong> woorden per minuut<br>`+
-        `<em>${extraMelding}</em>`;
-      showPage(3);startConfetti();setTimeout(stopConfetti,3000);
+
+    function klikAntwoord(correct, el){
+      el.classList.add('is-pressed');
+      setTimeout(()=>el.classList.remove('is-pressed'), 150);
+      flashFeedback(!!correct);
+      toggleAnswerButtons(true);
+      setTimeout(()=>toggleAnswerButtons(false), 100);
+      antwoord(correct);
     }
-    function opnieuw(){stopConfetti();ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);showPage(1);}
+    function toggleAnswerButtons(disabled){
+      document.getElementById('btnJuist').disabled = disabled;
+      document.getElementById('btnOnjuist').disabled = disabled;
+    }
+    function flashFeedback(ok){
+      const holder = document.getElementById('tapFeedback');
+      holder.innerHTML = `<div class="badge ${ok?'ok':'nok'}">${ok?'✓':'✗'}</div>`;
+      holder.classList.add('show');
+      setTimeout(()=>holder.classList.remove('show'), 200);
+    }
+
+    function antwoord(correct){
+      if(correct) score++;
+      getoond++;
+      idx++;
+      if(modus==='woorden'){
+        toonWoord();
+      } else {
+        if(Date.now() >= endTime){ eindeToets(true); } else { toonWoord(); }
+      }
+    }
+
+    
+function eindeToets(){
+  stopTimer();
+  const duurSec = Math.max(1, Math.round((Date.now()-startTijd)/1000));
+  const totaal = (modus === 'woorden') ? (toetswoorden.length) : (getoond);
+  const wpm = Math.round(((totaal || 0)/duurSec)*60);
+  let percentage = totaal > 0 ? (score / totaal) * 100 : 0;
+  let extraMelding = "";
+  if (percentage < 21){ extraMelding = "Je hebt alvast een begin gemaakt, ga zo door!"; }
+  else if (percentage < 41){ extraMelding = "Goed geprobeerd, elke keer gaat het beter!"; }
+  else if (percentage < 61){ extraMelding = "Mooi! Je bent al flink op weg."; }
+  else if (percentage < 81){ extraMelding = "Top! Nog een klein beetje oefenen en je hebt alles goed."; }
+  else { extraMelding = "Geweldig! Alles goed, jij bent een echte Oefenkampioen!"; }
+
+  // Content in gewenste volgorde
+  const res = document.getElementById('resultaat');
+  res.innerHTML = `<em>${extraMelding}</em><br><br>` +
+                  `Tijd: <strong>${duurSec}</strong> seconden<br>` +
+                  `Snelheid: <strong>${wpm}</strong> woorden per minuut`;
+
+  // Update the pills
+  const pillT = document.getElementById('pill-tijd');
+  const pillS = document.getElementById('pill-snel');
+  if(pillT) pillT.textContent = `Tijd: ${duurSec} s`;
+  if(pillS) pillS.textContent = `Snelheid: ${wpm} wpm`;
+
+  // Switch to results + celebrate
+  showPage(3);
+  startConfetti();
+  // Extra bursts
+  runFireworks();
+  const emojiTimer = setInterval(floatEmoji, 260);
+  setTimeout(()=>{ clearInterval(emojiTimer); }, 1800);
+  setTimeout(stopConfetti, 3500);
+}
+
+    function opnieuw(){
+      stopConfetti();
+      ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+      showPage(1);
+    }
+
+    // Abort with toast then reload
+    function abortWithToast(){
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(()=>{ location.reload(); }, 500);
+    }
+
+    // Keyboard shortcuts: J, F, Esc -> afbreken (toast + reload)
+    window.addEventListener('keydown', (e)=>{
+      const page2Active = document.getElementById('page2').classList.contains('active');
+      if(!page2Active) return;
+      if(e.key.toLowerCase()==='j'){ klikAntwoord(true, document.getElementById('btnJuist')); }
+      if(e.key.toLowerCase()==='f'){ klikAntwoord(false, document.getElementById('btnOnjuist')); }
+      if(e.key === 'Escape'){ abortWithToast(); }
+    });
+    function focusJuist(){ setTimeout(()=>document.getElementById('btnJuist')?.focus(), 0); }
 
     // Confetti
     const confettiCanvas=document.getElementById('confetti-canvas');const ctx=confettiCanvas.getContext('2d');
@@ -252,28 +638,107 @@
       }
       requestAnimationFrame(updateConfetti);
     }
+
     
-    //Check aantal
-function checkAantal(val) {
-  const errorMsg = document.getElementById('errorMsg');
-  errorMsg.textContent = "";
-
-  if (val.trim() === "") return;
-
-  // Controle: alleen hele getallen
-  if (!/^\d+$/.test(val)) {
-    errorMsg.textContent = "Voer een heel getal in tussen 1 en 50.";
-    return;
-  }
-
-  const getal = parseInt(val, 10);
-  if (getal < 1 || getal > 50) {
-    errorMsg.textContent = "Het getal moet tussen 1 en 50 liggen.";
-  }
+// Fancy shine on result hero
+function moveShine(e){
+  const hero = e.currentTarget;
+  const rect = hero.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width;
+  hero.style.setProperty('--mx', `${x*100}%`);
 }
 
+// Simple fireworks
+const fwCanvas = document.getElementById('fireworks-canvas');
+const fwCtx = fwCanvas.getContext('2d');
+function resizeFw(){ fwCanvas.width = window.innerWidth; fwCanvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeFw); resizeFw();
 
-    
+let fwActive = false, fwParticles = [];
+function fireworkBurst(){
+  const cx = Math.random()*fwCanvas.width;
+  const cy = Math.random()*fwCanvas.height*0.5 + fwCanvas.height*0.1;
+  const count = 80;
+  for(let i=0;i<count;i++){
+    const angle = (Math.PI*2)*i/count;
+    const speed = 2 + Math.random()*3;
+    fwParticles.push({
+      x: cx, y: cy,
+      vx: Math.cos(angle)*speed,
+      vy: Math.sin(angle)*speed,
+      life: 40 + Math.random()*30,
+      color: `hsl(${Math.floor(Math.random()*360)},100%,60%)`
+    });
+  }
+}
+function runFireworks(){
+  fwActive = true;
+  let bursts = 0;
+  const burstTimer = setInterval(()=>{
+    if(bursts++ > 5){ clearInterval(burstTimer); }
+    fireworkBurst();
+  }, 350);
+
+  function step(){
+    if(!fwActive && fwParticles.length===0) return;
+    fwCtx.clearRect(0,0,fwCanvas.width,fwCanvas.height);
+    const next = [];
+    for(const p of fwParticles){
+      fwCtx.fillStyle = p.color;
+      fwCtx.fillRect(p.x, p.y, 2, 2);
+      p.x += p.vx; p.y += p.vy; p.vy += 0.03;
+      p.life -= 1;
+      if(p.life > 0) next.push(p);
+    }
+    fwParticles = next;
+    requestAnimationFrame(step);
+  }
+  step();
+  setTimeout(()=>{ fwActive=false; }, 3200);
+}
+
+// Floating celebration emojis
+function floatEmoji(){
+  const set = ['🎉','✨','🎊','💫','🌟','🥳'];
+  const el = document.createElement('div');
+  el.className = 'emoji';
+  el.textContent = set[Math.floor(Math.random()*set.length)];
+  el.style.left = Math.floor(Math.random()*90+5)+'%';
+  el.style.bottom = '20px';
+  document.body.appendChild(el);
+  setTimeout(()=> el.remove(), 1700);
+}
+
+    // Validaties
+    function checkAantal(val) {
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.textContent = "";
+      if (String(val).trim() === "") return;
+      const getal = Number(val);
+      if (!Number.isFinite(getal) || !Number.isInteger(getal)) {
+        errorMsg.textContent = "Vul een heel getal in tussen 1 en 50.";
+        return;
+      }
+      if (getal < 1 || getal > 50) {
+        errorMsg.textContent = "Het aantal woorden moet tussen 1 en 50 liggen.";
+      }
+    }
+    function checkMinuten(val) {
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.textContent = "";
+      if (String(val).trim() === "") return;
+      const getal = Number(val);
+      if (!Number.isFinite(getal) || !Number.isInteger(getal)) {
+        errorMsg.textContent = "Vul een heel getal in tussen 1 en 3.";
+        return;
+      }
+      if (getal < 1 || getal > 3) {
+        errorMsg.textContent = "Het aantal minuten moet tussen 1 en 3 liggen.";
+      }
+    }
+
+    // init
+    document.addEventListener('DOMContentLoaded', setupHoverRows);
   </script>
 </body>
 </html>
