@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=1024, initial-scale=1, viewport-fit=cover" />
   <title>Woordrijen oefenen - Anker</title>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="6d304186-567b-4d15-bccd-a492bd415b15"></script>
   <style>
@@ -244,46 +246,18 @@
   }
   
 
-/* === Center het witte kader (intro & resultaten) === */
-#page1.page, #page3.page {
-  justify-content: center !important;
-  align-items: center !important;
-  min-height: 100svh;
-  padding-top: 0;
-}
-
-/* Zorg dat de card niet te breed is wanneer gecentreerd */
-#page1 .card, #page3 .card {
-  max-width: 860px;
-  width: clamp(520px, 78vw, 860px);
-}
-
-/* === Maak 'Kies een anker' en 'Oefenmodus' smaller & gecentreerd === */
-#fieldset-anker, #fieldset-modus {
-  max-width: 680px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Iets compacter binnen die fieldsets */
-#fieldset-anker .row, #fieldset-modus .row {
-  margin-top: 6px;
-  margin-bottom: 6px;
-}
-#fieldset-anker legend, #fieldset-modus legend {
-  margin-bottom: 8px;
-}
-
-/* Op touch devices nog iets smaller, zodat alles prettig oogt */
+/* --- iPhone/iPad toolbar vriendelijk --- */
 @media (hover: none) and (pointer: coarse) {
-  #fieldset-anker, #fieldset-modus { max-width: 600px; }
-  #page1 .card, #page3 .card { width: clamp(480px, 90vw, 820px); }
+  /* Gebruik de small viewport height wanneer balken zichtbaar zijn */
+  .page { min-height: 100svh; }
+
+  /* Voorkom janky/cropping effect van fixed backgrounds op iOS */
+  .page, body, html { background-attachment: scroll !important; }
 }
 
-/* In landscape op mobiel: benut breedte maar hou het kader gecentreerd */
-@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
-  #fieldset-anker, #fieldset-modus { max-width: 640px; }
-  #page1 .card, #page3 .card { width: clamp(520px, 88vw, 820px); }
+/* Fallback wanneer 100svh niet wordt ondersteund: gebruik JS-variabele --vh */
+@supports not (height: 100svh) {
+  .page { min-height: calc(var(--vh, 1vh) * 100); }
 }
 
 </style>
@@ -784,5 +758,24 @@ function floatEmoji(){
     // init
     document.addEventListener('DOMContentLoaded', setupHoverRows);
   </script>
+
+<script>
+  (function() {
+    function setVH() {
+      var vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight) * 0.01;
+      document.documentElement.style.setProperty('--vh', vh + 'px');
+    }
+    setVH();
+    window.addEventListener('resize', setVH);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', setVH);
+    }
+    // Probeer bij eerste interactie de adresbalk te laten inklappen
+    window.addEventListener('load', function() {
+      setTimeout(function(){ window.scrollTo(0, 1); }, 50);
+    });
+  })();
+</script>
+
 </body>
 </html>
