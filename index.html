@@ -137,7 +137,7 @@
   </style>
 </head>
 <body>
-  <div id="versionTopGlobal">versie <strong>1.01</strong> · <span id="feedbackLink" tabindex="0" title="Vragen of feedback? Vraag pappa Louis">feedback?</span></div>
+  <div id="versionTopGlobal">versie <strong>1.02</strong> · <span id="feedbackLink" tabindex="0" title="Vragen of feedback? Vraag pappa Louis">feedback?</span></div>
 
   <!-- Pagina 1: Intro -->
   <div id="page1" class="page active">
@@ -487,8 +487,8 @@
     }
     function prepareKlinkerSubVisibility(){
       const fsSub=document.getElementById('fieldset-klinkers-submode');
-      const anyChecked = !!document.querySelector('#fieldset-klinkers input[type=checkbox]:checked');
-      fsSub.style.display = anyChecked ? '' : 'none';
+      // Verberg niets meer: submodus blijft zichtbaar, ook als er (nog) niets is aangevinkt.
+      fsSub.style.display = '';
     }
 
     function showTap(ok){
@@ -619,7 +619,7 @@
       });
       document.getElementById('btnNone').addEventListener('click', ()=>{
         document.querySelectorAll('#fieldset-klinkers input[type=checkbox]').forEach(cb=>cb.checked=false);
-        prepareKlinkerSubVisibility();
+        // Alleen deselecteren; niets verbergen.
       });
       document.getElementById('klinkerChips').addEventListener('change', prepareKlinkerSubVisibility);
 
