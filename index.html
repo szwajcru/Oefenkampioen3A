@@ -137,7 +137,7 @@
   </style>
 </head>
 <body>
-  <div id="versionTopGlobal">versie <strong>1.02</strong> · <span id="feedbackLink" tabindex="0" title="Vragen of feedback? Vraag pappa Louis">feedback?</span></div>
+  <div id="versionTopGlobal">versie <strong>1.03</strong> · <span id="feedbackLink" tabindex="0" title="Vragen of feedback? Vraag pappa Louis">feedback?</span></div>
 
   <!-- Pagina 1: Intro -->
   <div id="page1" class="page active">
@@ -472,24 +472,41 @@
 
     // Core
     function updateTypeUI(){
-      oefentype = document.querySelector('input[name="type"]:checked').value;
-      const fsAnker=document.getElementById('fieldset-anker');
-      const fsKlin=document.getElementById('fieldset-klinkers');
-      const fsModus=document.getElementById('fieldset-modus');
-      const fsSub=document.getElementById('fieldset-klinkers-submode');
-      if(oefentype==='ankers'){
-        fsAnker.style.display=''; fsKlin.style.display='none'; fsModus.style.display=''; fsSub.style.display='none';
-        document.getElementById('page2Title').textContent='Lees dit woordje hardop';
-      }else{
-        fsAnker.style.display='none'; fsKlin.style.display=''; fsModus.style.display='none'; fsSub.style.display='';
-        document.getElementById('page2Title').textContent='Lees deze klinker (klank) hardop';
-      }
-    }
+  // Bepaalt welke velden zichtbaar zijn op basis van oefentype
+  oefentype = document.querySelector('input[name="type"]:checked').value;
+  const fsAnker = document.getElementById('fieldset-anker');
+  const fsKlin  = document.getElementById('fieldset-klinkers');
+  const fsModus = document.getElementById('fieldset-modus');
+  const fsSub   = document.getElementById('fieldset-klinkers-submode');
+
+  if(oefentype === 'ankers'){
+    fsAnker.style.display = '';
+    fsKlin.style.display  = 'none';
+    fsModus.style.display = '';
+    fsSub.style.display   = 'none'; // subkader verbergen bij Ankers
+    document.getElementById('page2Title').textContent = 'Lees dit woordje hardop';
+  } else {
+    fsAnker.style.display = 'none';
+    fsKlin.style.display  = '';
+    fsModus.style.display = 'none';
+    // fsSub niet forceren; prepareKlinkerSubVisibility() bepaalt zichtbaarheid
+    document.getElementById('page2Title').textContent = 'Lees deze klinker (klank) hardop';
+  }
+
+  // Her-evalueer subvisibiliteit na elke wissel
+  prepareKlinkerSubVisibility();
+}
     function prepareKlinkerSubVisibility(){
-      const fsSub=document.getElementById('fieldset-klinkers-submode');
-      // Verberg niets meer: submodus blijft zichtbaar, ook als er (nog) niets is aangevinkt.
-      fsSub.style.display = '';
-    }
+  const fsSub = document.getElementById('fieldset-klinkers-submode');
+  const isKlinkers = document.querySelector('input[name="type"][value="klinkers"]').checked;
+
+  // Toon het subkader direct zodra 'Klinkers' is geselecteerd
+  if (isKlinkers){
+    fsSub.style.display = '';
+  } else {
+    fsSub.style.display = 'none';
+  }
+}
 
     function showTap(ok){
       const tf = document.getElementById('tapFeedback'); if(!tf) return;
