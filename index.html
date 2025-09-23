@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,7 +8,7 @@
 
   <!-- Umami alleen online (niet via file://) -->
   <script>
-    (function(){
+    (function () {
       var ANALYTICS_ENABLED = location.protocol !== 'file:';
       if (ANALYTICS_ENABLED) {
         var s = document.createElement('script');
@@ -20,124 +21,459 @@
   </script>
 
   <style>
-    :root{ --ebx:#01689B; --ebx-d:#014f73; --ring:#cbd5e1; --ink:#0f172a; --ok:#16a34a; --nok:#dc2626; }
-    *{ box-sizing:border-box; }
-    body{
-      margin:0; padding:0; font-family:Arial, sans-serif; color:#0f172a;
+    :root {
+      --ebx: #01689B;
+      --ebx-d: #014f73;
+      --ring: #cbd5e1;
+      --ink: #0f172a;
+      --ok: #16a34a;
+      --nok: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      color: #0f172a;
       /* Gradient fallback + optionele afbeelding (geen error als PNG ontbreekt) */
       background: #f6f8fb;
       /* Als er een achtergrond.png naast de html staat, wordt die gebruikt */
-      background-image: url('achtergrond.png'), linear-gradient(180deg,#f8fafc 0%, #eef2f7 100%);
-      background-position: center; background-size: cover; background-attachment: fixed; background-repeat: no-repeat;
+      background-image: url('achtergrond.png'), linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+      background-position: center;
+      background-size: cover;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
     }
-    #versionTopGlobal{ width:100%; text-align:center; color:#64748b; font-size:13px; margin:10px 0 0; }
-    .page{ display:none; min-height:100vh; flex-direction:column; justify-content:center; align-items:center; padding:20px; }
-    .active{ display:flex; }
-    .card{ background:#fff; border:3px solid var(--ebx); border-radius:16px; padding:22px 26px; box-shadow:0 10px 30px rgba(0,0,0,.12);
-           max-width:640px; width:clamp(340px, 84vw, 640px); position:relative; }
-    h1{ font-size:26px; margin:0 0 10px 0; text-align:center; }
-    .champion-title{ font-size:44px; color:var(--ebx); margin:6px 0 10px 0; text-align:center; }
-    #woord{ font-size:clamp(64px, 14vw, 132px); font-weight:800; margin:10px 0 4px 0; line-height:1.05; letter-spacing:1px; text-align:center; }
-    .subline{ color:#475569; margin-bottom:6px; text-align:center; }
 
-    .btn{ font-size:18px; margin:8px; padding:8px 22px; border-radius:12px; background-color:var(--ebx); color:white; border:none; cursor:pointer;
-          transition:transform .08s ease, box-shadow .08s ease, background-color .15s ease; user-select:none; box-shadow:0 6px 0 rgba(0,0,0,.18); }
-    .btn:hover{ background-color:var(--ebx-d); }
-    .btn:active{ transform:translateY(2px); box-shadow:0 2px 0 rgba(0,0,0,.18); }
-    .btn-antwoord{ font-weight:900; font-size:clamp(18px, 2.4vw, 28px); padding:10px 18px; border-radius:12px; min-width:min(36vw, 240px); min-height:56px; }
+    #versionTopGlobal {
+      width: 100%;
+      text-align: center;
+      color: #64748b;
+      font-size: 13px;
+      margin: 10px 0 0;
+    }
 
-    .answers{ display:grid; gap:12px; grid-template-columns:1fr; justify-items:center; margin-top:6px; padding-inline:22px; }
-    @media (min-width:720px){ .answers{ grid-template-columns:1fr 1fr; gap:16px; } }
+    .page {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
 
-    input[type=number]{ font-size:18px; height:40px; padding:6px 10px; text-align:center; width:96px; border-radius:8px; border:2px solid #cbd5e1; }
+    .active {
+      display: flex;
+    }
 
-    .groepen{ display:grid; gap:12px; margin-top:8px; grid-template-columns:1fr; }
-    fieldset.optiegroep{ border:2px solid var(--ring); border-radius:12px; padding:10px 12px; max-width:720px; width:100%; margin:0 auto; background:#fff; }
-    fieldset.optiegroep legend{ padding:0 6px; font-weight:700; font-size:15px; }
-    .row{ display:flex; align-items:center; gap:10px; margin:6px 0; flex-wrap:wrap; }
-    .inline{ display:flex; align-items:center; gap:8px; }
-    .intro{ max-width: 760px; margin: 0 auto 8px; text-align:center; line-height:1.5; font-size:15px; } .intro p{ margin:6px 0; }
+    .card {
+      background: #fff;
+      border: 3px solid var(--ebx);
+      border-radius: 16px;
+      padding: 22px 26px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .12);
+      max-width: 640px;
+      width: clamp(340px, 84vw, 640px);
+      position: relative;
+    }
 
-    .chip{ border:1px solid #e2e8f0; border-radius:999px; padding:6px 10px; display:inline-flex; align-items:center; gap:8px; }
-    .klinker-groepen{ display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
-    .klinker-col{ border:1px dashed #e2e8f0; border-radius:10px; padding:8px; }
-    .klinker-col h4{ margin:0 0 6px 0; font-size:14px; color:#334155; }
-    .klinker-col .pair{ display:flex; gap:8px; flex-wrap:wrap; margin:6px 0; }
+    h1 {
+      font-size: 26px;
+      margin: 0 0 10px 0;
+      text-align: center;
+    }
 
-    .iconrow{ display:flex; gap:10px; justify-content:center; margin-top:8px; }
-    .iconbtn{ border:1px solid #e2e8f0; background:#f1f5f9; border-radius:999px; padding:8px 12px; cursor:pointer; box-shadow:0 1px 0 rgba(0,0,0,.05); font-size:16px; }
-    .iconbtn:hover{ background:#e2e8f0; }
+    .champion-title {
+      font-size: 44px;
+      color: var(--ebx);
+      margin: 6px 0 10px 0;
+      text-align: center;
+    }
+
+    #woord {
+      font-size: clamp(64px, 14vw, 132px);
+      font-weight: 800;
+      margin: 10px 0 4px 0;
+      line-height: 1.05;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    .subline {
+      color: #475569;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .btn {
+      font-size: 18px;
+      margin: 8px;
+      padding: 8px 22px;
+      border-radius: 12px;
+      background-color: var(--ebx);
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: transform .08s ease, box-shadow .08s ease, background-color .15s ease;
+      user-select: none;
+      box-shadow: 0 6px 0 rgba(0, 0, 0, .18);
+    }
+
+    .btn:hover {
+      background-color: var(--ebx-d);
+    }
+
+    .btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, .18);
+    }
+
+    .btn-antwoord {
+      font-weight: 900;
+      font-size: clamp(18px, 2.4vw, 28px);
+      padding: 10px 18px;
+      border-radius: 12px;
+      min-width: min(36vw, 240px);
+      min-height: 56px;
+    }
+
+    .answers {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr;
+      justify-items: center;
+      margin-top: 6px;
+      padding-inline: 22px;
+    }
+
+    @media (min-width:720px) {
+      .answers {
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+    }
+
+    input[type=number] {
+      font-size: 18px;
+      height: 40px;
+      padding: 6px 10px;
+      text-align: center;
+      width: 96px;
+      border-radius: 8px;
+      border: 2px solid #cbd5e1;
+    }
+
+    .groepen {
+      display: grid;
+      gap: 12px;
+      margin-top: 8px;
+      grid-template-columns: 1fr;
+    }
+
+    fieldset.optiegroep {
+      border: 2px solid var(--ring);
+      border-radius: 12px;
+      padding: 10px 12px;
+      max-width: 720px;
+      width: 100%;
+      margin: 0 auto;
+      background: #fff;
+    }
+
+    fieldset.optiegroep legend {
+      padding: 0 6px;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0;
+      flex-wrap: wrap;
+    }
+
+    .inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .intro {
+      max-width: 760px;
+      margin: 0 auto 8px;
+      text-align: center;
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    .intro p {
+      margin: 6px 0;
+    }
+
+    .chip {
+      border: 1px solid #e2e8f0;
+      border-radius: 999px;
+      padding: 6px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .klinker-groepen {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+
+    .klinker-col {
+      border: 1px dashed #e2e8f0;
+      border-radius: 10px;
+      padding: 8px;
+    }
+
+    .klinker-col h4 {
+      margin: 0 0 6px 0;
+      font-size: 14px;
+      color: #334155;
+    }
+
+    .klinker-col .pair {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 6px 0;
+    }
+
+    .iconrow {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    .iconbtn {
+      border: 1px solid #e2e8f0;
+      background: #f1f5f9;
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, .05);
+      font-size: 16px;
+    }
+
+    .iconbtn:hover {
+      background: #e2e8f0;
+    }
 
     .quit {
-      position:absolute; top:10px; right:10px;
-      width:36px; height:36px;
-      display:flex; align-items:center; justify-content:center;
-      background:#dc2626; color:#fff; font-weight:bold;
-      border:none; border-radius:6px;
-      cursor:pointer;
-      box-shadow:0 2px 6px rgba(0,0,0,.2);
-    }
-    .quit:hover {
-      background:#b91c1c;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #dc2626;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
     }
 
-    #toast{ position:fixed; left:50%; top:12px; transform:translateX(-50%); background:rgba(15,23,42,.92); color:#fff; padding:8px 12px; border-radius:10px; font-weight:700; box-shadow:0 10px 30px rgba(0,0,0,.25); opacity:0; transition:opacity .15s ease; z-index:40; pointer-events:none; }
-    #toast.show{ opacity:1; }
+    .quit:hover {
+      background: #b91c1c;
+    }
+
+    #toast {
+      position: fixed;
+      left: 50%;
+      top: 12px;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, .92);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+      opacity: 0;
+      transition: opacity .15s ease;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    #toast.show {
+      opacity: 1;
+    }
 
     /* Result hero */
-    .result-hero{
-      position: relative; border: 0; padding: 26px 20px 24px; border-radius: 20px;
+    .result-hero {
+      position: relative;
+      border: 0;
+      padding: 26px 20px 24px;
+      border-radius: 20px;
       background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 18%, #fdf2f8 55%, #fef3c7 100%);
       overflow: hidden;
     }
-    .result-hero .shine{ position:absolute; inset:-2px;
-      background: radial-gradient(600px 200px at var(--mx,50%) -10%, rgba(255,255,255,.45), transparent 60%);
-      mix-blend-mode: screen; pointer-events:none; }
-    .trophy{ width: 90px; height: 90px; border-radius: 50%; background: #fff; display:grid; place-items:center;
-      box-shadow: 0 14px 40px rgba(0,0,0,.12); margin: 0 auto 8px; animation: bob 2.2s ease-in-out infinite; }
-    .trophy span{ font-size: 48px; }
-    @keyframes bob{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-6px); } }
-    .cele-title{ text-align:center; font-size: 28px; margin: 6px 0 8px; color:#0f172a; }
-    .cele-msg{ text-align:center; font-size: 22px; margin: 2px 0 8px; }
-    .pill-wrap{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top: 8px; }
-    .pill{ border-radius:999px; padding:10px 16px; background:#0ea5e9; color:#fff; font-weight:800; box-shadow: 0 10px 30px rgba(14,165,233,.35); font-size: 18px; }
-    .pill.secondary{ background:#22c55e; box-shadow: 0 10px 30px rgba(34,197,94,.35); }
+
+    .result-hero .shine {
+      position: absolute;
+      inset: -2px;
+      background: radial-gradient(600px 200px at var(--mx, 50%) -10%, rgba(255, 255, 255, .45), transparent 60%);
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .trophy {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, .12);
+      margin: 0 auto 8px;
+      animation: bob 2.2s ease-in-out infinite;
+    }
+
+    .trophy span {
+      font-size: 48px;
+    }
+
+    @keyframes bob {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    .cele-title {
+      text-align: center;
+      font-size: 28px;
+      margin: 6px 0 8px;
+      color: #0f172a;
+    }
+
+    .cele-msg {
+      text-align: center;
+      font-size: 22px;
+      margin: 2px 0 8px;
+    }
+
+    .pill-wrap {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 10px 16px;
+      background: #0ea5e9;
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 10px 30px rgba(14, 165, 233, .35);
+      font-size: 18px;
+    }
+
+    .pill.secondary {
+      background: #22c55e;
+      box-shadow: 0 10px 30px rgba(34, 197, 94, .35);
+    }
 
     /* Confetti + Fireworks canvases (hidden until used) */
-    #confetti-canvas, #fireworks-canvas { position: fixed; inset: 0; pointer-events: none; display:none; }
-    #confetti-canvas{ z-index: 45; } #fireworks-canvas{ z-index: 46; }
+    #confetti-canvas,
+    #fireworks-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      display: none;
+    }
+
+    #confetti-canvas {
+      z-index: 45;
+    }
+
+    #fireworks-canvas {
+      z-index: 46;
+    }
 
     /* Tap feedback ✓ / ✗ overlay */
-    #tapFeedback{ position:fixed; inset:0; display:grid; place-items:center; pointer-events:none; opacity:0; transition:opacity .18s ease; z-index:80; }
-    #tapFeedback.show{ opacity:1; }
-    #tapFeedback .badge{ font-weight:900; font-size:clamp(64px, 10vw, 96px); padding:16px 28px; border-radius:16px; color:#fff; box-shadow:0 20px 40px rgba(0,0,0,.25); }
+    #tapFeedback {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .18s ease;
+      z-index: 80;
+    }
+
+    #tapFeedback.show {
+      opacity: 1;
+    }
+
+    #tapFeedback .badge {
+      font-weight: 900;
+      font-size: clamp(64px, 10vw, 96px);
+      padding: 16px 28px;
+      border-radius: 16px;
+      color: #fff;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, .25);
+    }
 
     /* --- FIX: perfecte uitlijning oefenmodus --- */
-    #fieldset-modus{
+    #fieldset-modus {
       max-width: 720px;
       margin-inline: auto;
     }
-    #fieldset-modus .form-row{
-      display:grid;
-      grid-template-columns: auto 96px; /* label links, input rechts (smal) */
-      align-items:center;
-      gap:4px; /* dichter bij het label */
-      margin:6px 0;
+
+    #fieldset-modus .form-row {
+      display: grid;
+      grid-template-columns: auto 96px;
+      /* label links, input rechts (smal) */
+      align-items: center;
+      gap: 4px;
+      /* dichter bij het label */
+      margin: 6px 0;
       justify-items: start;
     }
-    #fieldset-modus .form-row label.inline{
-      display:flex; align-items:center; gap:8px;
-      white-space:nowrap;
+
+    #fieldset-modus .form-row label.inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
       justify-self: start;
     }
-    #fieldset-modus .form-row input[type=number]{
-      width:96px; min-width:0;
+
+    #fieldset-modus .form-row input[type=number] {
+      width: 96px;
+      min-width: 0;
       justify-self: start;
     }
   </style>
 </head>
+
 <body>
-  <div id="versionTopGlobal">versie <strong>1.03</strong> · <span id="feedbackLink" tabindex="0" title="Vragen of feedback? Vraag pappa Louis">feedback?</span></div>
+  <div id="versionTopGlobal">versie <strong>1.04</strong> · <span id="feedbackLink" tabindex="0"
+      title="Vragen of feedback? Vraag pappa Louis">feedback?</span></div>
 
   <!-- Pagina 1: Intro -->
   <div id="page1" class="page active">
@@ -176,10 +512,13 @@
         <fieldset class="optiegroep" id="fieldset-klinkers-submode" style="display:none;">
           <legend>Klinkers: wat wil je oefenen?</legend>
           <div class="row">
-            <label class="inline"><input type="radio" name="klinkerSub" value="puur" checked> <span>Puur klinkers oefenen</span></label>
-            <label class="inline"><input type="radio" name="klinkerSub" value="woorden"> <span>Woordjes met aangevinkte klinkers</span></label>
+            <label class="inline"><input type="radio" name="klinkerSub" value="puur" checked> <span>Puur klinkers
+                oefenen</span></label>
+            <label class="inline"><input type="radio" name="klinkerSub" value="woorden"> <span>Woordjes met aangevinkte
+                klinkers</span></label>
           </div>
-          <div style="font-size:13px; color:#475569; margin-top:4px;">In Klinker-modus wordt gedurende 30 seconden klinkers getoond.</div>
+          <div style="font-size:13px; color:#475569; margin-top:4px;">In Klinker-modus wordt gedurende 30 seconden
+            klinkers getoond.</div>
         </fieldset>
 
         <!-- Ankers (alleen voor Ankers) -->
@@ -197,9 +536,9 @@
           <div style="font-size:14px; color:#64748b;">Tip: hover over een anker/klinker om de woordjes te zien.</div>
         </fieldset>
 
-        <!-- Oefenmodus (alleen bij Ankers) -->
+        <!-- Ankers (aantal woorden of minuten) -->
         <fieldset class="optiegroep" id="fieldset-modus">
-          <legend>Oefenmodus (alleen bij Ankers)</legend>
+          <legend>Oefenmodus</legend>
 
           <div class="form-row" id="row-woorden">
             <label class="inline" for="aantalInput">
@@ -238,7 +577,9 @@
         <button id="btnJuist" class="btn btn-antwoord" title="Juist">✓</button>
         <button id="btnOnjuist" class="btn btn-antwoord" title="Onjuist">✗</button>
       </div>
-      <div class="kb-hint" style="text-align:center;">Sneltoetsen: <kbd>J</kbd> = Juist, <kbd>F</kbd> = Fout, <kbd>Esc</kbd> = Afbreken</div>
+      <div class="kb-hint" style="text-align:center;">Sneltoetsen: <kbd>J</kbd> = Juist, <kbd>F</kbd> = Fout,
+        <kbd>Esc</kbd> = Afbreken
+      </div>
     </div>
   </div>
 
@@ -265,438 +606,507 @@
   <!-- Effects + Feedback overlay -->
   <canvas id="confetti-canvas"></canvas>
   <canvas id="fireworks-canvas"></canvas>
-  <div id="tapFeedback" aria-hidden="true"><div class="badge"></div></div>
+  <div id="tapFeedback" aria-hidden="true">
+    <div class="badge"></div>
+  </div>
 
   <script>
-  (function(){
-    // ===== Data =====
-    const ankers = {
-      1: ['rek','maak','sik','aas','baas','meer','sip','been','vis','vaar','boon','paar','roos','kook','bek','rook','voor','boor','naar','peer','kaak','oom','mis','ree','naam','ik','mes','raam','kaas','saar','beer','sep','nep','meen'],
-      2: [], 3: []
-    };
-    const KLINKER_GROUPS = [
-      { title: 'Korte/Lange A-E-U', pairs: [['a','aa'], ['e','ee'], ['u','uu']] },
-      { title: 'Korte/Lange I-O',   pairs: [['i','ie'], ['o','oo']] },
-      { title: 'Tweeklanken 1',     pairs: [['ei'], ['ij'], ['ui'], ['eu']] },
-      { title: 'Tweeklanken 2',     pairs: [['ou'], ['au'], ['oe']] }
-    ];
-    const KLINKER_WOORDEN = {
-      'a':  ['kat','jas','bak','man','tak','bal','zak','pan','rat','kap'],
-      'e':  ['pen','bed','nek','net','bel','hek','mes','weg','pet','tent'],
-      'i':  ['vis','lip','kip','tik','pit','pin','vin','zin','rit','min'],
-      'o':  ['kop','bos','zon','pot','rok','hok','bom','vos','mol','kok'],
-      'u':  ['bus','mus','rug','hut','put','mug','kus','tuk','pup','dus'],
-      'aa': ['maan','kaas','haak','zaag','baan','vaas','haan','raam','taart','laan'],
-      'ee': ['been','zeep','veer','teen','meer','neef','leeg','beet','beer','veeg'],
-      'ie': ['vier','diep','riet','ziek','dier','lied','mier','kies','fiets','tien'],
-      'oo': ['boom','boot','noot','zoon','room','boon','hoop','kooi','brood','rook'],
-      'uu': ['muur','buur','vuur','duur','huur','kuur','stuur','zuur','puur','uur'],
-      'oe': ['boek','koek','hoed','doek','zoen','snoep','broek','roep','zoek','boer'],
-      'eu': ['neus','reus','leuk','beuk','geur','keus','heus','deuk','zeur','peul'],
-      'ei': ['ei','geit','zeil','reis','plein','blij','fijn','ijs','mij','rij'],
-      'ij': ['ei','geit','zeil','reis','plein','blij','fijn','ijs','mij','rij'],
-      'ui': ['huis','muis','duif','ruit','puin','buik','luik','kuil','ruim','fruit'],
-      'ou': ['auto','saus','pauw','kauw','goud','hout','fout','bout','koud','jouw'],
-      'au': ['auto','saus','pauw','kauw','goud','hout','fout','bout','koud','jouw']
-    };
+    (function () {
+      // ===== Data =====
+      const ankers = {
+        1: ['rek', 'maak', 'sik', 'aas', 'baas', 'meer', 'sip', 'been', 'vis', 'vaar', 'boon', 'paar', 'roos', 'kook', 'bek', 'rook', 'voor', 'boor', 'naar', 'peer', 'kaak', 'oom', 'mis', 'ree', 'naam', 'ik', 'mes', 'raam', 'kaas', 'saar', 'beer', 'sep', 'nep', 'meen'],
+        2: [], 3: []
+      };
+      const KLINKER_GROUPS = [
+        { title: 'Korte/Lange A-E-U', pairs: [['a', 'aa'], ['e', 'ee'], ['u', 'uu']] },
+        { title: 'Korte/Lange I-O', pairs: [['i', 'ie'], ['o', 'oo']] },
+        { title: 'Tweeklanken 1', pairs: [['ei'], ['ij'], ['ui'], ['eu']] },
+        { title: 'Tweeklanken 2', pairs: [['ou'], ['au'], ['oe']] }
+      ];
+      const KLINKER_WOORDEN = {
+        'a': ['kat', 'jas', 'bak', 'man', 'tak', 'bal', 'zak', 'pan', 'rat', 'kap'],
+        'e': ['pen', 'bed', 'nek', 'net', 'bel', 'hek', 'mes', 'weg', 'pet', 'tent'],
+        'i': ['vis', 'lip', 'kip', 'tik', 'pit', 'pin', 'vin', 'zin', 'rit', 'min'],
+        'o': ['kop', 'bos', 'zon', 'pot', 'rok', 'hok', 'bom', 'vos', 'mol', 'kok'],
+        'u': ['bus', 'mus', 'rug', 'hut', 'put', 'mug', 'kus', 'tuk', 'pup', 'dus'],
+        'aa': ['maan', 'kaas', 'haak', 'zaag', 'baan', 'vaas', 'haan', 'raam', 'taart', 'laan'],
+        'ee': ['been', 'zeep', 'veer', 'teen', 'meer', 'neef', 'leeg', 'beet', 'beer', 'veeg'],
+        'ie': ['vier', 'diep', 'riet', 'ziek', 'dier', 'lied', 'mier', 'kies', 'fiets', 'tien'],
+        'oo': ['boom', 'boot', 'noot', 'zoon', 'room', 'boon', 'hoop', 'kooi', 'brood', 'rook'],
+        'uu': ['muur', 'buur', 'vuur', 'duur', 'huur', 'kuur', 'stuur', 'zuur', 'puur', 'uur'],
+        'oe': ['boek', 'koek', 'hoed', 'doek', 'zoen', 'snoep', 'broek', 'roep', 'zoek', 'boer'],
+        'eu': ['neus', 'reus', 'leuk', 'beuk', 'geur', 'keus', 'heus', 'deuk', 'zeur', 'peul'],
+        'ei': ['ei', 'geit', 'zeil', 'reis', 'plein'],
+        'ij': ['blij', 'fijn', 'ijs', 'mij', 'rij'],
+        'ui': ['huis', 'muis', 'duif', 'ruit', 'puin', 'buik', 'luik', 'kuil', 'ruim', 'fruit'],
+        'ou': ['goud', 'hout', 'fout', 'bout', 'koud', 'jouw'],
+        'au': ['auto', 'saus', 'pauw', 'kauw']
+      };
 
-    // ===== State =====
-    let oefentype = 'ankers';    // 'ankers' | 'klinkers'
-    let klinkerSub = 'puur';     // 'puur' | 'woorden'
-    let woorden = []; let items = [];
-    let idx = 0, score = 0, startTijd = 0, getoond = 0;
-    let timerId = null, endTime = 0;
+      // ===== State =====
+      let oefentype = 'ankers';    // 'ankers' | 'klinkers'
+      let klinkerSub = 'puur';     // 'puur' | 'woorden'
+      let woorden = []; let items = [];
+      let idx = 0, score = 0, startTijd = 0, getoond = 0;
+      let timerId = null, endTime = 0;
 
-    // ===== Highlight helpers =====
-    const VOWEL_COMBOS = ['aa','ee','oo','uu','ei','ij','ui','oe','ie','eu','ou','au'];
-    const SINGLE_VOWELS = ['a','e','i','o','u'];
-    const HIGHLIGHT_COLORS = ['#ef4444','#16a34a','#2563eb','#a855f7','#f59e0b'];
+      // ===== Highlight helpers =====
+      const VOWEL_COMBOS = ['aa', 'ee', 'oo', 'uu', 'ei', 'ij', 'ui', 'oe', 'ie', 'eu', 'ou', 'au'];
+      const SINGLE_VOWELS = ['a', 'e', 'i', 'o', 'u'];
+      const HIGHLIGHT_COLORS = ['#ef4444', '#16a34a', '#2563eb', '#a855f7', '#f59e0b'];
 
-    function kleurMetSelectie(woord, selectie){
-      const sel = [...selectie].sort((a,b)=>b.length-a.length);
-      let i=0, html='';
-      while(i<woord.length){
-        let match=null;
-        for(let k of sel){
-          if(woord.substring(i, i+k.length).toLowerCase()===k.toLowerCase()){ match=k; break; }
-        }
-        if(match){
-          const kleur = HIGHLIGHT_COLORS[Math.floor(Math.random()*HIGHLIGHT_COLORS.length)];
-          html += `<span style="color:${kleur}">${woord.substr(i, match.length)}</span>`;
-          i += match.length;
-        } else {
-          const ch = woord[i];
-          html += `<span style="color:#0f172a">${ch}</span>`;
-          i++;
-        }
-      }
-      return html;
-    }
-
-    function kleurMetAlleKlinkers(woord){
-      let i=0, html='';
-      while(i<woord.length){
-        let gevonden=null;
-        for(let comb of VOWEL_COMBOS){
-          if(woord.substring(i, i+comb.length).toLowerCase()===comb){ gevonden=comb; break; }
-        }
-        if(gevonden){
-          const kleur = HIGHLIGHT_COLORS[Math.floor(Math.random()*HIGHLIGHT_COLORS.length)];
-          html += `<span style="color:${kleur}">${woord.substr(i, gevonden.length)}</span>`;
-          i += gevonden.length;
-        } else {
-          const letter = woord[i];
-          if(SINGLE_VOWELS.includes(letter.toLowerCase())){
-            const kleur = HIGHLIGHT_COLORS[Math.floor(Math.random()*HIGHLIGHT_COLORS.length)];
-            html += `<span style="color:${kleur}">${letter}</span>`;
-          } else {
-            html += `<span style="color:#0f172a">${letter}</span>`;
+      function kleurMetSelectie(woord, selectie) {
+        const sel = [...selectie].sort((a, b) => b.length - a.length);
+        let i = 0, html = '';
+        while (i < woord.length) {
+          let match = null;
+          for (let k of sel) {
+            if (woord.substring(i, i + k.length).toLowerCase() === k.toLowerCase()) { match = k; break; }
           }
-          i++;
+          if (match) {
+            const kleur = HIGHLIGHT_COLORS[Math.floor(Math.random() * HIGHLIGHT_COLORS.length)];
+            html += `<span style="color:${kleur}">${woord.substr(i, match.length)}</span>`;
+            i += match.length;
+          } else {
+            const ch = woord[i];
+            html += `<span style="color:#0f172a">${ch}</span>`;
+            i++;
+          }
         }
+        return html;
       }
-      return html;
-    }
 
-    // ===== UI utils =====
-    window.showPage = function(n){
-      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-      const pg = document.getElementById('page'+n);
-      if(pg) pg.classList.add('active');
-      const again = document.getElementById('btnAgain');
-      if(again) again.style.display = (n===3) ? 'inline-block' : 'none';
-    }; 
-    function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
-    function formatMMSS(ms){ const t=Math.max(0,Math.floor(ms/1000)), m=Math.floor(t/60), s=t%60; return `${m}:${String(s).padStart(2,'0')}`; }
-    function startTimer(){ stopTimer(); timerId=setInterval(()=>{ const left=endTime-Date.now(); const b=document.getElementById('timerBadge'); if(b) b.textContent=formatMMSS(left); if(left<=0){ stopTimer(); eindeToets(); } }, 200); }
-    function stopTimer(){ if(timerId){ clearInterval(timerId); timerId=null; } }
-
-    // Hover tooltip for lists
-    let hoverHideId=null;
-    function showHover(el, lijst){
-      let card=document.getElementById('hoverCard');
-      if(!card){
-        card=document.createElement('div');
-        card.id='hoverCard';
-        card.style.cssText='position:fixed;display:none;z-index:30;background:#fff;color:#0f172a;border:2px solid var(--ebx);border-radius:12px;box-shadow:0 16px 50px rgba(0,0,0,.25);padding:10px 12px;max-width:min(520px, 92vw);max-height:60vh;overflow:auto;';
-        card.innerHTML='<h3 style="margin:0 0 8px 0; font-size:16px;">Woorden</h3><div class="chips" id="hoverCardContent"></div>';
-        document.body.appendChild(card);
+      function kleurMetAlleKlinkers(woord) {
+        let i = 0, html = '';
+        while (i < woord.length) {
+          let gevonden = null;
+          for (let comb of VOWEL_COMBOS) {
+            if (woord.substring(i, i + comb.length).toLowerCase() === comb) { gevonden = comb; break; }
+          }
+          if (gevonden) {
+            const kleur = HIGHLIGHT_COLORS[Math.floor(Math.random() * HIGHLIGHT_COLORS.length)];
+            html += `<span style="color:${kleur}">${woord.substr(i, gevonden.length)}</span>`;
+            i += gevonden.length;
+          } else {
+            const letter = woord[i];
+            if (SINGLE_VOWELS.includes(letter.toLowerCase())) {
+              const kleur = HIGHLIGHT_COLORS[Math.floor(Math.random() * HIGHLIGHT_COLORS.length)];
+              html += `<span style="color:${kleur}">${letter}</span>`;
+            } else {
+              html += `<span style="color:#0f172a">${letter}</span>`;
+            }
+            i++;
+          }
+        }
+        return html;
       }
-      const content=document.getElementById('hoverCardContent');
-      content.innerHTML = lijst.length ? lijst.map(w=>`<span class="chip" style="margin:4px;display:inline-flex;">${w}</span>`).join('') : '<em>Geen woordenlijst.</em>';
-      const r=el.getBoundingClientRect(), pad=8, cw=Math.min(520, window.innerWidth*0.92);
-      let left=r.left+window.scrollX; if(left+cw>window.innerWidth-10){ left=window.innerWidth-cw-10; }
-      let top=r.bottom+window.scrollY+pad; const ch=Math.min(card.scrollHeight, window.innerHeight*0.6);
-      if(top+ch>window.scrollY+window.innerHeight){ top=r.top+window.scrollY-ch-pad; }
-      card.style.left=left+'px'; card.style.top=top+'px'; card.style.display='block'; clearTimeout(hoverHideId);
-    }
-    function hideHoverSoon(){ clearTimeout(hoverHideId); hoverHideId=setTimeout(()=>{ const c=document.getElementById('hoverCard'); if(c) c.style.display='none'; },120); }
 
-    // Build klinker chips
-    function renderKlinkers(checked=false){
-      const holder=document.getElementById('klinkerChips'); holder.innerHTML='';
-      KLINKER_GROUPS.forEach(grp=>{
-        const col=document.createElement('div'); col.className='klinker-col';
-        const h=document.createElement('h4'); h.textContent=grp.title; col.appendChild(h);
-        // Two-column layout for Tweeklanken groups by grouping pairs two per row
-        grp.pairs.forEach(pair=>{
-          const wrap=document.createElement('div'); wrap.className='pair';
-          pair.forEach(k=>{
-            const id='klink_'+k, label=document.createElement('label'); label.className='chip'; label.setAttribute('data-klink', k);
-            label.innerHTML=`<input type="checkbox" id="${id}" value="${k}" ${checked?'checked':''}> <span>${k}</span>`;
-            label.addEventListener('mouseenter',()=>showHover(label, KLINKER_WOORDEN[k]||[]));
-            label.addEventListener('mouseleave',hideHoverSoon);
-            label.addEventListener('focus',()=>showHover(label, KLINKER_WOORDEN[k]||[]));
-            label.addEventListener('blur',hideHoverSoon);
-            wrap.appendChild(label);
+      // ===== UI utils =====
+      window.showPage = function (n) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const pg = document.getElementById('page' + n);
+        if (pg) pg.classList.add('active');
+        const again = document.getElementById('btnAgain');
+        if (again) again.style.display = (n === 3) ? 'inline-block' : 'none';
+      };
+      function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
+      function formatMMSS(ms) { const t = Math.max(0, Math.floor(ms / 1000)), m = Math.floor(t / 60), s = t % 60; return `${m}:${String(s).padStart(2, '0')}`; }
+      function startTimer() { stopTimer(); timerId = setInterval(() => { const left = endTime - Date.now(); const b = document.getElementById('timerBadge'); if (b) b.textContent = formatMMSS(left); if (left <= 0) { stopTimer(); eindeToets(); } }, 200); }
+      function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+
+      // Hover tooltip for lists
+      let hoverHideId = null;
+      function showHover(el, lijst) {
+        let card = document.getElementById('hoverCard');
+        if (!card) {
+          card = document.createElement('div');
+          card.id = 'hoverCard';
+          card.style.cssText = 'position:fixed;display:none;z-index:30;background:#fff;color:#0f172a;border:2px solid var(--ebx);border-radius:12px;box-shadow:0 16px 50px rgba(0,0,0,.25);padding:10px 12px;max-width:min(520px, 92vw);max-height:60vh;overflow:auto;';
+          card.innerHTML = '<h3 style="margin:0 0 8px 0; font-size:16px;">Woorden</h3><div class="chips" id="hoverCardContent"></div>';
+          document.body.appendChild(card);
+        }
+        const content = document.getElementById('hoverCardContent');
+        content.innerHTML = lijst.length ? lijst.map(w => `<span class="chip" style="margin:4px;display:inline-flex;">${w}</span>`).join('') : '<em>Geen woordenlijst.</em>';
+        const r = el.getBoundingClientRect(), pad = 8, cw = Math.min(520, window.innerWidth * 0.92);
+        let left = r.left + window.scrollX; if (left + cw > window.innerWidth - 10) { left = window.innerWidth - cw - 10; }
+        let top = r.bottom + window.scrollY + pad; const ch = Math.min(card.scrollHeight, window.innerHeight * 0.6);
+        if (top + ch > window.scrollY + window.innerHeight) { top = r.top + window.scrollY - ch - pad; }
+        card.style.left = left + 'px'; card.style.top = top + 'px'; card.style.display = 'block'; clearTimeout(hoverHideId);
+      }
+      function hideHoverSoon() { clearTimeout(hoverHideId); hoverHideId = setTimeout(() => { const c = document.getElementById('hoverCard'); if (c) c.style.display = 'none'; }, 120); }
+
+      // Build klinker chips
+      function renderKlinkers(checked = false) {
+        const holder = document.getElementById('klinkerChips'); holder.innerHTML = '';
+        KLINKER_GROUPS.forEach(grp => {
+          const col = document.createElement('div'); col.className = 'klinker-col';
+          const h = document.createElement('h4'); h.textContent = grp.title; col.appendChild(h);
+          // Two-column layout for Tweeklanken groups by grouping pairs two per row
+          grp.pairs.forEach(pair => {
+            const wrap = document.createElement('div'); wrap.className = 'pair';
+            pair.forEach(k => {
+              const id = 'klink_' + k, label = document.createElement('label'); label.className = 'chip'; label.setAttribute('data-klink', k);
+              label.innerHTML = `<input type="checkbox" id="${id}" value="${k}" ${checked ? 'checked' : ''}> <span>${k}</span>`;
+              label.addEventListener('mouseenter', () => showHover(label, KLINKER_WOORDEN[k] || []));
+              label.addEventListener('mouseleave', hideHoverSoon);
+              label.addEventListener('focus', () => showHover(label, KLINKER_WOORDEN[k] || []));
+              label.addEventListener('blur', hideHoverSoon);
+              wrap.appendChild(label);
+            });
+            col.appendChild(wrap);
           });
-          col.appendChild(wrap);
+          holder.appendChild(col);
         });
-        holder.appendChild(col);
-      });
-    }
-
-    // Confetti + Fireworks (lazy init; example style)
-    function startConfetti(){
-      const canvas = document.getElementById('confetti-canvas'); if(!canvas) return;
-      canvas.style.display='block';
-      const ctx = canvas.getContext('2d');
-      const resize = ()=>{ canvas.width = innerWidth; canvas.height = innerHeight; }; resize(); addEventListener('resize', resize);
-      const rand=(min,max)=>Math.random()*(max-min)+min;
-      function Particle(){ this.x = rand(0, canvas.width); this.y = rand(-canvas.height, 0); this.color = `hsl(${rand(0,360)},100%,55%)`; this.size = rand(4,9); this.speed = rand(2,5); this.tilt = rand(-10,10); }
-      let parts = Array.from({length: 160}, ()=> new Particle());
-      let active = true;
-      (function step(){
-        if(!active) return;
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        for(const p of parts){
-          ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
-          p.y += p.speed; p.x += Math.sin(p.tilt/20);
-          if(p.y > canvas.height){ p.y = rand(-20,0); p.x = rand(0, canvas.width); }
-        }
-        requestAnimationFrame(step);
-      })();
-      setTimeout(()=>{ active=false; canvas.style.display='none'; }, 3000);
-    }
-    function runFireworks(){
-      const canvas = document.getElementById('fireworks-canvas'); if(!canvas) return;
-      canvas.style.display='block';
-      const ctx = canvas.getContext('2d');
-      const resize = ()=>{ canvas.width = innerWidth; canvas.height = innerHeight; }; resize(); addEventListener('resize', resize);
-      let particles = [], active = true;
-      function burst(){
-        const cx = Math.random()*canvas.width;
-        const cy = Math.random()*canvas.height*0.5 + canvas.height*0.1;
-        const count = 80;
-        for(let i=0;i<count;i++){
-          const angle = (Math.PI*2)*i/count;
-          const speed = 2 + Math.random()*3;
-          particles.push({ x:cx, y:cy, vx:Math.cos(angle)*speed, vy:Math.sin(angle)*speed, life: 40 + Math.random()*30, color:`hsl(${Math.floor(Math.random()*360)},100%,60%)` });
-        }
       }
-      let bursts=0; const timer=setInterval(()=>{ burst(); if(++bursts>5){ clearInterval(timer); } }, 350);
-      (function step(){
-        if(!active && particles.length===0) return;
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        const next=[];
-        for(const p of particles){
-          ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 2, 2);
-          p.x += p.vx; p.y += p.vy; p.vy += 0.03; p.life -= 1;
-          if(p.life>0) next.push(p);
+
+      // Confetti + Fireworks (lazy init; example style)
+      function startConfetti() {
+        const canvas = document.getElementById('confetti-canvas'); if (!canvas) return;
+        canvas.style.display = 'block';
+        const ctx = canvas.getContext('2d');
+        const resize = () => { canvas.width = innerWidth; canvas.height = innerHeight; }; resize(); addEventListener('resize', resize);
+        const rand = (min, max) => Math.random() * (max - min) + min;
+        function Particle() { this.x = rand(0, canvas.width); this.y = rand(-canvas.height, 0); this.color = `hsl(${rand(0, 360)},100%,55%)`; this.size = rand(4, 9); this.speed = rand(2, 5); this.tilt = rand(-10, 10); }
+        let parts = Array.from({ length: 160 }, () => new Particle());
+        let active = true;
+        (function step() {
+          if (!active) return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          for (const p of parts) {
+            ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+            p.y += p.speed; p.x += Math.sin(p.tilt / 20);
+            if (p.y > canvas.height) { p.y = rand(-20, 0); p.x = rand(0, canvas.width); }
+          }
+          requestAnimationFrame(step);
+        })();
+        setTimeout(() => { active = false; canvas.style.display = 'none'; }, 3000);
+      }
+      function runFireworks() {
+        const canvas = document.getElementById('fireworks-canvas'); if (!canvas) return;
+        canvas.style.display = 'block';
+        const ctx = canvas.getContext('2d');
+        const resize = () => { canvas.width = innerWidth; canvas.height = innerHeight; }; resize(); addEventListener('resize', resize);
+        let particles = [], active = true;
+        function burst() {
+          const cx = Math.random() * canvas.width;
+          const cy = Math.random() * canvas.height * 0.5 + canvas.height * 0.1;
+          const count = 80;
+          for (let i = 0; i < count; i++) {
+            const angle = (Math.PI * 2) * i / count;
+            const speed = 2 + Math.random() * 3;
+            particles.push({ x: cx, y: cy, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 40 + Math.random() * 30, color: `hsl(${Math.floor(Math.random() * 360)},100%,60%)` });
+          }
         }
-        particles = next;
-        requestAnimationFrame(step);
-      })();
-      setTimeout(()=>{ active=false; canvas.style.display='none'; }, 3500);
-    }
+        let bursts = 0; const timer = setInterval(() => { burst(); if (++bursts > 5) { clearInterval(timer); } }, 350);
+        (function step() {
+          if (!active && particles.length === 0) return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const next = [];
+          for (const p of particles) {
+            ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 2, 2);
+            p.x += p.vx; p.y += p.vy; p.vy += 0.03; p.life -= 1;
+            if (p.life > 0) next.push(p);
+          }
+          particles = next;
+          requestAnimationFrame(step);
+        })();
+        setTimeout(() => { active = false; canvas.style.display = 'none'; }, 3500);
+      }
 
-    // Core
-    function updateTypeUI(){
-  // Bepaalt welke velden zichtbaar zijn op basis van oefentype
-  oefentype = document.querySelector('input[name="type"]:checked').value;
-  const fsAnker = document.getElementById('fieldset-anker');
-  const fsKlin  = document.getElementById('fieldset-klinkers');
-  const fsModus = document.getElementById('fieldset-modus');
-  const fsSub   = document.getElementById('fieldset-klinkers-submode');
+      // Core
+      function updateTypeUI() {
+        // Bepaalt welke velden zichtbaar zijn op basis van oefentype
+        oefentype = document.querySelector('input[name="type"]:checked').value;
+        const fsAnker = document.getElementById('fieldset-anker');
+        const fsKlin = document.getElementById('fieldset-klinkers');
+        const fsModus = document.getElementById('fieldset-modus');
+        const fsSub = document.getElementById('fieldset-klinkers-submode');
 
-  if(oefentype === 'ankers'){
-    fsAnker.style.display = '';
-    fsKlin.style.display  = 'none';
-    fsModus.style.display = '';
-    fsSub.style.display   = 'none'; // subkader verbergen bij Ankers
-    document.getElementById('page2Title').textContent = 'Lees dit woordje hardop';
-  } else {
-    fsAnker.style.display = 'none';
-    fsKlin.style.display  = '';
-    fsModus.style.display = 'none';
-    // fsSub niet forceren; prepareKlinkerSubVisibility() bepaalt zichtbaarheid
-    document.getElementById('page2Title').textContent = 'Lees deze klinker (klank) hardop';
-  }
-
-  // Her-evalueer subvisibiliteit na elke wissel
-  prepareKlinkerSubVisibility();
-}
-    function prepareKlinkerSubVisibility(){
-  const fsSub = document.getElementById('fieldset-klinkers-submode');
-  const isKlinkers = document.querySelector('input[name="type"][value="klinkers"]').checked;
-
-  // Toon het subkader direct zodra 'Klinkers' is geselecteerd
-  if (isKlinkers){
-    fsSub.style.display = '';
-  } else {
-    fsSub.style.display = 'none';
-  }
-}
-
-    function showTap(ok){
-      const tf = document.getElementById('tapFeedback'); if(!tf) return;
-      const b = tf.querySelector('.badge');
-      b.textContent = ok ? '✓' : '✗';
-      b.style.background = ok ? '#16a34a' : '#dc2626';
-      tf.classList.add('show');
-      setTimeout(()=>tf.classList.remove('show'), 220);
-    }
-
-    function toonItem(){
-      if(idx>=items.length){ items=shuffle(items); idx=0; }
-      const el=document.getElementById('woord'); const item=items[idx]??'';
-      if(oefentype==='ankers'){
-        el.innerHTML = kleurMetAlleKlinkers(item);
-      } else {
-        if(klinkerSub==='woorden'){
-          const selectie = Array.from(document.querySelectorAll('#fieldset-klinkers input[type=checkbox]:checked')).map(cb=>cb.value);
-          el.innerHTML = kleurMetSelectie(item, selectie);
+        if (oefentype === 'ankers') {
+          fsAnker.style.display = '';
+          fsKlin.style.display = 'none';
+          fsModus.style.display = '';
+          fsSub.style.display = 'none'; // subkader verbergen bij Ankers
+          document.getElementById('page2Title').textContent = 'Lees dit woordje hardop';
         } else {
-          el.innerHTML = `<span style="color:var(--ebx);">${item}</span>`;
+          fsAnker.style.display = 'none';
+          fsKlin.style.display = '';
+          //fsModus.style.display = 'none';
+          // fsSub niet forceren; prepareKlinkerSubVisibility() bepaalt zichtbaarheid
+          document.getElementById('page2Title').textContent = 'Lees deze klinker (klank) hardop';
         }
-      }
-      const byWords = document.querySelector('input[name="modus"]:checked')?.value==='woorden';
-      if(oefentype==='ankers' && byWords){
-        document.getElementById('subInfo').innerHTML=`<span class="timer">${idx}/${items.length}</span>`;
-      }
-    }
 
-    function startToets(){
-      const err=document.getElementById('errorMsg'); if(err) err.textContent='';
-      idx=0; score=0; getoond=0; startTijd=Date.now(); items=[];
-
-      if(oefentype==='ankers'){
-        const gekozen=document.querySelector('input[name="anker"]:checked')?.value;
-        if(!gekozen){ if(err) err.textContent='Kies eerst een anker.'; return; }
-        woorden=ankers[gekozen];
-        if(!woorden || !woorden.length){ if(err) err.textContent='Dit anker heeft nog geen woorden.'; return; }
-        items=shuffle(woorden);
-
-        const byWords = document.querySelector('input[name="modus"]:checked')?.value==='woorden';
-        if(byWords){
-          const aantal=parseInt(document.getElementById('aantalInput').value,10);
-          if(!Number.isFinite(aantal)||aantal<1||aantal>50){ if(err) err.textContent='Vul bij "Aantal items" 1..50 in.'; return; }
-          if(items.length<aantal){ const fill=[]; while(fill.length<aantal){ fill.push(...shuffle(items)); } items=fill.slice(0,aantal); } else { items=items.slice(0,aantal); }
-          document.getElementById('subInfo').innerHTML=`<span class="timer">${idx}/${items.length}</span>`;
-          showPage(2); toonItem();
-        }else{
-          const min=parseInt(document.getElementById('minutenInput').value,10);
-          if(!Number.isFinite(min)||min<1||min>3){ if(err) err.textContent='Vul bij "Aantal minuten" 1..3 in.'; return; }
-          endTime=Date.now()+min*60*1000; startTimer();
-          document.getElementById('subInfo').innerHTML=`<span class="timer" id="timerBadge"></span>`;
-          showPage(2); toonItem();
-        }
-      }else{ // klinkers
-        const gekozen=Array.from(document.querySelectorAll('#fieldset-klinkers input[type=checkbox]:checked')).map(cb=>cb.value);
-        if(!gekozen.length){ alert('Selecteer minstens één klinker (bijv. a, aa, ui).'); return; }
-        klinkerSub = document.querySelector('input[name="klinkerSub"]:checked').value;
-        if(klinkerSub==='puur'){
-          items=shuffle(gekozen);
-          document.getElementById('page2Title').textContent='Lees deze klinker (klank) hardop';
-        }else{
-          let all=[]; gekozen.forEach(k=>{ const pool=KLINKER_WOORDEN[k]||[]; all.push(...pool); });
-          items=shuffle(all.length?all:gekozen);
-          document.getElementById('page2Title').textContent='Lees dit woordje hardop';
-        }
-        endTime=Date.now()+30*1000; startTimer();
-        document.getElementById('subInfo').innerHTML=`<span class="timer" id="timerBadge"></span>`;
-        showPage(2); toonItem();
-      }
-    }
-
-    function klikAntwoord(ok){
-      showTap(ok);
-      if(ok) score++; getoond++; idx++;
-      if(oefentype==='ankers'){
-        const byWords = document.querySelector('input[name="modus"]:checked')?.value==='woorden';
-        if(byWords){ if(idx<items.length){ toonItem(); } else { eindeToets(); } }
-        else { if(Date.now()>=endTime){ eindeToets(); } else { toonItem(); } }
-      }else{
-        if(Date.now()>=endTime){ eindeToets(); } else { toonItem(); }
-      }
-    }
-
-    function eindeToets(){
-      if(timerId){ clearInterval(timerId); timerId=null; }
-      const duurSec=Math.max(1, Math.round((Date.now()-startTijd)/1000));
-      const byWords = document.querySelector('input[name="modus"]:checked')?.value==='woorden';
-      const totaal=(oefentype==='ankers' && byWords)?items.length:getoond;
-      const wpm=Math.round(((totaal||0)/duurSec)*60);
-      const pct=totaal>0?Math.round((score/totaal)*100):0;
-      let msg=''; if(pct<40) msg='Goed geprobeerd, herhalen helpt!'; else if(pct<70) msg='Mooi zo, je bent op de goede weg.'; else if(pct<90) msg='Top! Nog even oefenen en je hebt het helemaal.'; else msg='Geweldig! Erg knap gedaan.';
-      document.getElementById('resultaat').innerHTML = `${msg}<br><br>Juist: <strong>${score}</strong> van <strong>${totaal}</strong> (${pct}%)<br>Tijd: <strong>${duurSec}</strong> seconden<br>Snelheid: <strong>${wpm}</strong> items per minuut`;
-      document.getElementById('pill-tijd').textContent = `Tijd: ${duurSec} s`;
-      document.getElementById('pill-snel').textContent = `Snelheid: ${wpm} ipm`;
-      showPage(3);
-      startConfetti(); runFireworks();
-    }
-
-    // Init bindings after DOM ready
-    window.addEventListener('load', function(){
-      // Type switch
-      document.querySelectorAll('input[name="type"]').forEach(r=>r.addEventListener('change', updateTypeUI));
-      // Modus sync (robust)
-      const rW = document.getElementById('modus-woorden');
-      const rM = document.getElementById('modus-minuten');
-      const ai = document.getElementById('aantalInput');
-      const mi = document.getElementById('minutenInput');
-      function sync(){
-        if (rW.checked) { ai.disabled = false; mi.disabled = true; }
-        else            { ai.disabled = true;  mi.disabled = false; }
-      }
-      rW.addEventListener('change', sync); rM.addEventListener('change', sync);
-      ai.addEventListener('focus', ()=>{ rW.checked = true; sync(); });
-      ai.addEventListener('input', ()=>{ rW.checked = true; sync(); });
-      mi.addEventListener('focus', ()=>{ rM.checked = true; sync(); });
-      mi.addEventListener('input', ()=>{ rM.checked = true; sync(); });
-      document.getElementById('row-woorden').addEventListener('click', (e)=>{ if(e.target.tagName!=='INPUT'){ rW.checked=true; sync(); } });
-      document.getElementById('row-minuten').addEventListener('click', (e)=>{ if(e.target.tagName!=='INPUT'){ rM.checked=true; sync(); } });
-      sync();
-
-      // Chips + select all/none
-      renderKlinkers(false);
-      document.getElementById('btnAll').addEventListener('click', ()=>{
-        document.querySelectorAll('#fieldset-klinkers input[type=checkbox]').forEach(cb=>cb.checked=true);
+        // Her-evalueer subvisibiliteit na elke wissel
         prepareKlinkerSubVisibility();
+      }
+      function prepareKlinkerSubVisibility() {
+        const fsSub = document.getElementById('fieldset-klinkers-submode');
+        const isKlinkers = document.querySelector('input[name="type"][value="klinkers"]').checked;
+
+        // Toon het subkader direct zodra 'Klinkers' is geselecteerd
+        if (isKlinkers) {
+          fsSub.style.display = '';
+        } else {
+          fsSub.style.display = 'none';
+        }
+      }
+
+      function showTap(ok) {
+        const tf = document.getElementById('tapFeedback'); if (!tf) return;
+        const b = tf.querySelector('.badge');
+        b.textContent = ok ? '✓' : '✗';
+        b.style.background = ok ? '#16a34a' : '#dc2626';
+        tf.classList.add('show');
+        setTimeout(() => tf.classList.remove('show'), 220);
+      }
+
+      function toonItem() {
+        if (idx >= items.length) { items = shuffle(items); idx = 0; }
+        const el = document.getElementById('woord'); const item = items[idx] ?? '';
+        if (oefentype === 'ankers') {
+          //klinkerSub = 'woorden'  //TODO: nodig?
+          el.innerHTML = kleurMetAlleKlinkers(item);
+
+          // Klinkers dus   
+        } else {
+          if (klinkerSub === 'woorden') {
+            const selectie = Array.from(document.querySelectorAll('#fieldset-klinkers input[type=checkbox]:checked')).map(cb => cb.value);
+            el.innerHTML = kleurMetSelectie(item, selectie);
+          } else {
+            el.innerHTML = `<span style="color:var(--ebx);">${item}</span>`;
+          }
+        }
+        const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+        if (byWords) {
+          document.getElementById('subInfo').innerHTML = `<span class="timer">${idx}/${items.length}</span>`;
+        } else {
+          //document.getElementById('subInfo').innerHTML = `<span class="timer"></span>`;
+        }
+      }
+
+      function startToets() {
+        const err = document.getElementById('errorMsg'); if (err) err.textContent = '';
+        idx = 0; score = 0; getoond = 0; startTijd = Date.now(); items = [];
+
+        if (oefentype === 'ankers') {
+          const gekozen = document.querySelector('input[name="anker"]:checked')?.value;
+          if (!gekozen) { if (err) err.textContent = 'Kies eerst een anker.'; return; }
+          woorden = ankers[gekozen];
+          if (!woorden || !woorden.length) { if (err) err.textContent = 'Dit anker heeft nog geen woorden.'; return; }
+          items = shuffle(woorden);
+
+          const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+          if (byWords) {
+            const aantal = parseInt(document.getElementById('aantalInput').value, 10);
+            if (!Number.isFinite(aantal) || aantal < 1 || aantal > 50) { if (err) err.textContent = 'Vul bij "Aantal items" 1..50 in.'; return; }
+            if (items.length < aantal) { const fill = []; while (fill.length < aantal) { fill.push(...shuffle(items)); } items = fill.slice(0, aantal); } else { items = items.slice(0, aantal); }
+            document.getElementById('subInfo').innerHTML = `<span class="timer">${idx}/${items.length}</span>`;
+            showPage(2); toonItem();
+          } else {
+            const min = parseInt(document.getElementById('minutenInput').value, 10);
+            if (!Number.isFinite(min) || min < 1 || min > 3) { if (err) err.textContent = 'Vul bij "Aantal minuten" 1..3 in.'; return; }
+            endTime = Date.now() + min * 60 * 1000; startTimer();
+            document.getElementById('subInfo').innerHTML = `<span class="timer" id="timerBadge"></span>`;
+            showPage(2); toonItem();
+          }
+        } else {
+          // klinkers sectie
+          const gekozen = Array.from(document.querySelectorAll('#fieldset-klinkers input[type=checkbox]:checked')).map(cb => cb.value);
+          if (!gekozen.length) { alert('Selecteer minstens één klinker (bijv. a, aa, ui).'); return; }
+          klinkerSub = document.querySelector('input[name="klinkerSub"]:checked').value;
+
+          if (klinkerSub === 'puur') {
+            items = shuffle(gekozen);
+
+            // Controleer minuten of items
+            const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+            if (byWords) {
+              const aantal = parseInt(document.getElementById('aantalInput').value, 10);
+              if (!Number.isFinite(aantal) || aantal < 1 || aantal > 50) { if (err) err.textContent = 'Vul bij "Aantal items" 1..50 in.'; return; }
+
+              let all = []; gekozen.forEach(k => { const pool = KLINKER_WOORDEN[k] || []; all.push(...pool); });
+              items = shuffle(all.length ? all : aantal);
+
+              if (items.length < aantal) { const fill = []; while (fill.length < aantal) { fill.push(...shuffle(items)); } items = fill.slice(0, aantal); } else { items = items.slice(0, aantal); }
+              document.getElementById('subInfo').innerHTML = `<span class="timer">${idx}/${items.length}</span>`;
+              showPage(2); toonItem();
+            } else {
+              const min = parseInt(document.getElementById('minutenInput').value, 10);
+              if (!Number.isFinite(min) || min < 1 || min > 3) { if (err) err.textContent = 'Vul bij "Aantal minuten" 1..3 in.'; return; }
+              endTime = Date.now() + min * 60 * 1000; startTimer();
+              document.getElementById('subInfo').innerHTML = `<span class="timer" id="timerBadge"></span>`;
+              showPage(2); toonItem();
+            }
+
+            // Woorden met gekozen klinkers
+            document.getElementById('page2Title').textContent = 'Lees dit woordje hardop';
+          } else {
+            // Woorden met gekozen klinkers
+            let all = []; gekozen.forEach(k => { const pool = KLINKER_WOORDEN[k] || []; all.push(...pool); });
+            if (!all.length) { if (err) err.textContent = 'De geselecteerde klinkers hebben geen woorden.'; return; }
+            items = shuffle(all);
+
+            // Controleer minuten of items
+            const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+            if (byWords) {
+              const aantal = parseInt(document.getElementById('aantalInput').value, 10);
+              if (!Number.isFinite(aantal) || aantal < 1 || aantal > 50) { if (err) err.textContent = 'Vul bij "Aantal items" 1..50 in.'; return; }
+              if (items.length < aantal) { const fill = []; while (fill.length < aantal) { fill.push(...shuffle(items)); } items = fill.slice(0, aantal); } else { items = items.slice(0, aantal); }
+              document.getElementById('subInfo').innerHTML = `<span class="timer">${idx}/${items.length}</span>`;
+              showPage(2); toonItem();
+            } else {
+              const min = parseInt(document.getElementById('minutenInput').value, 10);
+              if (!Number.isFinite(min) || min < 1 || min > 3) { if (err) err.textContent = 'Vul bij "Aantal minuten" 1..3 in.'; return; }
+              endTime = Date.now() + min * 60 * 1000; startTimer();
+              document.getElementById('subInfo').innerHTML = `<span class="timer" id="timerBadge"></span>`;
+              showPage(2); toonItem();
+            }
+
+            document.getElementById('page2Title').textContent = 'Lees dit woordje hardop';
+          }
+
+        }
+      }
+
+      function klikAntwoord(ok) {
+        showTap(ok);
+        if (ok) score++; getoond++; idx++;
+        if (oefentype === 'klinkers') {
+          const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+          if (byWords) { if (idx < items.length) { toonItem(); } else { eindeToets(); } }
+          else { if (Date.now() >= endTime) { eindeToets(); } else { toonItem(); } }
+        //Ankers
+        } else {
+          const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+          if (byWords) { if (idx < items.length) { toonItem(); } else { eindeToets(); } }
+          else { if (Date.now() >= endTime) { eindeToets(); } else { toonItem(); } }
+        }
+      }
+
+      function eindeToets() {
+        if (timerId) { clearInterval(timerId); timerId = null; }
+        const duurSec = Math.max(1, Math.round((Date.now() - startTijd) / 1000));
+        const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+        const totaal = (oefentype === 'ankers' && byWords) ? items.length : getoond;
+        const wpm = Math.round(((totaal || 0) / duurSec) * 60);
+        const pct = totaal > 0 ? Math.round((score / totaal) * 100) : 0;
+        let msg = ''; if (pct < 40) msg = 'Goed geprobeerd, herhalen helpt!'; else if (pct < 70) msg = 'Mooi zo, je bent op de goede weg.'; else if (pct < 90) msg = 'Top! Nog even oefenen en je hebt het helemaal.'; else msg = 'Geweldig! Erg knap gedaan.';
+        document.getElementById('resultaat').innerHTML = `${msg}<br><br>Juist: <strong>${score}</strong> van <strong>${totaal}</strong> (${pct}%)<br>Tijd: <strong>${duurSec}</strong> seconden<br>Snelheid: <strong>${wpm}</strong> items per minuut`;
+        document.getElementById('pill-tijd').textContent = `Tijd: ${duurSec} s`;
+        document.getElementById('pill-snel').textContent = `Snelheid: ${wpm} ipm`;
+        showPage(3);
+        startConfetti(); runFireworks();
+      }
+
+      // Init bindings after DOM ready
+      window.addEventListener('load', function () {
+        // Type switch
+        document.querySelectorAll('input[name="type"]').forEach(r => r.addEventListener('change', updateTypeUI));
+        // Modus sync (robust)
+        const rW = document.getElementById('modus-woorden');
+        const rM = document.getElementById('modus-minuten');
+        const ai = document.getElementById('aantalInput');
+        const mi = document.getElementById('minutenInput');
+        function sync() {
+          if (rW.checked) { ai.disabled = false; mi.disabled = true; }
+          else { ai.disabled = true; mi.disabled = false; }
+        }
+        rW.addEventListener('change', sync); rM.addEventListener('change', sync);
+        ai.addEventListener('focus', () => { rW.checked = true; sync(); });
+        ai.addEventListener('input', () => { rW.checked = true; sync(); });
+        mi.addEventListener('focus', () => { rM.checked = true; sync(); });
+        mi.addEventListener('input', () => { rM.checked = true; sync(); });
+        document.getElementById('row-woorden').addEventListener('click', (e) => { if (e.target.tagName !== 'INPUT') { rW.checked = true; sync(); } });
+        document.getElementById('row-minuten').addEventListener('click', (e) => { if (e.target.tagName !== 'INPUT') { rM.checked = true; sync(); } });
+        sync();
+
+        // Chips + select all/none
+        renderKlinkers(false);
+        document.getElementById('btnAll').addEventListener('click', () => {
+          document.querySelectorAll('#fieldset-klinkers input[type=checkbox]').forEach(cb => cb.checked = true);
+          prepareKlinkerSubVisibility();
+        });
+        document.getElementById('btnNone').addEventListener('click', () => {
+          document.querySelectorAll('#fieldset-klinkers input[type=checkbox]').forEach(cb => cb.checked = false);
+          // Alleen deselecteren; niets verbergen.
+        });
+        document.getElementById('klinkerChips').addEventListener('change', prepareKlinkerSubVisibility);
+
+        // Hover for anker rows
+        document.querySelectorAll('.anker-row').forEach(row => {
+          row.addEventListener('mouseenter', () => showHover(row, ankers[row.getAttribute('data-anker')] || []));
+          row.addEventListener('mouseleave', hideHoverSoon);
+          row.addEventListener('focus', () => showHover(row, ankers[row.getAttribute('data-anker')] || []));
+          row.addEventListener('blur', hideHoverSoon);
+        });
+
+        // Buttons
+        document.getElementById('btnStart').addEventListener('click', startToets);
+        document.getElementById('btnQuit').addEventListener('click', () => { const t = document.getElementById('toast'); t.classList.add('show'); setTimeout(() => location.reload(), 500); });
+        document.getElementById('btnAgain').addEventListener('click', () => showPage(1));
+        document.getElementById('btnJuist').addEventListener('click', () => klikAntwoord(true));
+        document.getElementById('btnOnjuist').addEventListener('click', () => klikAntwoord(false));
+
+        // Keys
+        window.addEventListener('keydown', (e) => {
+          const onPage2 = document.getElementById('page2').classList.contains('active'); if (!onPage2) return;
+          if (e.key.toLowerCase() === 'j') { klikAntwoord(true); }
+          if (e.key.toLowerCase() === 'f') { klikAntwoord(false); }
+          if (e.key === 'Escape') { const t = document.getElementById('toast'); t.classList.add('show'); setTimeout(() => location.reload(), 500); }
+        });
+
+        // Initial view
+        updateTypeUI();
+        prepareKlinkerSubVisibility();
+        showPage(1);
       });
-      document.getElementById('btnNone').addEventListener('click', ()=>{
-        document.querySelectorAll('#fieldset-klinkers input[type=checkbox]').forEach(cb=>cb.checked=false);
-        // Alleen deselecteren; niets verbergen.
-      });
-      document.getElementById('klinkerChips').addEventListener('change', prepareKlinkerSubVisibility);
 
-      // Hover for anker rows
-      document.querySelectorAll('.anker-row').forEach(row=>{
-        row.addEventListener('mouseenter', ()=>showHover(row, ankers[row.getAttribute('data-anker')]||[]));
-        row.addEventListener('mouseleave', hideHoverSoon);
-        row.addEventListener('focus', ()=>showHover(row, ankers[row.getAttribute('data-anker')]||[]));
-        row.addEventListener('blur', hideHoverSoon);
-      });
-
-      // Buttons
-      document.getElementById('btnStart').addEventListener('click', startToets);
-      document.getElementById('btnQuit').addEventListener('click', ()=>{ const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>location.reload(), 500); });
-      document.getElementById('btnAgain').addEventListener('click', ()=>showPage(1));
-      document.getElementById('btnJuist').addEventListener('click', ()=>klikAntwoord(true));
-      document.getElementById('btnOnjuist').addEventListener('click', ()=>klikAntwoord(false));
-
-      // Keys
-      window.addEventListener('keydown', (e)=>{
-        const onPage2=document.getElementById('page2').classList.contains('active'); if(!onPage2) return;
-        if(e.key.toLowerCase()==='j'){ klikAntwoord(true); }
-        if(e.key.toLowerCase()==='f'){ klikAntwoord(false); }
-        if(e.key==='Escape'){ const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>location.reload(), 500); }
-      });
-
-      // Initial view
-      updateTypeUI();
-      prepareKlinkerSubVisibility();
-      showPage(1);
-    });
-
-    // Shine effect for result hero
-    window.moveShine = function(e){
-      const hero = e.currentTarget;
-      const rect = hero.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width;
-      hero.style.setProperty('--mx', `${x*100}%`);
-    };
-  })();
+      // Shine effect for result hero
+      window.moveShine = function (e) {
+        const hero = e.currentTarget;
+        const rect = hero.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        hero.style.setProperty('--mx', `${x * 100}%`);
+      };
+    })();
   </script>
 
   <div id="feedbackTip">Vragen of feedback? Vraag pappa Louis</div>
   <style>
-    #versionTopGlobal span#feedbackLink { text-decoration: underline; cursor:pointer; color:#01689B; }
-    #feedbackTip {
-      position:fixed; top:34px; left:50%; transform:translateX(-50%);
-      background:#111827; color:#fff; font-size:13px; padding:8px 12px;
-      border-radius:10px; box-shadow:0 10px 25px rgba(0,0,0,.25);
-      opacity:0; pointer-events:none; transition:opacity .12s ease; z-index:100;
+    #versionTopGlobal span#feedbackLink {
+      text-decoration: underline;
+      cursor: pointer;
+      color: #01689B;
     }
-    #feedbackTip.show { opacity:1; }
+
+    #feedbackTip {
+      position: fixed;
+      top: 34px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111827;
+      color: #fff;
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, .25);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .12s ease;
+      z-index: 100;
+    }
+
+    #feedbackTip.show {
+      opacity: 1;
+    }
   </style>
   <script>
-    (function(){
-      const link=document.getElementById('feedbackLink');
-      const tip=document.getElementById('feedbackTip');
-      if(link && tip){
-        function show(){ tip.classList.add('show'); }
-        function hide(){ tip.classList.remove('show'); }
+    (function () {
+      const link = document.getElementById('feedbackLink');
+      const tip = document.getElementById('feedbackTip');
+      if (link && tip) {
+        function show() { tip.classList.add('show'); }
+        function hide() { tip.classList.remove('show'); }
         link.addEventListener('mouseenter', show);
         link.addEventListener('mouseleave', hide);
         link.addEventListener('focus', show);
@@ -704,38 +1114,39 @@
       }
     })();
   </script>
-    
 
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  var quitBtn = document.getElementById('btnQuit');
-  if(quitBtn){
-    quitBtn.addEventListener('click', function(){
-      if(typeof stopTimer === "function"){ stopTimer(); }
-      if(typeof score !== "undefined"){ score = 0; }
-      if(typeof idx !== "undefined"){ idx = 0; }
-      if(typeof getoond !== "undefined"){ getoond = 0; }
-      if(typeof showPage === "function"){ showPage(1); }
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var quitBtn = document.getElementById('btnQuit');
+      if (quitBtn) {
+        quitBtn.addEventListener('click', function () {
+          if (typeof stopTimer === "function") { stopTimer(); }
+          if (typeof score !== "undefined") { score = 0; }
+          if (typeof idx !== "undefined") { idx = 0; }
+          if (typeof getoond !== "undefined") { getoond = 0; }
+          if (typeof showPage === "function") { showPage(1); }
+        });
+      }
     });
-  }
-});
-</script>
+  </script>
 
 
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  // Escape key for abort
-  document.addEventListener('keydown', function(e){
-    if(e.key === "Escape" && document.getElementById('page2') && document.getElementById('page2').classList.contains('active')){
-      if(typeof stopTimer === "function") stopTimer();
-      if(typeof score !== "undefined"){ score = 0; }
-      if(typeof idx !== "undefined"){ idx = 0; }
-      if(typeof getoond !== "undefined"){ getoond = 0; }
-      if(typeof showPage === "function"){ showPage(1); }
-    }
-  });
-});
-</script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Escape key for abort
+      document.addEventListener('keydown', function (e) {
+        if (e.key === "Escape" && document.getElementById('page2') && document.getElementById('page2').classList.contains('active')) {
+          if (typeof stopTimer === "function") stopTimer();
+          if (typeof score !== "undefined") { score = 0; }
+          if (typeof idx !== "undefined") { idx = 0; }
+          if (typeof getoond !== "undefined") { getoond = 0; }
+          if (typeof showPage === "function") { showPage(1); }
+        }
+      });
+    });
+  </script>
 
 </body>
+
 </html>
