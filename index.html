@@ -923,9 +923,6 @@
               const aantal = parseInt(document.getElementById('aantalInput').value, 10);
               if (!Number.isFinite(aantal) || aantal < 1 || aantal > 50) { if (err) err.textContent = 'Vul bij "Aantal items" 1..50 in.'; return; }
 
-              let all = []; gekozen.forEach(k => { const pool = KLINKER_WOORDEN[k] || []; all.push(...pool); });
-              items = shuffle(all.length ? all : aantal);
-
               if (items.length < aantal) { const fill = []; while (fill.length < aantal) { fill.push(...shuffle(items)); } items = fill.slice(0, aantal); } else { items = items.slice(0, aantal); }
               document.getElementById('subInfo').innerHTML = `<span class="timer">${idx}/${items.length}</span>`;
               showPage(2); toonItem();
