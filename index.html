@@ -468,12 +468,119 @@
       min-width: 0;
       justify-self: start;
     }
+
+    /* Toggle switch for Flitslezen */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 28px;
+      vertical-align: middle;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #e5e7eb;
+      transition: .2s;
+      border-radius: 999px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, .12);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      top: 3px;
+      background: white;
+      transition: .2s;
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
+    }
+
+    .switch input:checked+.slider {
+      background: var(--ebx);
+    }
+
+    .switch input:checked+.slider:before {
+      transform: translateX(24px);
+    }
+
+    .flits-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+    }
+
+
+    #versionTopGlobal span#changelogLink {
+      text-decoration: underline;
+      cursor: pointer;
+      color: #01689B;
+    }
+
+    #changelogTip {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111827;
+      color: #fff;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, .25);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .12s ease;
+      z-index: 100;
+      min-width: 280px;
+      text-align: left;
+    }
+
+    #changelogTip.show {
+      opacity: 1;
+    }
+
+    #flitsSeconden:disabled {
+      background: #f1f5f9;
+      color: #94a3b8;
+      border-color: #cbd5e1;
+    }
+
+    /* Left align flitslezen & duration within 'Meer uitdaging?' */
+    #fieldset-extra {
+      text-align: left;
+    }
+
+    #fieldset-extra .row.extra-row {
+      align-items: flex-start;
+    }
+
+    #fieldset-extra .flits-label {
+      justify-content: flex-start;
+    }
+
+    #fieldset-extra .secs-group {
+      justify-content: flex-start;
+    }
   </style>
 </head>
 
 <body>
-  <div id="versionTopGlobal">versie <strong>1.05</strong> · <span id="feedbackLink" tabindex="0"
-      title="Vragen of feedback? Vraag pappa Louis">feedback?</span></div>
+  <div id="versionTopGlobal">versie <strong>1.06</strong> · <span id="feedbackLink" tabindex="0"
+      title="Vragen of feedback? Vraag pappa Louis">feedback?</span> · <span id="changelogLink" tabindex="0"
+      title="Bekijk wijzigingen">changelog</span></div>
 
   <!-- Pagina 1: Intro -->
   <div id="page1" class="page active">
@@ -557,6 +664,46 @@
 
           <div id="errorMsg" style="color:red; font-size:14px; margin:4px 0 2px 0;"></div>
         </fieldset>
+
+        <fieldset class="optiegroep" id="fieldset-extra">
+          <legend>Flits optie (optioneel)</legend>
+          <div class="tip-extra" style="font-size:14px; color:#64748b; margin:4px 0 8px;">
+            <div><strong>Wil je oefenen met flitsen?</strong></div>
+            <div>Door deze optie aan te zetten wordt het woord kort weergegeven. (De snelheid is instelbaar).
+              <span class="dots-icon" aria-hidden="true"
+                style="display:inline-block;vertical-align:middle;transform:translateY(1px);">
+                <svg width="36" height="12" viewBox="0 0 48 16" fill="none">
+                  <circle cx="8" cy="8" r="4" fill="#0f172a" />
+                  <circle cx="24" cy="8" r="4" fill="#0f172a" />
+                  <circle cx="40" cy="8" r="4" fill="#0f172a" />
+                </svg>
+              </span>.
+            </div>
+          </div>
+          <div class="row extra-row"
+            style="display:flex;flex-direction:column;gap:10px;align-items:flex-start;text-align:left;">
+            <label class="inline flits-label" for="flitsInput" style="display:inline-flex;align-items:center;gap:10px;">
+              <!-- Camera icon (inline SVG) -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                <path
+                  d="M4 7h3l1.2-2.4A2 2 0 0 1 10 3h4a2 2 0 0 1 1.8 1.1L17 7h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"
+                  stroke="#0f172a" stroke-width="1.5" fill="none" />
+                <circle cx="12" cy="14" r="4" stroke="#0f172a" stroke-width="1.5" fill="none" />
+              </svg>
+              <span>Flitslezen</span>
+              <span class="switch">
+                <input type="checkbox" id="flitsInput" name="flits" />
+                <span class="slider"></span>
+              </span>
+            </label>
+            <div class="secs-group" style="display:inline-flex;align-items:center;gap:10px;">
+              <label for="flitsSeconden" style="font-size:16px;">Duur weergave</label>
+              <input id="flitsSeconden" type="number" min="0.2" max="5" step="0.1" value="1.5" style="width:110px;" />
+              <span style="font-size:14px; color:#475569;">seconde(n)</span>
+            </div>
+          </div>
+        </fieldset>
+
       </div>
 
       <div style="text-align:center; margin-top:8px;">
@@ -634,18 +781,22 @@
         'oo': ['boom', 'boot', 'noot', 'zoon', 'room', 'boon', 'hoop', 'kooi', 'brood', 'rook'],
         'uu': ['muur', 'buur', 'vuur', 'duur', 'huur', 'kuur', 'stuur', 'zuur', 'puur', 'uur'],
         'oe': ['boek', 'koek', 'hoed', 'doek', 'zoen', 'snoep', 'broek', 'roep', 'zoek', 'boer'],
-        'eu': ['neus', 'reus', 'leuk', 'beuk', 'geur', 'keus', 'heus', 'deuk', 'zeur', 'peul'],
+        'eu': ['neus', 'reus', 'leuk', 'beuk', 'geur', 'keus', 'heus', 'deuk', 'zeur', 'deur'],
         'ei': ['ei', 'geit', 'zeil', 'reis', 'plein'],
         'ij': ['blij', 'fijn', 'ijs', 'mij', 'rij'],
         'ui': ['huis', 'muis', 'duif', 'ruit', 'puin', 'buik', 'luik', 'kuil', 'ruim', 'fruit'],
         'ou': ['goud', 'hout', 'fout', 'bout', 'koud', 'jouw'],
-        'au': ['auto', 'saus', 'pauw', 'kauw']
+        'au': ['auto', 'lauw', 'pauw', 'kauw']
       };
 
       // ===== State =====
       let oefentype = 'ankers';    // 'ankers' | 'klinkers'
       let klinkerSub = 'puur';     // 'puur' | 'woorden'
       let woorden = []; let items = [];
+      let toetsAfgebroken = false;
+      let flitslezen = false;
+      let flitsTimeoutId = null;
+      let flitsDurationMs = 500; // standaardwaarde in ms
       let idx = 0, score = 0, startTijd = 0, getoond = 0;
       let timerId = null, endTime = 0;
 
@@ -711,7 +862,41 @@
       function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
       function formatMMSS(ms) { const t = Math.max(0, Math.floor(ms / 1000)), m = Math.floor(t / 60), s = t % 60; return `${m}:${String(s).padStart(2, '0')}`; }
       function startTimer() { stopTimer(); timerId = setInterval(() => { const left = endTime - Date.now(); const b = document.getElementById('timerBadge'); if (b) b.textContent = formatMMSS(left); if (left <= 0) { stopTimer(); eindeToets(); } }, 200); }
-      function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+      function stopTimer() {
+        if (timerId) { clearInterval(timerId); timerId = null; }
+        clearTimeout(flitsTimeoutId);
+      }
+
+      function scheduleFlitsHide() {
+        try { clearTimeout(flitsTimeoutId); } catch (e) { }
+        const inp = document.getElementById('flitsSeconden');
+        let sec = parseFloat(inp && inp.value);
+        if (!Number.isFinite(sec)) sec = 0.5;
+        sec = Math.max(0.2, Math.min(5, sec));
+        flitsTimeoutId = setTimeout(() => {
+          const el = document.getElementById('woord');
+          if (el) {
+            el.innerHTML = '<span class="dots-icon" aria-hidden="true"><svg width="48" height="16" viewBox="0 0 48 16" fill="none"><circle cx="8" cy="8" r="4" fill="#0f172a"/><circle cx="24" cy="8" r="4" fill="#0f172a"/><circle cx="40" cy="8" r="4" fill="#0f172a"/></svg></span>';
+          }
+        }, Math.round(sec * 1000));
+      }
+
+      function getFlitsDurationMs() {
+        const inp = document.getElementById('flitsSeconden');
+        let sec = parseFloat(inp && inp.value);
+        if (!Number.isFinite(sec)) sec = 0.5;
+        sec = Math.max(0.2, Math.min(5, sec));
+        return Math.round(sec * 1000);
+      }
+
+      function cancelToets() {
+        try { stopTimer(); } catch (e) { }
+        toetsAfgebroken = true;
+        try { clearTimeout(flitsTimeoutId); } catch (e) { }
+        const t = document.getElementById('toast'); if (t) t.classList.add('show');
+        // niet meteen reloaden; ga terug naar pagina 1 en laat timers niet doorlopen
+        if (typeof showPage === 'function') { showPage(1); }
+      }
 
       // Hover tooltip for lists
       let hoverHideId = null;
@@ -876,6 +1061,10 @@
           }
         }
         const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+        if (flitslezen) {
+          clearTimeout(flitsTimeoutId);
+          flitsTimeoutId = setTimeout(() => { document.getElementById('woord').innerHTML = '...'; }, flitsDurationMs);
+        }
         if (byWords) {
           document.getElementById('subInfo').innerHTML = `<span class="timer">${idx}/${items.length}</span>`;
         } else {
@@ -884,8 +1073,14 @@
       }
 
       function startToets() {
+
+        flitsDurationMs = getFlitsDurationMs();
+
         const err = document.getElementById('errorMsg'); if (err) err.textContent = '';
         idx = 0; score = 0; getoond = 0; startTijd = Date.now(); items = [];
+        toetsAfgebroken = false;
+        toetsAfgebroken = false;
+        flitslezen = document.getElementById('flitsInput')?.checked;
 
         if (oefentype === 'ankers') {
           const gekozen = document.querySelector('input[name="anker"]:checked')?.value;
@@ -895,6 +1090,11 @@
           items = shuffle(woorden);
 
           const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+          if (flitslezen) {
+            clearTimeout(flitsTimeoutId);   //TODO wat doet dit?
+            scheduleFlitsHide()
+            flitsTimeoutId = setTimeout(() => { document.getElementById('woord').innerHTML = '...'; }, flitsDurationMs);
+          }
           if (byWords) {
             const aantal = parseInt(document.getElementById('aantalInput').value, 10);
             if (!Number.isFinite(aantal) || aantal < 1 || aantal > 50) { if (err) err.textContent = 'Vul bij "Aantal items" 1..50 in.'; return; }
@@ -919,6 +1119,10 @@
 
             // Controleer minuten of items
             const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+            if (flitslezen) {
+              clearTimeout(flitsTimeoutId);
+              flitsTimeoutId = setTimeout(() => { document.getElementById('woord').innerHTML = '...'; }, flitsDurationMs);
+            }
             if (byWords) {
               const aantal = parseInt(document.getElementById('aantalInput').value, 10);
               if (!Number.isFinite(aantal) || aantal < 1 || aantal > 50) { if (err) err.textContent = 'Vul bij "Aantal items" 1..50 in.'; return; }
@@ -944,6 +1148,10 @@
 
             // Controleer minuten of items
             const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+            if (flitslezen) {
+              clearTimeout(flitsTimeoutId);
+              flitsTimeoutId = setTimeout(() => { document.getElementById('woord').innerHTML = '...'; }, flitsDurationMs);
+            }
             if (byWords) {
               const aantal = parseInt(document.getElementById('aantalInput').value, 10);
               if (!Number.isFinite(aantal) || aantal < 1 || aantal > 50) { if (err) err.textContent = 'Vul bij "Aantal items" 1..50 in.'; return; }
@@ -965,24 +1173,40 @@
       }
 
       function klikAntwoord(ok) {
-        showTap(ok);
+        if (!flitslezen) { if (!flitslezen) { if (!flitslezen) { showTap(ok); } } }
+        if (!flitslezen) { showTap(ok); }
         if (ok) score++; getoond++; idx++;
         if (oefentype === 'klinkers') {
           const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+          if (flitslezen) {
+            clearTimeout(flitsTimeoutId);
+            flitsTimeoutId = setTimeout(() => { document.getElementById('woord').innerHTML = '...'; }, flitsDurationMs);
+          }
           if (byWords) { if (idx < items.length) { toonItem(); } else { eindeToets(); } }
           else { if (Date.now() >= endTime) { eindeToets(); } else { toonItem(); } }
-        //Ankers
+          //Ankers
         } else {
           const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+          if (flitslezen) {
+            clearTimeout(flitsTimeoutId);
+            flitsTimeoutId = setTimeout(() => { document.getElementById('woord').innerHTML = '...'; }, flitsDurationMs);
+          }
           if (byWords) { if (idx < items.length) { toonItem(); } else { eindeToets(); } }
           else { if (Date.now() >= endTime) { eindeToets(); } else { toonItem(); } }
         }
       }
 
       function eindeToets() {
+        if (toetsAfgebroken) return;
+        if (toetsAfgebroken) return;
         if (timerId) { clearInterval(timerId); timerId = null; }
+        clearTimeout(flitsTimeoutId);
         const duurSec = Math.max(1, Math.round((Date.now() - startTijd) / 1000));
         const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+        if (flitslezen) {
+          clearTimeout(flitsTimeoutId);
+          flitsTimeoutId = setTimeout(() => { document.getElementById('woord').innerHTML = '...'; }, flitsDurationMs);
+        }
         const totaal = (oefentype === 'ankers' && byWords) ? items.length : getoond;
         const wpm = Math.round(((totaal || 0) / duurSec) * 60);
         const pct = totaal > 0 ? Math.round((score / totaal) * 100) : 0;
@@ -996,6 +1220,18 @@
 
       // Init bindings after DOM ready
       window.addEventListener('load', function () {
+        // Flits seconds enable/disable
+        const flitsToggle = document.getElementById('flitsInput');
+        const flitsSecs = document.getElementById('flitsSeconden');
+        if (flitsToggle && flitsSecs) {
+          const syncFlitsUI = () => {
+            const on = !!flitsToggle.checked;
+            flitsSecs.disabled = !on;
+            if (!on) flitsSecs.value = '0.5';
+          };
+          syncFlitsUI();
+          flitsToggle.addEventListener('change', syncFlitsUI);
+        }
         // Type switch
         document.querySelectorAll('input[name="type"]').forEach(r => r.addEventListener('change', updateTypeUI));
         // Modus sync (robust)
@@ -1038,7 +1274,7 @@
 
         // Buttons
         document.getElementById('btnStart').addEventListener('click', startToets);
-        document.getElementById('btnQuit').addEventListener('click', () => { const t = document.getElementById('toast'); t.classList.add('show'); setTimeout(() => location.reload(), 500); });
+        document.getElementById('btnQuit').addEventListener('click', () => { cancelToets(); });
         document.getElementById('btnAgain').addEventListener('click', () => showPage(1));
         document.getElementById('btnJuist').addEventListener('click', () => klikAntwoord(true));
         document.getElementById('btnOnjuist').addEventListener('click', () => klikAntwoord(false));
@@ -1048,7 +1284,7 @@
           const onPage2 = document.getElementById('page2').classList.contains('active'); if (!onPage2) return;
           if (e.key.toLowerCase() === 'j') { klikAntwoord(true); }
           if (e.key.toLowerCase() === 'f') { klikAntwoord(false); }
-          if (e.key === 'Escape') { const t = document.getElementById('toast'); t.classList.add('show'); setTimeout(() => location.reload(), 500); }
+          if (e.key === 'Escape') { cancelToets(); }
         });
 
         // Initial view
@@ -1095,6 +1331,112 @@
     #feedbackTip.show {
       opacity: 1;
     }
+
+    /* Toggle switch for Flitslezen */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 28px;
+      vertical-align: middle;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #e5e7eb;
+      transition: .2s;
+      border-radius: 999px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, .12);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      top: 3px;
+      background: white;
+      transition: .2s;
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
+    }
+
+    .switch input:checked+.slider {
+      background: var(--ebx);
+    }
+
+    .switch input:checked+.slider:before {
+      transform: translateX(24px);
+    }
+
+    .flits-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+    }
+
+
+    #versionTopGlobal span#changelogLink {
+      text-decoration: underline;
+      cursor: pointer;
+      color: #01689B;
+    }
+
+    #changelogTip {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111827;
+      color: #fff;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, .25);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .12s ease;
+      z-index: 100;
+      min-width: 280px;
+      text-align: left;
+    }
+
+    #changelogTip.show {
+      opacity: 1;
+    }
+
+    #flitsSeconden:disabled {
+      background: #f1f5f9;
+      color: #94a3b8;
+      border-color: #cbd5e1;
+    }
+
+    /* Left align flitslezen & duration within 'Meer uitdaging?' */
+    #fieldset-extra {
+      text-align: left;
+    }
+
+    #fieldset-extra .row.extra-row {
+      align-items: flex-start;
+    }
+
+    #fieldset-extra .flits-label {
+      justify-content: flex-start;
+    }
+
+    #fieldset-extra .secs-group {
+      justify-content: flex-start;
+    }
   </style>
   <script>
     (function () {
@@ -1121,6 +1463,7 @@
           if (typeof score !== "undefined") { score = 0; }
           if (typeof idx !== "undefined") { idx = 0; }
           if (typeof getoond !== "undefined") { getoond = 0; }
+          toetsAfgebroken = true;
           if (typeof showPage === "function") { showPage(1); }
         });
       }
@@ -1137,12 +1480,45 @@
           if (typeof score !== "undefined") { score = 0; }
           if (typeof idx !== "undefined") { idx = 0; }
           if (typeof getoond !== "undefined") { getoond = 0; }
+          toetsAfgebroken = true;
           if (typeof showPage === "function") { showPage(1); }
         }
       });
     });
   </script>
 
+  <div id="changelogTip">
+    <div style="font-weight:700; margin-bottom:6px;">Changelog</div>
+    <div style="font-family:Arial, sans-serif; font-size:13px; line-height:1.35;">
+      <div>2025-09-24: 1.06 Flitslezen waarbij snelheid instelbaar is.</div>
+      <div>2025-09-23: 1.05 Extra uitdaging optie voor flitslezen toegevoegd.</div>
+      <div>2025-09-22: 1.04 Optie voor woordjes maken met de gekozen klinkers toegevoegd.</div>
+      <div>2025-09-21: 1.03 Oefenen met woorden van geselecteerde klinkers toegevoegd.</div>
+      <div>2025-09-20: 1.01 Oefenen met klinkers toegevoegd.</div>
+      <div>2025-09-20: 1.00 Oefenen met ankers toegevoegd.</div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var link = document.getElementById('changelogLink');
+      var tip = document.getElementById('changelogTip');
+      if (link && tip) {
+        function show() { tip.classList.add('show'); }
+        function hide() { tip.classList.remove('show'); }
+        link.addEventListener('mouseenter', show);
+        link.addEventListener('mouseleave', hide);
+        link.addEventListener('focus', show);
+        link.addEventListener('blur', hide);
+      }
+    });
+  </script>
+  <script>
+    document.addEventListener('click', function onceResume() {
+      try { var ctx = getAudioCtx(); if (ctx && ctx.state === 'suspended') ctx.resume(); } catch (e) { }
+      document.removeEventListener('click', onceResume);
+    }, { once: true });
+  </script>
 </body>
 
 </html>
