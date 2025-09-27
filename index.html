@@ -797,7 +797,7 @@
         'aa': ['maan', 'kaas', 'haak', 'zaag', 'baan', 'vaas', 'haan', 'raam', 'taart', 'laan'],
         'ee': ['been', 'zeep', 'veer', 'teen', 'meer', 'neef', 'leeg', 'beet', 'beer', 'veeg'],
         'ie': ['vier', 'diep', 'riet', 'ziek', 'dier', 'lied', 'mier', 'kies', 'fiets', 'tien'],
-        'oo': ['boom', 'boot', 'noot', 'zoon', 'room', 'boon', 'hoop', 'kooi', 'brood', 'rook'],
+        'oo': ['boom', 'boot', 'noot', 'zoon', 'room', 'boon', 'hoop', 'kool', 'brood', 'rook'],
         'uu': ['muur', 'buur', 'vuur', 'duur', 'huur', 'kuur', 'stuur', 'zuur', 'puur', 'uur'],
         'oe': ['boek', 'koek', 'hoed', 'doek', 'zoen', 'snoep', 'broek', 'roep', 'zoek', 'boer'],
         'eu': ['neus', 'reus', 'leuk', 'beuk', 'geur', 'keus', 'heus', 'deuk', 'zeur', 'deur'],
@@ -813,7 +813,7 @@
         'f': ['fles', 'fiets', 'fijn', 'foto', 'film', 'fout', 'fluit', 'friet'],
         'g': ['geit', 'goud', 'glas', 'gans', 'goed', 'graag', 'groen', 'groot'],
         'h': ['huis', 'hoed', 'hand', 'hok', 'hout', 'hoorn', 'heel', 'hond'],
-        'j': ['jas', 'jaar', 'juf', 'jong', 'jurk', 'jawel', 'jeuk', 'jongens'],
+        'j': ['jas', 'jaar', 'juf', 'jong', 'jurk', 'jawel', 'jeuk', 'jop'],
         'k': ['kat', 'kop', 'koe', 'kaas', 'kous', 'klein', 'krab', 'kroon'],
         'l': ['lip', 'lamp', 'leer', 'luik', 'laag', 'lief', 'lucht', 'luid'],
         'm': ['man', 'mes', 'muis', 'mug', 'molen', 'maan', 'meer', 'mooi'],
@@ -849,25 +849,50 @@
       const HIGHLIGHT_COLORS = ['#ef4444', '#16a34a', '#2563eb', '#a855f7', '#f59e0b'];
 
       function kleurMetSelectie(woord, selectie) {
-        const sel = [...selectie].sort((a, b) => b.length - a.length);
-        let i = 0, html = '';
-        while (i < woord.length) {
-          let match = null;
-          for (let k of sel) {
-            if (woord.substring(i, i + k.length).toLowerCase() === k.toLowerCase()) { match = k; break; }
-          }
-          if (match) {
-            const kleur = HIGHLIGHT_COLORS[Math.floor(Math.random() * HIGHLIGHT_COLORS.length)];
-            html += `<span style="color:${kleur}">${woord.substr(i, match.length)}</span>`;
-            i += match.length;
-          } else {
-            const ch = woord[i];
-            html += `<span style="color:#0f172a">${ch}</span>`;
-            i++;
-          }
-        }
-        return html;
-      }
+    	  const sel = [...selectie].sort((a, b) => b.length - a.length);
+    	  let i = 0, html = '';
+
+    	  while (i < woord.length) {
+    	    let match = null;
+
+    	    // 1. Eerst checken op klinkercombinaties
+    	    for (let comb of VOWEL_COMBOS) {
+    	      if (woord.substring(i, i + comb.length).toLowerCase() === comb) {
+    	        match = comb;
+    	        break;
+    	      }
+    	    }
+
+    	    // 2. Dan checken op losse klinkers
+    	    if (!match && SINGLE_VOWELS.includes(woord[i].toLowerCase())) {
+    	      match = woord[i];
+    	    }
+
+    	    // 3. Dan checken op selectie, maar alleen als het géén medeklinker is
+    	    if (!match) {
+    	      for (let k of sel) {
+    	        const isVowel = VOWEL_COMBOS.includes(k.toLowerCase()) || SINGLE_VOWELS.includes(k.toLowerCase());
+    	        if (isVowel && woord.substring(i, i + k.length).toLowerCase() === k.toLowerCase()) {
+    	          match = k;
+    	          break;
+    	        }
+    	      }
+    	    }
+
+    	    // Resultaat: altijd klinkers kleuren, medeklinkers niet
+    	    if (match) {
+    	      const kleur = HIGHLIGHT_COLORS[Math.floor(Math.random() * HIGHLIGHT_COLORS.length)];
+    	      html += `<span style="color:${kleur}">${woord.substr(i, match.length)}</span>`;
+    	      i += match.length;
+    	    } else {
+    	      html += `<span style="color:#0f172a">${woord[i]}</span>`;
+    	      i++;
+    	    }
+    	  }
+    	  return html;
+    	}
+
+
 
       function kleurMetAlleKlinkers(woord) {
         let i = 0, html = '';
