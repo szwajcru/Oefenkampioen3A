@@ -592,6 +592,37 @@
     .klinker-col.fullrow .pair {
       flex-wrap: wrap;
     }
+    
+    
+    @media (min-width: 720px) {
+  .klinker-groepen {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  /* alle linker kolommen breder maken */
+  .klinker-groepen .klinker-col:nth-child(odd) {
+    flex: 1.5; /* neemt 1.5x zoveel ruimte */
+  }
+
+  .klinker-groepen .klinker-col:nth-child(even) {
+    flex: 1; /* normale breedte */
+  }
+
+  /* grid-items moeten flexgedrag overnemen */
+  .klinker-groepen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .klinker-groepen .klinker-col {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+    
+    
+    
   </style>
 </head>
 
@@ -783,9 +814,9 @@
       };
       const KLINKER_GROUPS = [
         { title: 'Korte/Lange klanken', pairs: [['i'], ['e', 'o', 'a', 'u'], ['ee', 'oo', 'aa', 'uu']] },
-        { title: 'Tweeklanken', pairs: [['ie', 'eu', 'oe']] },
-        { title: 'Tweeklanken', pairs: [['ou', 'ei', 'oe'], ['au', 'ij', 'ui']] },
-        { title: 'Klanken', pairs: [['b', 'd', 'f', 'g', 'h', 'j',], ['k', 'l', 'm', 'n', 'p', 'r', 's', 't'], ['v', 'w', 'z']] },
+        { title: 'Tweeklanken 1', pairs: [['ie', 'eu', 'oe']] },
+        { title: 'Tweeklanken 2', pairs: [['ou', 'ei'], ['au', 'ij', 'ui']] },
+//        { title: 'Klanken', pairs: [['b', 'd', 'f', 'g', 'h', 'j',], ['k', 'l', 'm', 'n', 'p', 'r', 's', 't'], ['v', 'w', 'z']] },
         { title: 'Clusters', pairs: [['ng', 'nk'], ['ch', 'sch']] }
       ];
       const KLINKER_WOORDEN = {
@@ -994,8 +1025,8 @@
           const col = document.createElement('div'); col.className = 'klinker-col';
           const h = document.createElement('h4'); h.textContent = grp.title; col.appendChild(h);
 
-          if (grp.title === 'Korte/Lange klanken') { col.classList.add('fullrow'); }
-          if (grp.title === 'Klanken') { col.classList.add('fullrow'); }
+          //if (grp.title === 'Korte/Lange klanken') { col.classList.add('fullrow'); }
+          //if (grp.title === 'Klanken') { col.classList.add('fullrow'); }
 
           // Two-column layout for Tweeklanken groups by grouping pairs two per row
           grp.pairs.forEach(pair => {
