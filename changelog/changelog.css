@@ -1,0 +1,20 @@
+.tg {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.tg td,
+.tg th {
+  border: 1px solid black;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.tg th {
+  background-color: solid black;
+  color: #ffffff;
+}
