@@ -194,6 +194,7 @@
     .chip {
       border: 1px solid #e2e8f0;
       border-radius: 999px;
+      min-width: 70px;
       padding: 6px 10px;
       display: inline-flex;
       align-items: center;
@@ -578,7 +579,7 @@
 
   /* alle linker kolommen breder maken */
   .klinker-groepen .klinker-col:nth-child(odd) {
-    flex: 1.5; /* neemt 1.5x zoveel ruimte */
+    flex: 1.6; /* neemt 1.5x zoveel ruimte */
   }
 
   .klinker-groepen .klinker-col:nth-child(even) {
