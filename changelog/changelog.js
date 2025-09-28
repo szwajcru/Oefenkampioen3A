@@ -36,7 +36,7 @@ const changelog = [
   {
     version: '1.03',
     changes: [
-      { type: 'Toegevoegd', description: 'Oefenen met woorden van geselecteerde klanken' }
+      { type: 'Toegevoegd', description: 'Onderscheid oefenen met "puur" klanken of "woorden met klanken"' }
     ]
   },
   {

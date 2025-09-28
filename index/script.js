@@ -9,7 +9,7 @@
         { title: 'Tweeklanken 1', pairs: [['ie', 'eu', 'oe']] },
         { title: 'Tweeklanken 2', pairs: [['ou', 'ei'], ['au', 'ij', 'ui']] },
 //        { title: 'Klanken', pairs: [['b', 'd', 'f', 'g', 'h', 'j',], ['k', 'l', 'm', 'n', 'p', 'r', 's', 't'], ['v', 'w', 'z']] },
-        { title: 'Clusters', pairs: [['ng', 'nk'], ['ch', 'sch']] }
+        { title: 'Overige klanken', pairs: [['ng', 'nk'], ['ch', 'sch']] }
       ];
       const KLINKER_WOORDEN = {
         'a': ['kat', 'jas', 'bak', 'man', 'tak', 'bal', 'zak', 'pan', 'rat', 'kap'],
