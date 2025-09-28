@@ -406,7 +406,7 @@
         } else {
           // klinkers sectie
           const gekozen = Array.from(document.querySelectorAll('#fieldset-klinkers input[type=checkbox]:checked')).map(cb => cb.value);
-          if (!gekozen.length) { alert('Selecteer minstens één klinker (bijv. a, aa, ui).'); return; }
+          if (!gekozen.length) { alert('Selecteer minstens één klank (bijv. a, aa, ui).'); return; }
           klinkerSub = document.querySelector('input[name="klinkerSub"]:checked').value;
 
           if (klinkerSub === 'puur') {
