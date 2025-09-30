@@ -211,32 +211,68 @@
       function hideHoverSoon() { clearTimeout(hoverHideId); hoverHideId = setTimeout(() => { const c = document.getElementById('hoverCard'); if (c) c.style.display = 'none'; }, 120); }
 
       // Build klinker chips
-      function renderKlinkers(checked = false) {
-        const holder = document.getElementById('klinkerChips'); holder.innerHTML = '';
-        KLINKER_GROUPS.forEach(grp => {
-          const col = document.createElement('div'); col.className = 'klinker-col';
-          const h = document.createElement('h4'); h.textContent = grp.title; col.appendChild(h);
+	  function renderKlinkers(checked = false) {
+	    const holder = document.getElementById('klinkerChips');
+	    holder.innerHTML = '';
 
-          //if (grp.title === 'Korte/Lange klanken') { col.classList.add('fullrow'); }
-          //if (grp.title === 'Klanken') { col.classList.add('fullrow'); }
+	    KLINKER_GROUPS.forEach(grp => {
+	      const col = document.createElement('div');
+	      col.className = 'klinker-col';
 
-          // Two-column layout for Tweeklanken groups by grouping pairs two per row
-          grp.pairs.forEach(pair => {
-            const wrap = document.createElement('div'); wrap.className = 'pair';
-            pair.forEach(k => {
-              const id = 'klink_' + k, label = document.createElement('label'); label.className = 'chip'; label.setAttribute('data-klink', k);
-              label.innerHTML = `<input type="checkbox" id="${id}" value="${k}" ${checked ? 'checked' : ''}> <span>${k}</span>`;
-              label.addEventListener('mouseenter', () => showHover(label, KLINKER_WOORDEN[k] || []));
-              label.addEventListener('mouseleave', hideHoverSoon);
-              label.addEventListener('focus', () => showHover(label, KLINKER_WOORDEN[k] || []));
-              label.addEventListener('blur', hideHoverSoon);
-              wrap.appendChild(label);
-            });
-            col.appendChild(wrap);
-          });
-          holder.appendChild(col);
-        });
-      }
+	      // Header (titel + toggle)
+	      const header = document.createElement('div');
+	      header.className = 'klinker-col-header';
+
+	      const h = document.createElement('h4');
+	      h.textContent = grp.title;
+	      header.appendChild(h);
+
+	      // Toggle switch
+	      const toggleWrap = document.createElement('label');
+	      toggleWrap.className = 'switch klinker-toggle';
+	      const toggleInput = document.createElement('input');
+	      toggleInput.type = 'checkbox';
+	      const slider = document.createElement('span');
+	      slider.className = 'slider';
+	      toggleWrap.appendChild(toggleInput);
+	      toggleWrap.appendChild(slider);
+	      header.appendChild(toggleWrap);
+
+	      col.appendChild(header);
+
+	      // Event: alle checkboxes in dit blok aan/uit
+	      toggleInput.addEventListener('change', () => {
+	        const checkboxes = col.querySelectorAll('input[type=checkbox]');
+	        checkboxes.forEach(cb => cb.checked = toggleInput.checked);
+	      });
+
+	      // Klanken toevoegen
+	      grp.pairs.forEach(pair => {
+	        const wrap = document.createElement('div');
+	        wrap.className = 'pair';
+	        pair.forEach(k => {
+	          const id = 'klink_' + k;
+	          const label = document.createElement('label');
+	          label.className = 'chip';
+	          label.setAttribute('data-klink', k);
+	          label.innerHTML = `<input type="checkbox" id="${id}" value="${k}" ${checked ? 'checked' : ''}> <span>${k}</span>`;
+
+	          label.addEventListener('mouseenter', () => showHover(label, KLINKER_WOORDEN[k] || []));
+	          label.addEventListener('mouseleave', hideHoverSoon);
+	          label.addEventListener('focus', () => showHover(label, KLINKER_WOORDEN[k] || []));
+	          label.addEventListener('blur', hideHoverSoon);
+
+	          wrap.appendChild(label);
+	        });
+	        col.appendChild(wrap);
+	      });
+
+	      holder.appendChild(col);
+	    });
+	  }
+
+
+
 
       // Confetti + Fireworks (lazy init; example style)
       function startConfetti() {

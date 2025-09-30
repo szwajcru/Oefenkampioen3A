@@ -1,6 +1,12 @@
 // changelog.js: data + renderlogica
 
 const changelog = [
+	{
+	  version: '1.09',
+	  changes: [
+	    { type: 'Toegevoegd', description: 'Sliders bij klank secties om snel aan en uit te kunnen zetten' },
+	  ]
+	},	
   {
     version: '1.08',
     changes: [
