@@ -2,6 +2,12 @@
 
 const changelog = [
 	{
+	  version: '1.10',
+	  changes: [
+	    { type: 'Bugfix', description: 'Bij klank selectie kwam de slider waarde "on" onbedoeld mee in de getoonde woordjes' },
+	  ]
+	},	
+		{
 	  version: '1.09',
 	  changes: [
 	    { type: 'Toegevoegd', description: 'Sliders bij klank secties om snel aan en uit te kunnen zetten' },
