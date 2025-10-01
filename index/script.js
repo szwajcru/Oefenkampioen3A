@@ -418,10 +418,8 @@
 
     if (oefentype === 'ankers') {
 
-      const gekozen = Array.from(document.querySelectorAll('#fieldset-klinkers input[type=checkbox]:checked'))
-        .filter(cb => !cb.dataset.toggle)  // sliders overslaan
-        .map(cb => cb.value);
-
+	  const gekozen = document.querySelector('#fieldset-anker input[name="anker"]:checked')?.value;
+		
       if (!gekozen) { if (err) err.textContent = 'Kies eerst een anker.'; return; }
       woorden = ankers[gekozen];
       if (!woorden || !woorden.length) { if (err) err.textContent = 'Dit anker heeft nog geen woorden.'; return; }
