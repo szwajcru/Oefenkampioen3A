@@ -23,7 +23,7 @@
 </head>
 
 <body>
-  <div id="versionTopGlobal">versie <strong>1.10</strong> · <span id="feedbackLink" tabindex="0"
+  <div id="versionTopGlobal">versie <strong>1.11</strong> · <span id="feedbackLink" tabindex="0"
       title="Vragen of feedback? Vraag pappa Louis">feedback?</span> · <span id="changelogLink" tabindex="0"
       title="Bekijk wijzigingen">changelog</span></div>
 
@@ -47,6 +47,7 @@
           <div class="row">
             <label class="inline"><input type="radio" name="type" value="ankers" checked> <span>Ankers</span></label>
             <label class="inline"><input type="radio" name="type" value="klinkers"> <span>Klanken</span></label>
+            <!--           <label class="inline"><input type="radio" name="type" value="lezen"> <span>Lezen</span></label> -->
           </div>
         </fieldset>
 
@@ -72,6 +73,31 @@
           <div style="font-size:13px; color:#475569; margin-top:4px;"></div>
         </fieldset>
 
+        <!-- Lezen categorieën -->
+        <fieldset class="optiegroep" id="fieldset-lezen" style="display:none;">
+          <legend>Kies categorie (Lezen)</legend>
+
+          <div class="row lezen-row" data-lezen="functiewoorden" tabindex="0">
+            <label>
+              <input type="radio" name="lezenCat" value="functiewoorden" checked>
+              Functiewoorden
+            </label>
+          </div>
+
+          <div class="row lezen-row" data-lezen="zinnetjes" tabindex="0">
+            <label>
+              <input type="radio" name="lezenCat" value="zinnetjes">
+              Zinnetjes
+            </label>
+          </div>
+
+          <div style="font-size:14px; color:#64748b;">
+            Tip: hover over een categorie om de woordjes of zinnetjes te zien.
+          </div>
+        </fieldset>
+
+
+
         <!-- Ankers (alleen voor Ankers) -->
         <fieldset class="optiegroep" id="fieldset-anker">
           <legend>Kies een anker</legend>
@@ -79,10 +105,25 @@
             <label><input type="radio" name="anker" value="1" checked> Anker 1</label>
           </div>
           <div class="row anker-row" data-anker="2" tabindex="0">
-            <label><input type="radio" name="anker" value="2" disabled> Anker 2</label>
+            <label><input type="radio" name="anker" value="2"> Anker 2</label>
           </div>
           <div class="row anker-row" data-anker="3" tabindex="0">
-            <label><input type="radio" name="anker" value="3" disabled> Anker 3</label>
+            <label><input type="radio" name="anker" value="3"> Anker 3</label>
+          </div>
+          <div class="row anker-row" data-anker="4" tabindex="0">
+            <label><input type="radio" name="anker" value="4"> Anker 4</label>
+          </div>
+          <div class="row anker-row" data-anker="5" tabindex="0">
+            <label><input type="radio" name="anker" value="5"> Anker 5</label>
+          </div>
+          <div class="row anker-row" data-anker="6" tabindex="0">
+            <label><input type="radio" name="anker" value="6"> Anker 6</label>
+          </div>
+          <div class="row anker-row" data-anker="7" tabindex="0">
+            <label><input type="radio" name="anker" value="7"> Anker 7</label>
+          </div>
+          <div class="row anker-row" data-anker="8" tabindex="0">
+            <label><input type="radio" name="anker" value="8"> Anker 8</label>
           </div>
           <div style="font-size:14px; color:#64748b;">Tip: hover over een anker/klanken om de woordjes te zien.</div>
         </fieldset>

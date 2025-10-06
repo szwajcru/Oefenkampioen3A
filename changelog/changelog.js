@@ -1,18 +1,25 @@
 // changelog.js: data + renderlogica
 
 const changelog = [
-	{
-	  version: '1.10',
-	  changes: [
-	    { type: 'Bugfix', description: 'Bij klank selectie kwam de slider waarde "on" onbedoeld mee in de getoonde woordjes' },
-	  ]
-	},	
-		{
-	  version: '1.09',
-	  changes: [
-	    { type: 'Toegevoegd', description: 'Sliders bij klank secties om snel aan en uit te kunnen zetten' },
-	  ]
-	},	
+  {
+    version: '1.11',
+    changes: [
+      { type: 'Toegevoegd', description: 'Anker woordjes voor anker 2 tm 8' },
+      { type: 'Toegevoegd', description: 'Klank woordjes om mee te oefenen van de juffen' }
+    ]
+  },
+  {
+    version: '1.10',
+    changes: [
+      { type: 'Bugfix', description: 'Klank selectie niet responsief' },
+    ]
+  },
+  {
+    version: '1.09',
+    changes: [
+      { type: 'Toegevoegd', description: 'Sliders bij klank secties om snel aan en uit te kunnen zetten' },
+    ]
+  },
   {
     version: '1.08',
     changes: [

@@ -1,9 +1,91 @@
 (function () {
   // ===== Data =====
   const ankers = {
-    1: ['rek', 'maak', 'sik', 'aas', 'baas', 'meer', 'sip', 'been', 'vis', 'vaar', 'boon', 'paar', 'roos', 'kook', 'bek', 'rook', 'voor', 'boor', 'naar', 'peer', 'kaak', 'oom', 'mis', 'ree', 'naam', 'ik', 'mes', 'raam', 'kaas', 'saar', 'beer', 'sep', 'nep', 'meen'],
-    2: [], 3: []
+    1: ['rek', 'maak', 'sik', 'aas', 'baas', 'meer', 'sip', 'been', 'vis', 'vaar', 'boon', 'paar', 'roos', 'kook', 'bek', 'rook', 'voor', 'boor', 'naar', 'peer', 'kaak', 'oom', 'mis', 'ree', 'naam', 'veer', 'mes', 'raam', 'kaas', 'kraak', 'snik', 'prik', 'smaak', 'spook'],
+    2: ['roer', 'moes', 'sap', 'pak', 'dip', 'teen', 'dijk', 'oen', 'zin', 'das', 'baan', 'mus', 'hoop', 'bus', 'hap', 'toen', 'vik', 'zus', 'pit', 'zoen', 'man', 'hoop', 'vis', 'zeer', 'voer', 'zoet', 'rijp', 'buk', 'doet', 'troep', 'hark', 'moest', 'bukt', 'prijs'],
+    3: ['woon', 'heus', 'veer', 'mok', 'waak', 'baas', 'huur', 'soep', 'biet', 'waas', 'hun', 'buur', 'was', 'sok', 'haar', 'pier', 'lus', 'wiel', 'neus', 'hiel', 'vuur', 'keus', 'heer', 'jet', 'poes', 'loon', 'wiek', 'rook', 'leuk', 'pomp', 'buurt', 'stuur', 'blaas', 'stoer'],
+    4: ['saus', 'ring', 'jouw', 'geef', 'tang', 'gek', 'reus', 'paul', 'wieg', 'fop', 'zeep', 'zus', 'lach', 'paus', 'fout', 'vang', 'mouw', 'bang', 'acht', 'dier', 'hei', 'beuk', 'lauw', 'auto', 'geit', 'muis', 'ijs', 'guur', 'pijl', 'blauw', 'graaf', 'slang', 'nacht', 'fiets'],
+    5: ['schat', 'dief', 'scheur', 'wang', 'duif', 'schoot', 'voetbal', 'schaap', 'deur', 'schoen', 'berg', 'wolk', 'schip', 'wolf', 'buurman', 'denk', 'nacht', 'friet', 'kwijt', 'zondag', 'hart', 'brief', 'pink', 'schijn', 'klei', 'gips', 'plons', 'stamp', 'klont', 'sport', 'zwempak', 'zeilboot', 'zand', 'hond'],
+    6: ['schroef', 'koprol', 'tuinbank', 'vloed', 'schoenzool', 'spons', 'schelp', 'boompje', 'stoeltje', 'klomp', 'schuur', 'feestje', 'dagboek', 'kroontje', 'sla', 'glad', 'jurk', 'slang', 'mond', 'jaszak', 'worst', 'spruit', 'schrift', 'drink', 'ronde', 'oogje', 'halve', 'minder', 'broeken', 'trouwring', 'pillen', 'poppen', 'bakker', 'kopen', 'mogen', 'neushoorn', 'eettafel'],
+    7: ['maai', 'hooi', 'duimpje', 'ruggen', 'krijtje', 'goud', 'kippen', 'duikbril', 'loopfiets', 'hondje', 'huren', 'gebak', 'beloof', 'verhaal', 'rollen', 'geluid', 'ruw', 'nieuw', 'geeuw', 'kleurtje', 'beeld', 'verlies', 'bezoek', 'aanrecht', 'klussen', 'vlinder', 'feestmuts', 'dromen', 'sparen', 'voeten', 'leuning', 'haring', 'oordop', 'koeken', 'stukken', 'speeltuin', 'schommel'],
+    8: ['voeding', 'botsing', 'leunen', 'sierlijk', 'zonnig', 'nodig', 'getallen', 'verdriet', 'versieren', 'betalen', 'onkruid', 'bloempje', 'kraantje', 'dorst', 'standbeeld', 'telling', 'drukker', 'pinken', 'vlucht', 'brengen', 'steiger', 'zomer', 'tikkertje', 'propjes', 'groei', 'draai', 'klimmen', 'schuif', 'beestje', 'bessen', 'struiken', 'knappe', 'zitten', 'sporttas', 'bedankt', 'egels', 'vrienden']
   };
+
+  const LEZEN = {
+
+    functiewoorden: [
+      // lidwoorden
+      'de', 'het', 'een',
+
+      // aanwijzende vnw
+      'dit', 'dat', 'die', 'deze',
+
+      // voorzetsels
+      'in', 'op', 'aan', 'bij', 'met', 'van', 'uit', 'om', 'tot',
+
+      // persoonlijke/bezittelijke vnw
+      'ik', 'jij', 'hij', 'zij', 'ze', 'het', 'we', 'wij',
+
+      // kleine hulpwerkwoorden
+      'is', 'ben', 'was', 'heeft', 'heb', 'had',
+
+      // voegwoorden
+      'en', 'maar', 'of', 'als', 'want', 'dus', 'toen', 'omdat',
+
+      // bijwoorden
+      'er', 'daar', 'nu', 'al'],
+
+    zinnetjes: [
+      // school
+      'Ik zit in de klas',
+      'De juf is lief',
+      'Ik lees een boek',
+      'De bel gaat',
+      'ik ben ik',
+      'jij bent jij',
+
+      // dieren
+      'De kat zit op de stoel',
+      'De hond rent hard',
+      'De muis eet kaas',
+      'De koe zegt boe',
+      'Een mier is klein',
+      'Ik zoek beer',
+
+      // extra
+      'Klein is fijn!',
+      'Ik ben zes!',
+      'Kom je spelen?',
+      'Mijn zadel is nat',
+      'De bal is rond',
+      'Fietsen is leuk',
+      'Een braam is lekker',
+
+      //Verzorging
+      'Was je handen',
+      'Poets je tanden',
+      'kam je haren',
+
+
+    ]
+  }
+
+  // Hover preview voor lezen categorieën
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.row.lezen-row').forEach(row => {
+      row.addEventListener('mouseenter', () => {
+        const cat = row.getAttribute('data-lezen');
+        const lijst = LEZEN[cat] || [];
+        const voorbeeld = lijst.slice(0, 10).join(', ');
+        row.title = voorbeeld;
+      });
+      row.addEventListener('mouseleave', () => {
+        row.removeAttribute('title');
+      });
+    });
+  });
+
+
   const KLINKER_GROUPS = [
     { title: 'Korte/Lange klanken', pairs: [['i'], ['e', 'o', 'a', 'u'], ['ee', 'oo', 'aa', 'uu']] },
     { title: 'Tweeklanken 1', pairs: [['ie', 'eu', 'oe']] },
@@ -11,12 +93,14 @@
     //        { title: 'Klanken', pairs: [['b', 'd', 'f', 'g', 'h', 'j',], ['k', 'l', 'm', 'n', 'p', 'r', 's', 't'], ['v', 'w', 'z']] },
     { title: 'Overige klanken', pairs: [['ng', 'nk'], ['ch', 'sch']] }
   ];
+
+
   const KLINKER_WOORDEN = {
-    'a': ['kat', 'jas', 'bak', 'man', 'tak', 'bal', 'zak', 'pan', 'rat', 'kap'],
-    'e': ['pen', 'bed', 'nek', 'net', 'bel', 'hek', 'mes', 'weg', 'pet', 'tent'],
-    'i': ['vis', 'lip', 'kip', 'tik', 'pit', 'pin', 'vin', 'zin', 'rit', 'min'],
-    'o': ['kop', 'bos', 'zon', 'pot', 'rok', 'hok', 'bom', 'vos', 'mol', 'kok'],
-    'u': ['bus', 'mus', 'rug', 'hut', 'put', 'mug', 'kus', 'tuk', 'pup', 'dus'],
+    'a': ['kat', 'jas', 'bak', 'man', 'tak', 'bal', 'zak', 'pan', 'rat', 'pan'],
+    'e': ['pen', 'bek', 'nek', 'net', 'bel', 'hek', 'mes', 'weg', 'pet', 'en'],
+    'i': ['vis', 'lip', 'kip', 'tik', 'pit', 'pin', 'vin', 'zin', 'rit', 'ik'],
+    'o': ['kop', 'bos', 'zon', 'pot', 'rok', 'hok', 'sok', 'vos', 'mol', 'kok'],
+    'u': ['bus', 'mus', 'rug', 'hut', 'put', 'mug', 'kus', 'dus', 'pup', 'lus'],
     'aa': ['maan', 'kaas', 'haak', 'zaag', 'baan', 'vaas', 'haan', 'raam', 'taart', 'laan'],
     'ee': ['been', 'zeep', 'veer', 'teen', 'meer', 'neef', 'leeg', 'beet', 'beer', 'veeg'],
     'ie': ['vier', 'diep', 'riet', 'ziek', 'dier', 'lied', 'mier', 'kies', 'fiets', 'tien'],
@@ -24,12 +108,11 @@
     'uu': ['muur', 'buur', 'vuur', 'duur', 'huur', 'kuur', 'stuur', 'zuur', 'puur', 'uur'],
     'oe': ['boek', 'koek', 'hoed', 'doek', 'zoen', 'snoep', 'broek', 'roep', 'zoek', 'boer'],
     'eu': ['neus', 'reus', 'leuk', 'beuk', 'geur', 'keus', 'heus', 'deuk', 'zeur', 'deur'],
-    'ei': ['ei', 'geit', 'zeil', 'reis', 'plein'],
-    'ij': ['blij', 'fijn', 'ijs', 'mij', 'rij'],
+    'ei': ['ei', 'geit', 'zeil', 'reis', 'plein', 'sein', 'klei', 'hei', 'klein', 'kei'],
+    'ij': ['blij', 'fijn', 'ijs', 'mij', 'rij', 'zij', 'pijl', 'wij', 'vijl', 'hijs'],
     'ui': ['huis', 'muis', 'duif', 'ruit', 'puin', 'buik', 'luik', 'kuil', 'ruim', 'fruit'],
-    'ou': ['goud', 'hout', 'fout', 'bout', 'koud', 'jouw'],
-    'au': ['auto', 'lauw', 'pauw', 'kauw'],
-
+    'ou': ['goud', 'hout', 'fout', 'bout', 'koud', 'jouw', 'bouw', 'touw', 'hou', 'vouw'],
+    'au': ['auto', 'lauw', 'pauw', 'kauw', 'saus', 'gauw', 'dauw', 'rauw', 'flauw', 'nauw'],
 
     'b': ['bal', 'boom', 'bus', 'been', 'bak', 'bont', 'boog', 'bok'],
     'd': ['dak', 'doos', 'deur', 'duif', 'dus', 'dun', 'denk', 'droom'],
@@ -49,10 +132,10 @@
     'w': ['water', 'wiel', 'wip', 'wolk', 'woord', 'woud', 'wesp', 'wand'],
     'z': ['zak', 'zoon', 'zand', 'zeep', 'zeil', 'zomer', 'zout', 'zon'],
 
-    'ng': ['ring', 'lang', 'tong', 'slang', 'zang', 'bang', 'jong', 'sprong'],
-    'nk': ['bank', 'dank', 'plank', 'flink', 'denk', 'pink', 'klank', 'schenk'],
-    'ch': ['lach', 'pech', 'dicht', 'licht', 'bocht', 'tocht', 'acht', 'nacht'],
-    'sch': ['schaap', 'school', 'schip', 'schaar', 'schoen', 'schuur', 'schrik', 'schrift']
+    'ng': ['ring', 'lang', 'tong', 'slang', 'zang', 'bang', 'jong', 'sprong', 'zing', 'vang'],
+    'nk': ['bank', 'dank', 'plank', 'flink', 'denk', 'pink', 'klank', 'wenk', 'zink', 'klonk'],
+    'ch': ['lach', 'pech', 'dicht', 'licht', 'bocht', 'tocht', 'acht', 'nacht', 'recht', 'echt'],
+    'sch': ['schaap', 'school', 'schip', 'schaar', 'schoen', 'schuur', 'schrik', 'schrift', 'schrob', 'schrijf'],
   };
 
   // ===== State =====
@@ -69,7 +152,7 @@
   // ===== Highlight helpers =====
   const VOWEL_COMBOS = ['aa', 'ee', 'oo', 'uu', 'ei', 'ij', 'ui', 'oe', 'ie', 'eu', 'ou', 'au'];
   const SINGLE_VOWELS = ['a', 'e', 'i', 'o', 'u'];
-  const HIGHLIGHT_COLORS = ['#ef4444', '#16a34a', '#2563eb', '#a855f7', '#f59e0b'];
+  const HIGHLIGHT_COLORS = ['#ef4444'];
 
   function kleurMetSelectie(woord, selectie) {
     const sel = [...selectie].sort((a, b) => b.length - a.length);
@@ -116,7 +199,7 @@
   }
 
 
-
+  const HIGHLIGHT_COLOR = 'var(--ebx)'; // vaste blauwe kleur
   function kleurMetAlleKlinkers(woord) {
     let i = 0, html = '';
     while (i < woord.length) {
@@ -339,19 +422,27 @@
     const fsKlin = document.getElementById('fieldset-klinkers');
     const fsModus = document.getElementById('fieldset-modus');
     const fsSub = document.getElementById('fieldset-klinkers-submode');
+    const fsLezen = document.getElementById('fieldset-lezen');
 
     if (oefentype === 'ankers') {
       fsAnker.style.display = '';
       fsKlin.style.display = 'none';
+      fsLezen.style.display = 'none';
       fsModus.style.display = '';
-      fsSub.style.display = 'none'; // subkader verbergen bij Ankers
+      fsSub.style.display = 'none';
       document.getElementById('page2Title').textContent = 'Lees dit woordje hardop';
-    } else {
+    } else if (oefentype === 'klinkers') {
       fsAnker.style.display = 'none';
       fsKlin.style.display = '';
-      //fsModus.style.display = 'none';
-      // fsSub niet forceren; prepareKlinkerSubVisibility() bepaalt zichtbaarheid
+      fsLezen.style.display = 'none';
       document.getElementById('page2Title').textContent = 'Lees deze klinker (klank) hardop';
+    } else if (oefentype === 'lezen') {
+      fsAnker.style.display = 'none';
+      fsKlin.style.display = 'none';
+      fsLezen.style.display = '';
+      fsModus.style.display = '';
+      fsSub.style.display = 'none';
+      document.getElementById('page2Title').textContent = 'Lees dit hardop';
     }
 
     // Her-evalueer subvisibiliteit na elke wissel
@@ -381,10 +472,37 @@
   function toonItem() {
     if (idx >= items.length) { items = shuffle(items); idx = 0; }
     const el = document.getElementById('woord'); const item = items[idx] ?? '';
-    if (oefentype === 'ankers') {
-      //klinkerSub = 'woorden'  //TODO: nodig?
-      el.innerHTML = kleurMetAlleKlinkers(item);
 
+    const woordEl = document.getElementById('woord');
+    woordEl.textContent = items[idx];
+
+    // standaard weer resetten
+    const card = document.querySelector('#page2 .card');
+    card.classList.remove('zin-card');
+    woordEl.classList.remove('zin-woord');
+
+    // check oefentype lezen + categorie zinnetjes
+    if (oefentype === 'lezen') {
+      const cat = document.querySelector('input[name="lezenCat"]:checked')?.value;
+      if (cat === 'zinnetjes') {
+        card.classList.add('zin-card');
+        woordEl.classList.add('zin-woord');
+      }
+    }
+
+    // standaard groot voor losse woorden
+    woordEl.style.fontSize = 'clamp(48px, 14vw, 132px)';
+
+    if (oefentype === 'ankers') {
+      let gekozenAnker = parseInt(document.querySelector('input[name="anker"]:checked').value);
+      // Controleer welk anker gekozen is
+      if (gekozenAnker < 5) {
+        // Anker 1–4 → klanken gekleurd
+        el.innerHTML = kleurMetAlleKlinkers(item);
+      } else {
+        // Anker 5–8 → geen klankkleuring
+        el.innerHTML = item;
+      }
       // Klinkers dus   
     } else {
       if (klinkerSub === 'woorden') {
@@ -394,6 +512,37 @@
         el.innerHTML = `<span style="color:var(--ebx);">${item}</span>`;
       }
     }
+
+
+    if (oefentype === 'lezen') {
+      const cat = document.querySelector('input[name="lezenCat"]:checked')?.value;
+      if (cat === 'zinnetjes') {
+        // Gewoon platte tekst → altijd zwart
+        el.textContent = item;
+      } else {
+        // mag blauw blijven
+        el.innerHTML = `<span style="color:var(--ebx);">${item}</span>`;
+      }
+    }
+
+    // standaard resetten
+    card.classList.remove('zin-card');
+    woordEl.classList.remove('zin-woord');
+
+    // check oefentype lezen + categorie zinnetjes
+    const cat = document.querySelector('input[name="lezenCat"]:checked')?.value;
+    if (cat === 'zinnetjes') {
+      card.classList.add('zin-card');
+      woordEl.classList.add('zin-woord');
+      woordEl.style.color = '#000';   // <-- directe override
+      woordEl.style.fontSize = 'clamp(48px, 10vw, 132px)';
+      //woordEl.style.lineHeight = '1.3';
+
+    } else {
+      woordEl.style.color = '';       // reset zodat functiewoorden weer blauw worden
+    }
+
+
     const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
     if (flitslezen) {
       clearTimeout(flitsTimeoutId);
@@ -418,8 +567,8 @@
 
     if (oefentype === 'ankers') {
 
-	  const gekozen = document.querySelector('#fieldset-anker input[name="anker"]:checked')?.value;
-		
+      const gekozen = document.querySelector('#fieldset-anker input[name="anker"]:checked')?.value;
+
       if (!gekozen) { if (err) err.textContent = 'Kies eerst een anker.'; return; }
       woorden = ankers[gekozen];
       if (!woorden || !woorden.length) { if (err) err.textContent = 'Dit anker heeft nog geen woorden.'; return; }
@@ -444,7 +593,8 @@
         document.getElementById('subInfo').innerHTML = `<span class="timer" id="timerBadge" style="display:none;"></span>`;
         showPage(2); toonItem();
       }
-    } else {
+
+    } else if (oefentype === 'klinkers') {
       // klinkers sectie
       const gekozen = Array.from(document.querySelectorAll('#fieldset-klinkers input[type=checkbox]:checked'))
         .filter(cb => !cb.dataset.toggle)  // sliders overslaan
@@ -508,7 +658,48 @@
         document.getElementById('page2Title').textContent = 'Lees dit woordje hardop';
       }
 
+    } else if (oefentype === 'lezen') {
+      const cat = document.querySelector('input[name="lezenCat"]:checked')?.value;
+      woorden = LEZEN[cat] || [];
+      if (!woorden.length) { if (err) err.textContent = 'Geen woorden voor deze categorie.'; return; }
+      items = shuffle(woorden);
+
+      const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
+      if (flitslezen) {
+        clearTimeout(flitsTimeoutId);
+        flitsTimeoutId = setTimeout(() => { document.getElementById('woord').innerHTML = '...'; }, flitsDurationMs);
+      }
+
+      if (byWords) {
+        const aantal = parseInt(document.getElementById('aantalInput').value, 10);
+        if (!Number.isFinite(aantal) || aantal < 1 || aantal > 50) {
+          if (err) err.textContent = 'Vul bij "Aantal items" 1..50 in.';
+          return;
+        }
+        if (items.length < aantal) {
+          const fill = [];
+          while (fill.length < aantal) { fill.push(...shuffle(items)); }
+          items = fill.slice(0, aantal);
+        } else {
+          items = items.slice(0, aantal);
+        }
+        document.getElementById('subInfo').innerHTML = `<span class="timer">${idx}/${items.length}</span>`;
+        showPage(2); toonItem();
+      } else {
+        const min = parseInt(document.getElementById('minutenInput').value, 10);
+        if (!Number.isFinite(min) || min < 1 || min > 3) {
+          if (err) err.textContent = 'Vul bij "Aantal minuten" 1..3 in.';
+          return;
+        }
+        endTime = Date.now() + min * 60 * 1000;
+        startTimer();
+        document.getElementById('subInfo').innerHTML = `<span class="timer" id="timerBadge" style="display:none;"></span>`;
+        showPage(2); toonItem();
+      }
+
+      document.getElementById('page2Title').textContent = 'Lees dit hardop';
     }
+
   }
 
   function klikAntwoord(ok) {
@@ -536,26 +727,54 @@
   }
 
   function eindeToets() {
-    if (toetsAfgebroken) return;
-    if (toetsAfgebroken) return;
-    if (timerId) { clearInterval(timerId); timerId = null; }
-    clearTimeout(flitsTimeoutId);
-    const duurSec = Math.max(1, Math.round((Date.now() - startTijd) / 1000));
-    const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
-    if (flitslezen) {
-      clearTimeout(flitsTimeoutId);
-      flitsTimeoutId = setTimeout(() => { document.getElementById('woord').innerHTML = '...'; }, flitsDurationMs);
+    stopTimer();
+
+    const tijdMs = Date.now() - startTijd;
+    const tijdSeconden = Math.round(tijdMs / 1000);
+    const percentage = Math.round((score / items.length) * 100);
+    const ipm = Math.round((score / tijdSeconden) * 60);
+
+    // basisresultaattekst
+    let tekst = 'Geweldig! Erg knap gedaan.<br><br>' +
+      `Juist: ${score} van ${items.length} (${percentage}%)<br>` +
+      `Tijd: ${tijdSeconden} seconden`;
+
+    // categorie bepalen
+    const cat = document.querySelector('input[name="lezenCat"]:checked')?.value;
+
+    // alleen snelheid tonen als het GEEN 'zinnetjes' betreft
+    if (!(oefentype === 'lezen' && cat === 'zinnetjes')) {
+      tekst += `<br>Snelheid: ${ipm} items per minuut`;
     }
-    const totaal = (oefentype === 'ankers' && byWords) ? items.length : getoond;
-    const wpm = Math.round(((totaal || 0) / duurSec) * 60);
-    const pct = totaal > 0 ? Math.round((score / totaal) * 100) : 0;
-    let msg = ''; if (pct < 40) msg = 'Goed geprobeerd, herhalen helpt!'; else if (pct < 70) msg = 'Mooi zo, je bent op de goede weg.'; else if (pct < 90) msg = 'Top! Nog even oefenen en je hebt het helemaal.'; else msg = 'Geweldig! Erg knap gedaan.';
-    document.getElementById('resultaat').innerHTML = `${msg}<br><br>Juist: <strong>${score}</strong> van <strong>${totaal}</strong> (${pct}%)<br>Tijd: <strong>${duurSec}</strong> seconden<br>Snelheid: <strong>${wpm}</strong> items per minuut`;
-    document.getElementById('pill-tijd').textContent = `Tijd: ${duurSec} s`;
-    document.getElementById('pill-snel').textContent = `Snelheid: ${wpm} ipm`;
+
+    // resultaat tonen
+    const resultaatDiv = document.getElementById('resultaat');
+    resultaatDiv.innerHTML = tekst;
+
+    // pillen bijwerken (tijd + evt snelheid)
+    const pillTijd = document.getElementById('pill-tijd');
+    if (pillTijd) {
+      pillTijd.textContent = `Tijd: ${tijdSeconden} s`;
+    }
+
+    const pillSnel = document.getElementById('pill-snel');
+    if (pillSnel) {
+      if (oefentype === 'lezen' && cat === 'zinnetjes') {
+        pillSnel.style.display = 'none';
+      } else {
+        pillSnel.style.display = '';
+        pillSnel.textContent = `Snelheid: ${ipm} items per minuut`;
+      }
+    }
+
+    // toon resultaatpagina
     showPage(3);
-    startConfetti(); runFireworks();
+
+    // confetti en vuurwerk (optioneel)
+    startConfetti();
+    runFireworks();
   }
+
 
   // Init bindings after DOM ready
   window.addEventListener('load', function () {
@@ -610,6 +829,22 @@
       row.addEventListener('focus', () => showHover(row, ankers[row.getAttribute('data-anker')] || []));
       row.addEventListener('blur', hideHoverSoon);
     });
+
+    // Hover voor lezen-rijen met eigen hoverCard
+    document.querySelectorAll('.row.lezen-row').forEach(row => {
+      row.addEventListener('mouseenter', () => {
+        const cat = row.getAttribute('data-lezen');
+        showHover(row, LEZEN[cat] || []);   // gebruik dezelfde hoverCard
+      });
+      row.addEventListener('mouseleave', hideHoverSoon);
+      row.addEventListener('focus', () => {
+        const cat = row.getAttribute('data-lezen');
+        showHover(row, LEZEN[cat] || []);
+      });
+      row.addEventListener('blur', hideHoverSoon);
+    });
+
+
 
     // Buttons
     document.getElementById('btnStart').addEventListener('click', startToets);
