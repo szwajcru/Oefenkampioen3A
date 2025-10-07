@@ -734,8 +734,10 @@
     const percentage = Math.round((score / items.length) * 100);
     const ipm = Math.round((score / tijdSeconden) * 60);
 
+	let msg = ''; if (percentage < 40) msg = 'Goed geprobeerd, herhalen helpt!'; else if (percentage < 70) msg = 'Mooi zo, je bent op de goede weg.'; else if (percentage < 90) msg = 'Top! Nog even oefenen en je hebt het helemaal.'; else msg = 'Geweldig! Erg knap gedaan.';
+
     // basisresultaattekst
-    let tekst = 'Geweldig! Erg knap gedaan.<br><br>' +
+    let tekst = msg + '<br><br>' +
       `Juist: ${score} van ${items.length} (${percentage}%)<br>` +
       `Tijd: ${tijdSeconden} seconden`;
 
