@@ -37,33 +37,33 @@
 
     zinnetjes: [
       // school
-      'Ik zit in de klas',
-      'De juf is lief',
-      'Ik lees een boek',
-      'De bel gaat',
+      'ik zit in de klas',
+      'de juf is lief',
+      'ik lees een boek',
+      'de bel gaat',
       'ik ben ik',
       'jij bent jij',
 
       // dieren
-      'De kat zit op de stoel',
-      'De hond rent hard',
-      'De muis eet kaas',
-      'De koe zegt boe',
-      'Een mier is klein',
-      'Ik zoek beer',
+      'de kat zit op de stoel',
+      'de hond rent hard',
+      'de muis eet kaas',
+      'de koe zegt boe',
+      'een mier is klein',
+      'ik zoek beer',
 
       // extra
-      'Klein is fijn!',
-      'Ik ben zes!',
-      'Kom je spelen?',
-      'Mijn zadel is nat',
-      'De bal is rond',
-      'Fietsen is leuk',
-      'Een braam is lekker',
+      'klein is fijn!',
+      'ik ben zes!',
+      'kom je spelen?',
+      'mijn zadel is nat',
+      'de bal is rond',
+      'fietsen is leuk',
+      'een braam is lekker',
 
       //Verzorging
-      'Was je handen',
-      'Poets je tanden',
+      'was je handen',
+      'poets je tanden',
       'kam je haren',
 
 
@@ -88,8 +88,8 @@
 
   const KLINKER_GROUPS = [
     { title: 'Korte/Lange klanken', pairs: [['i'], ['e', 'o', 'a', 'u'], ['ee', 'oo', 'aa', 'uu']] },
-    { title: 'Tweeklanken 1', pairs: [['ie', 'eu', 'oe']] },
-    { title: 'Tweeklanken 2', pairs: [['ou', 'ei'], ['au', 'ij', 'ui']] },
+    { title: 'Tweeteken klanken 1', pairs: [['ie', 'eu', 'oe']] },
+    { title: 'Tweeteken klanken 2', pairs: [['ou', 'ei'], ['au', 'ij', 'ui']] },
     //        { title: 'Klanken', pairs: [['b', 'd', 'f', 'g', 'h', 'j',], ['k', 'l', 'm', 'n', 'p', 'r', 's', 't'], ['v', 'w', 'z']] },
     { title: 'Overige klanken', pairs: [['ng', 'nk'], ['ch', 'sch']] }
   ];
@@ -1007,10 +1007,8 @@ function tekenResultaatGrafiek() {
   const history = JSON.parse(localStorage.getItem('resultaten') || '[]');
   if (history.length === 0) return;
 
-  // Laatste 50 resultaten weergeven
+  // Alleen de laatste 50 resultaten weergeven
   const laatste = history.slice(-50);
-
-  // Labels: 1, 2, 3, ...
   const labels = laatste.map((_, i) => i + 1);
 
   // Oude grafiek verwijderen als die al bestaat
@@ -1018,27 +1016,26 @@ function tekenResultaatGrafiek() {
     window.resultChartInstance.destroy();
   }
 
-  // --- Slimme x-as labeldichtheid ---
-  const total = labels.length; // bijv. 51 (0 t/m 50)
+  // --- Slimme x-as stapgrootte ---
+  const total = labels.length;
   let stap = 1;
   if (total > 60) stap = 6;
   else if (total > 40) stap = 4;
   else if (total > 25) stap = 2;
-  else stap = 1;
 
   const xTicks = {
     stepSize: stap,
     autoSkip: false,
     maxRotation: 0,
     callback: function (value) {
-      // Toon altijd 0 en laatste waarde (bijv. 50)
       if (value === 0 || value === labels.length - 1 || value % stap === 0) {
         return value;
       }
       return '';
     }
   };
-  
+
+  // --- De grafiek ---
   window.resultChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
@@ -1050,23 +1047,50 @@ function tekenResultaatGrafiek() {
         backgroundColor: 'rgba(1,104,155,0.15)',
         fill: true,
         tension: 0.4,
-        pointRadius: 2,            // kleinere stippen
-        pointHoverRadius: 5,       // worden wel groter bij hover
+        pointRadius: 3,
+        pointHoverRadius: 6,
         pointBackgroundColor: '#01689B',
-        showLine: true,            // lijn blijft behouden
+        pointHoverBackgroundColor: '#E53935', // rood bij hover
+        pointHoverBorderColor: '#ff6666',
+        pointHoverBorderWidth: 3,
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      scales: {
+        x: {
+          beginAtZero: true,
+          min: 0,
+          max: labels.length - 1,
+          ticks: xTicks,
+          grid: { display: false },
+          title: {
+            display: true,
+            text: 'Poging #',
+            color: '#333',
+            font: { size: 14, weight: 'bold' }
+          }
+        },
+        y: {
+          beginAtZero: true,
+          suggestedMax: 50,
+          title: { display: true, text: 'Woordjes per minuut' },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        }
+      },
       plugins: {
         legend: { display: false },
         tooltip: {
           mode: 'index',
           intersect: false,
+          displayColors: false,
           backgroundColor: '#01689B',
           titleColor: '#fff',
           bodyColor: '#fff',
+          footerColor: '#ffcccc',
+          footerFont: { size: 11, weight: 'bold' },
+          footerAlign: 'center',
           callbacks: {
             title: (tooltipItems) => {
               const index = tooltipItems[0].dataIndex;
@@ -1074,55 +1098,81 @@ function tekenResultaatGrafiek() {
               return d ? d.datum : '';
             },
             label: (context) => {
-              const index = context.dataIndex;
-              const d = laatste[index];
+              const d = laatste[context.dataIndex];
               if (!d) return '';
               const goed = d.goed ?? 0;
+              const fout = d.fout ?? 0;
               const totaal = d.totaal ?? 0;
               const ipm = d.ipm ?? 0;
               const percentage = totaal > 0 ? Math.round((goed / totaal) * 100) : 0;
               return [
                 `Woordjes per minuut: ${ipm}`,
-                `Juist: ${goed} van ${totaal}`,
+                `Juist: ${goed}`,
+                `Fout: ${fout}`,
+                `Totaal: ${totaal}`,
                 `Percentage: ${percentage}%`
               ];
-            }
+            },
+            footer: () => ['Klik om meting te verwijderen']
           }
         }
       },
-      scales: {
-		x: {
-		  beginAtZero: true,
-		  min: 0,
-		  max: labels.length - 1,
-		  ticks: xTicks,
-		  grid: { display: false },
-		  title: {                    // 🔹 dit is de ontbrekende titel
-		        display: true,
-		        text: 'Poging #',
-		        color: '#333',
-		        font: { size: 14, weight: 'bold' }
-		      },
-		},
-        y: {
-          beginAtZero: true,
-          suggestedMax: 51,
-          title: { display: true, text: 'Woordjes per minuut' },
-          grid: { color: 'rgba(0,0,0,0.05)' }
-        }
+      interaction: { mode: 'nearest', axis: 'x', intersect: false },
+      onHover: (event, elements, chart) => {
+        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
       },
-      interaction: { mode: 'nearest', axis: 'x', intersect: false }
+      onClick: (evt, activeEls, chart) => {
+        if (!activeEls.length) return;
+
+        const idx = activeEls[0].index;
+        const geselecteerde = laatste[idx];
+        if (!geselecteerde) return;
+
+        toonBevestiging(
+          `Weet je zeker dat je meting #${idx + 1} (${geselecteerde.datum}, ${geselecteerde.ipm} wpm) wilt verwijderen?`,
+          (bevestig) => {
+            if (!bevestig) return;
+
+            let alleResultaten = JSON.parse(localStorage.getItem('resultaten') || '[]');
+            const echteIndex = alleResultaten.findIndex(r =>
+              r.type === geselecteerde.type &&
+              r.datum === geselecteerde.datum &&
+              r.ipm === geselecteerde.ipm
+            );
+
+            if (echteIndex === -1) {
+              toonBevestiging('Kon de juiste meting niet vinden.', () => { }, true);
+              return;
+            }
+
+            // 🔹 Verwijdering
+            alleResultaten.splice(echteIndex, 1);
+            localStorage.setItem('resultaten', JSON.stringify(alleResultaten));
+
+            // 🔹 Update grafiek
+            chart.data.datasets[0].data.splice(idx, 1);
+            chart.data.labels.splice(idx, 1);
+            chart.update();
+
+            // 🔹 OK-only melding
+            toonOK(`Meting van ${geselecteerde.datum} is verwijderd.`);
+
+          }
+        );
+      }
     }
   });
 }
 
 
-document.addEventListener('DOMContentLoaded', function () {
 
+
+document.addEventListener('DOMContentLoaded', function () {
   const resultatenLink = document.getElementById('resultatenLink');
   const resultatenTip = document.getElementById('resultatenTip');
   const wisBtn = document.getElementById('btnWisResultaten');
 
+  // Hover mini-grafiek bij link
   if (resultatenLink && resultatenTip) {
     resultatenLink.addEventListener('mouseenter', () => {
       resultatenTip.style.display = 'block';
@@ -1144,7 +1194,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // 🗑️ Resultaten wissen met bevestiging
+  // 🗑️ Resultaten wissen met EBX-stijl bevestiging
   if (wisBtn) {
     wisBtn.addEventListener('click', function () {
       toonBevestiging('Weet je zeker dat je alle resultaten wilt wissen?', (bevestig) => {
@@ -1154,12 +1204,13 @@ document.addEventListener('DOMContentLoaded', function () {
             window.resultatenChartInstance.destroy();
           }
           toonMelding('Alle resultaten zijn gewist.');
-          resultatenTip.style.display = 'none';
+          if (resultatenTip) resultatenTip.style.display = 'none';
         }
       });
     });
   }
 });
+
 
 
 
@@ -1220,11 +1271,14 @@ function tekenResultatenHoverGrafiek() {
           beginAtZero: true,
           title: { display: true, text: 'Metingnummer' },
           ticks: {
-            stepSize: stap,
-            autoSkip: false,
-            maxRotation: 0,
+            autoSkip: true,          // 🔹 Chart.js bepaalt automatisch welke labels passen
+            maxTicksLimit: 10,       // 🔹 toon max. 10 labels
+            maxRotation: 0,          // 🔹 horizontaal
+            minRotation: 0,
+            font: { size: 11 },
             callback: function (value) {
-              if (value === 0 || value === 50 || value % stap === 0) {
+              // Toon enkel ronde getallen en altijd de laatste (50)
+              if (value === 50 || value % Math.ceil(total / 10) === 0) {
                 return value;
               }
               return '';
@@ -1269,7 +1323,7 @@ function tekenResultatenHoverGrafiek() {
                 `Percentage: ${percentage}%`
               ];
             },
-            afterBody: () => ['Klik om deze meting te verwijderen']
+            afterBody: () => ['Klik om meting te verwijderen']
           }
         }
       },
@@ -1302,36 +1356,39 @@ function tekenResultatenHoverGrafiek() {
         const geselecteerde = laatste[idx];
         if (!geselecteerde) return;
 
-        // 3️⃣ Bevestiging
-        const bevestig = confirm(
-          `Weet je zeker dat je meting #${idx + 1} (${geselecteerde.datum}, ${geselecteerde.ipm} wpm) wilt verwijderen?`
+        // 🔹 Gebruik EBX-stijl bevestiging
+        toonBevestiging(
+          `Weet je zeker dat je meting #${idx + 1} (${geselecteerde.datum}, ${geselecteerde.ipm} wpm) wilt verwijderen?`,
+          (bevestig) => {
+            if (!bevestig) return; // alleen bij 'Ja' doorgaan
+
+            // 4️⃣ Zoek de echte index in de volledige lijst
+            const echteIndex = alleResultaten.findIndex(r =>
+              r.type === geselecteerde.type &&
+              r.datum === geselecteerde.datum &&
+              r.ipm === geselecteerde.ipm
+            );
+
+            if (echteIndex === -1) {
+              toonBevestiging('Kon de juiste meting niet vinden.', () => { });
+              return;
+            }
+
+            // 5️⃣ Verwijder en update
+            alleResultaten.splice(echteIndex, 1);
+            localStorage.setItem('resultaten', JSON.stringify(alleResultaten));
+            document.cookie = `resultaten=${encodeURIComponent(JSON.stringify(alleResultaten))}; path=/; max-age=31536000; SameSite=Lax`;
+
+            // 6️⃣ Update grafiek
+            chart.data.datasets[0].data.splice(idx, 1);
+            chart.data.labels.splice(idx, 1);
+            chart.update();
+
+            toonOK(`Meting van ${geselecteerde.datum} is verwijderd.`);
+          }
         );
-        if (!bevestig) return;
-
-        // 4️⃣ Zoek de echte index in de volledige lijst
-        const echteIndex = alleResultaten.findIndex(r =>
-          r.type === geselecteerde.type &&
-          r.datum === geselecteerde.datum &&
-          r.ipm === geselecteerde.ipm
-        );
-
-        if (echteIndex === -1) {
-          alert('Kon de juiste meting niet vinden.');
-          return;
-        }
-
-        // 5️⃣ Verwijder en update
-        alleResultaten.splice(echteIndex, 1);
-        localStorage.setItem('resultaten', JSON.stringify(alleResultaten));
-        document.cookie = `resultaten=${encodeURIComponent(JSON.stringify(alleResultaten))}; path=/; max-age=31536000; SameSite=Lax`;
-
-        // 6️⃣ Update grafiek
-        chart.data.datasets[0].data.splice(idx, 1);
-        chart.data.labels.splice(idx, 1);
-        chart.update();
-
-        alert(`Meting van ${geselecteerde.datum} is verwijderd.`);
       },
+
       onHover: (event, elements, chart) => {
         chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
       }
@@ -1341,85 +1398,142 @@ function tekenResultatenHoverGrafiek() {
 
 
 
+
+// ===== Voortgangsgrafiek tonen =====
 function toonVoortgang() {
-  const data = JSON.parse(localStorage.getItem('resultaten') || '[]');
-  if (data.length === 0) {
-    alert('Nog geen resultaten opgeslagen.');
+  const canvas = document.getElementById('resultChart');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const history = JSON.parse(localStorage.getItem('resultaten') || '[]')
+    .filter(r => r.type === 'ankers');
+
+  if (history.length === 0) {
+    toonBevestiging('Nog geen resultaten opgeslagen.', () => { });
     return;
   }
-  document.getElementById('resultChart').style.display = 'block';
-  document.getElementById('btnToonVoortgang').style.display = 'none';
 
-  const labels = data.map(d => d.datum);
-  const snelheden = data.map(d => d.snelheid);
-  const goed = data.map(d => d.score);
-  const totaal = data.map(d => d.totaal);
+  const laatste = history.slice(-50);
+  const labels = laatste.map((_, i) => i + 1);
 
-  const ctx = document.getElementById('resultChart').getContext('2d');
   if (window.resultChartInstance) window.resultChartInstance.destroy();
 
-
-  let stap = 1;
-  if (total > 60) stap = 6;
-  else if (total > 40) stap = 2;
-  else if (total > 25) stap = 2;
-  else if (total > 15) stap = 1;
-  else if (total > 10) stap = 1;
+  const chartData = laatste.map(d => d.ipm || 0);
 
   window.resultChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: labels,
+      labels,
       datasets: [{
-        label: 'Snelheid (woordjes per minuut)',
-        data: laatste.map(d => d.ipm || 0),
+        label: 'Snelheid (IPM)',
+        data: chartData,
         borderColor: '#01689B',
         backgroundColor: 'rgba(1,104,155,0.15)',
         fill: true,
         tension: 0.4,
-        pointRadius: 2,            // kleinere stippen
-        pointHoverRadius: 5,       // worden wel groter bij hover
+        pointRadius: 4,
         pointBackgroundColor: '#01689B',
-        showLine: true,            // lijn blijft behouden
-      }]
+        pointHoverBackgroundColor: 'red',
+        pointHoverBorderColor: '#ff6666',
+        pointHoverBorderWidth: 3
+      }],
+      fullData: laatste
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      scales: {
+        x: {
+          title: { display: true, text: 'Metingnummer' },
+          ticks: { autoSkip: true, maxTicksLimit: 10 }
+        },
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Woordjes per minuut' }
+        }
+      },
       plugins: {
         legend: { display: false },
         tooltip: {
           mode: 'index',
           intersect: false,
+          displayColors: false,   // verplicht voor footer
           backgroundColor: '#01689B',
           titleColor: '#fff',
           bodyColor: '#fff',
+          footerColor: '#ffcccc',
+          footerFont: { size: 11, weight: 'bold' },
+          footerAlign: 'center',
+          padding: 12,
           callbacks: {
             title: (tooltipItems) => {
               const index = tooltipItems[0].dataIndex;
-              const d = laatste[index];
+              const d = tooltipItems[0].chart.data.fullData[index];
               return d ? d.datum : '';
             },
             label: (context) => {
-              const index = context.dataIndex;
-              const d = laatste[index];
+              const d = context.chart.data.fullData[context.dataIndex];
               if (!d) return '';
               const goed = d.goed ?? 0;
+              const fout = d.fout ?? 0;
               const totaal = d.totaal ?? 0;
               const ipm = d.ipm ?? 0;
-              const percentage = totaal > 0 ? Math.round((goed / totaal) * 100) : 0;
+              const perc = totaal > 0 ? Math.round((goed / totaal) * 100) : 0;
               return [
                 `Woordjes per minuut: ${ipm}`,
-                `Juist: ${goed} van ${totaal}`,
-                `Percentage: ${percentage}%`
+                `Juist: ${goed}`,
+                `Fout: ${fout}`,
+                `Totaal: ${totaal}`,
+                `Percentage: ${perc}%`
               ];
+            },
+            // ✅ BELANGRIJK: dit dwingt footerweergave af
+            footer: (items) => {
+              if (!items.length) return '';
+              return 'Klik om meting te verwijderen';
+            }
+          },
+          // ✅ Extra truc om footer te forceren
+          external: (context) => {
+            const tooltipEl = context.tooltip;
+            if (tooltipEl && tooltipEl.footer && tooltipEl.opacity !== 0) {
+              tooltipEl.footer = tooltipEl.footer; // noop, maar triggert rendering
             }
           }
         }
       },
+
+      onHover: (e, els, chart) => chart.canvas.style.cursor = els.length ? 'pointer' : 'default',
+      onClick: (evt, activeEls, chart) => {
+        if (!activeEls.length) return;
+        const idx = activeEls[0].index;
+        const geselecteerde = laatste[idx];
+        toonBevestiging(
+          `Weet je zeker dat je meting #${idx + 1} (${geselecteerde.datum}, ${geselecteerde.ipm} wpm) wilt verwijderen?`,
+          (ja) => {
+            if (!ja) return;
+            let alle = JSON.parse(localStorage.getItem('resultaten') || '[]');
+            const echteIndex = alle.findIndex(r => r.datum === geselecteerde.datum && r.ipm === geselecteerde.ipm);
+            if (echteIndex >= 0) {
+              alle.splice(echteIndex, 1);
+              localStorage.setItem('resultaten', JSON.stringify(alle));
+              chart.data.datasets[0].data.splice(idx, 1);
+              chart.data.labels.splice(idx, 1);
+              chart.update();
+
+              toonOK(`Meting van ${geselecteerde.datum} is verwijderd.`);
+            }
+          }
+        );
+      }
     }
   });
 }
+
+
+
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const oefentypeInput = document.querySelector('input[name="type"]:checked');
@@ -1474,6 +1588,57 @@ function toonBevestiging(boodschap, callback) {
     callback(false);
   };
 }
+
+// OK-only modal (EBX-stijl)
+function toonOK(boodschap, onOk) {
+  // sluit bestaande modal als die er is
+  const bestaand = document.getElementById('okOnlyModal');
+  if (bestaand) bestaand.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'okOnlyModal';
+  overlay.style.cssText = `
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,.45);
+    display: flex; align-items: center; justify-content: center;
+  `;
+
+  const box = document.createElement('div');
+  box.style.cssText = `
+    background:#fff; border-radius:14px; padding:22px 28px; max-width:360px; width: min(90vw, 360px);
+    text-align:center; box-shadow:0 10px 30px rgba(0,0,0,.25);
+  `;
+  box.innerHTML = `
+    <p style="margin-bottom:20px;font-size:16px;">${boodschap}</p>
+    <div style="display:flex; justify-content:center;">
+      <button id="okOnlyBtn" class="btn">OK</button>
+    </div>
+  `;
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  const okBtn = box.querySelector('#okOnlyBtn');
+
+  function close(ok = true) {
+    overlay.remove();
+    if (typeof onOk === 'function' && ok) onOk();
+    window.removeEventListener('keydown', keyHandler);
+  }
+
+  function keyHandler(e) {
+    if (e.key === 'Enter' || e.key === 'Escape') close(true);
+  }
+
+  okBtn.addEventListener('click', () => close(true));
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(true); });
+  window.addEventListener('keydown', keyHandler);
+
+  // focus
+  setTimeout(() => okBtn.focus(), 0);
+}
+
+
 function toonMelding(boodschap) {
   const overlay = document.getElementById('meldingOverlay');
   const msg = document.getElementById('meldingMessage');

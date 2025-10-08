@@ -1292,3 +1292,110 @@ fieldset.optiegroep legend {
   transform: translateX(-50%);
   background-color: #016
 }
+
+/* EBX-stijl modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 10px;
+  border: 2px solid #01689B;
+  padding: 20px 25px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  font-size: 15px;
+}
+
+.modal-buttons {
+  margin-top: 18px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.ebx-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.ebx-btn-primary {
+  background: #01689B;
+  color: white;
+}
+
+.ebx-btn-primary:hover {
+  background: #015b89;
+}
+
+.ebx-btn-secondary {
+  background: #f2f2f2;
+  color: #333;
+}
+
+.ebx-btn-secondary:hover {
+  background: #e0e0e0;
+}
+
+.confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.confirm-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  border: 2px solid #01689B;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 300px;
+}
+
+.confirm-buttons button {
+  margin: 8px;
+  padding: 6px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #01689B;
+  color: white;
+  cursor: pointer;
+}
+
+.confirm-buttons button:hover {
+  background: #014d73;
+}
+
+.meldingKnoppen {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.meldingKnoppen:only-child,
+.meldingKnoppen:has(button:only-child) {
+  justify-content: center;
+}
