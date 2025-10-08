@@ -938,16 +938,38 @@ fieldset.optiegroep legend {
 #resultatenTip {
   position: fixed;
   top: 80px;
+  left: 30%;
   right: 20px;
   background: #fff;
   border: 2px solid var(--ebx);
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  z-index: 1000;
+  z-index: 100;
   display: none;
-  width: 80%;
+  width: 40%;
+  max-width: 600px;
+  /* voorkomt te brede weergave op grote schermen */
 }
+
+/* 📱 Mobiel: maak popup bijna schermvullend */
+@media (max-width: 768px) {
+  #resultatenTip {
+    left: 5%;
+    right: 5%;
+    width: 90%;
+    top: 60px;
+    padding: 15px;
+  }
+
+  #resultatenTip canvas {
+    width: 100% !important;
+    height: 300px !important;
+    /* meer hoogte op mobiel */
+  }
+}
+
+
 
 #resultatenChartContainer {
   max-width: 440px;
@@ -1032,4 +1054,241 @@ fieldset.optiegroep legend {
 
 .confirm-buttons button:hover {
   background: #014d73;
+}
+
+
+/* Knop zelf */
+#btnAgain {
+  position: relative;
+  background-color: #01689B;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 14px 36px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease-in-out;
+  text-transform: none;
+  /* geen hoofdletters */
+  overflow: visible;
+}
+
+#btnAgain:hover {
+  background-color: #0284c7;
+  transform: scale(1.05);
+}
+
+/* 🐝 Bijtje vliegt subtiel van rechts en landt rechts naast de knop */
+#btnAgain::after {
+  content: '🐝';
+  position: absolute;
+  top: 8px;
+  left: calc(100% + 8px);
+  /* eindpositie naast de knop */
+  font-size: 24px;
+  opacity: 0;
+  animation: bijtjeVliegtAan 1.8s ease-out forwards, bijtjeZoemtRechts 3s ease-in-out 1.8s infinite;
+}
+
+/* 🚀 Kort aanvliegen vanuit iets rechts van de knop */
+@keyframes bijtjeVliegtAan {
+  0% {
+    transform: translateX(90px) rotate(0deg);
+    /* start niet buiten beeld */
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  90% {
+    transform: translateX(-4px) rotate(10deg);
+  }
+
+  100% {
+    transform: translateX(0px) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* ✨ Na het landen zachtjes zoemen */
+@keyframes bijtjeZoemtRechts {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+
+  25% {
+    transform: translate(2px, -2px) rotate(8deg);
+  }
+
+  50% {
+    transform: translate(-1px, 1px) rotate(-8deg);
+  }
+
+  75% {
+    transform: translate(1px, -1px) rotate(5deg);
+  }
+
+  100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+}
+
+
+/* Tooltip voor reset/prullenbakknop */
+#btnReset {
+  position: relative;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+  color: #444;
+  transition: transform 0.15s ease-in-out;
+}
+
+#btnReset:hover {
+  color: #01689B;
+  transform: scale(1.1);
+}
+
+/* Tooltip-stijl */
+#btnReset::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  /* boven de knop */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #01689B;
+  color: #fff;
+  font-size: 13px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+/* Klein pijltje onder tooltip */
+#btnReset::before {
+  content: '';
+  position: absolute;
+  bottom: 115%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #01689B transparent transparent transparent;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Tooltip zichtbaar bij hover */
+#btnReset:hover::after,
+#btnReset:hover::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-2px);
+}
+
+/* Prullenbak hoverkleur */
+#btnReset:hover svg {
+  stroke: #01689B;
+  transform: scale(1.08);
+  transition: all 0.2s ease;
+}
+
+/* Tooltip */
+.icon-only[data-tooltip] {
+  position: relative;
+}
+
+.icon-only[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #01689B;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.icon-only[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+/* --- Wis-knop stijl --- */
+.delete-btn {
+  margin-top: 15px;
+  background: none;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  color: #333;
+  font-size: 14px;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+  border-color: #01689B;
+  color: #01689B;
+}
+
+.delete-btn:hover svg {
+  stroke: #01689B;
+  transform: scale(1.08);
+  transition: all 0.2s ease;
+}
+
+/* Tooltip bij hover */
+.icon-only {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 12px;
+  transition: background-color .15s ease, transform .1s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-only svg {
+  pointer-events: none;
+  transition: transform .15s ease;
+}
+
+/* Hover: lichte achtergrond + groeieffect */
+.icon-only:hover {
+  background-color: white;
+}
+
+.icon-only:hover svg {
+  transform: scale(1.1);
+}
+
+/* Klik: iets naar beneden duwen */
+.icon-only:active {
+  transform: translateY(2px);
+}
+
+/* Tooltip */
+.icon-only[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #016
 }

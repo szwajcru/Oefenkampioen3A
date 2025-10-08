@@ -1007,16 +1007,25 @@ function tekenResultaatGrafiek() {
   const history = JSON.parse(localStorage.getItem('resultaten') || '[]');
   if (history.length === 0) return;
 
-  // Alleen de laatste resultaten weergeven (bijv. laatste 50)
+  // Laatste 50 resultaten weergeven
   const laatste = history.slice(-50);
 
-  // Labels zijn gewoon 1, 2, 3, ...
+  // Labels: 1, 2, 3, ...
   const labels = laatste.map((_, i) => i + 1);
 
   // Oude grafiek verwijderen als die al bestaat
   if (window.resultChartInstance) {
     window.resultChartInstance.destroy();
   }
+
+  // --- Slimme x-as labeldichtheid ---
+  const total = labels.length;
+  let stap = 1;
+  if (total > 60) stap = 6;
+  else if (total > 40) stap = 5;
+  else if (total > 25) stap = 4;
+  else if (total > 15) stap = 3;
+  else if (total > 10) stap = 2;
 
   window.resultChartInstance = new Chart(ctx, {
     type: 'line',
@@ -1029,8 +1038,10 @@ function tekenResultaatGrafiek() {
         backgroundColor: 'rgba(1,104,155,0.15)',
         fill: true,
         tension: 0.4,
-        pointRadius: 5,
-        pointBackgroundColor: '#01689B'
+        pointRadius: 2,            // kleinere stippen
+        pointHoverRadius: 5,       // worden wel groter bij hover
+        pointBackgroundColor: '#01689B',
+        showLine: true,            // lijn blijft behouden
       }]
     },
     options: {
@@ -1057,7 +1068,7 @@ function tekenResultaatGrafiek() {
               const goed = d.goed ?? 0;
               const totaal = d.totaal ?? 0;
               const ipm = d.ipm ?? 0;
-              const percentage = Math.round((goed / totaal) * 100);
+              const percentage = totaal > 0 ? Math.round((goed / totaal) * 100) : 0;
               return [
                 `Woordjes per minuut: ${ipm}`,
                 `Juist: ${goed} van ${totaal}`,
@@ -1069,15 +1080,21 @@ function tekenResultaatGrafiek() {
       },
       scales: {
         x: {
-          title: { display: true, text: 'Poging #' }, // geen titel
+          title: { display: true, text: 'Poging #' },
           ticks: {
-            autoSkip: false,   // toon alle nummers
-            maxRotation: 0
+            callback: function (value, index) {
+              // Toon alleen elke 'stap'-de waarde om de x-as rustig te houden
+              return index % stap === 0 ? this.getLabelForValue(value) : '';
+            },
+            autoSkip: false,
+            maxRotation: 0,
+            minRotation: 0
           },
           grid: { display: false }
         },
         y: {
           beginAtZero: true,
+          suggestedMax: 50,
           title: { display: true, text: 'Woordjes per minuut' },
           grid: { color: 'rgba(0,0,0,0.05)' }
         }
@@ -1086,6 +1103,7 @@ function tekenResultaatGrafiek() {
     }
   });
 }
+
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -1143,14 +1161,27 @@ function tekenResultatenHoverGrafiek() {
 
   if (history.length === 0) return;
 
-  const laatste = history.slice(-10);
+  // Toon alleen de laatste 50 resultaten
+  const laatste = history.slice(-50);
+
+  // Labels 1, 2, 3, ...
   const labels = laatste.map((_, i) => i + 1);
 
-  // Oude grafiek verwijderen
+  // Oude grafiek verwijderen als die al bestaat
   if (window.resultatenChartInstance) {
     window.resultatenChartInstance.destroy();
   }
 
+  // --- Slimme x-as labeldichtheid ---
+  const total = labels.length;
+  let stap = 1;
+  if (total > 60) stap = 6;
+  else if (total > 40) stap = 5;
+  else if (total > 25) stap = 4;
+  else if (total > 15) stap = 3;
+  else if (total > 10) stap = 2;
+
+  // --- Chart.js aanroep ---
   window.resultatenChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
@@ -1162,8 +1193,10 @@ function tekenResultatenHoverGrafiek() {
         backgroundColor: 'rgba(1,104,155,0.15)',
         fill: true,
         tension: 0.4,
-        pointRadius: 4,
-        pointBackgroundColor: '#01689B'
+        pointRadius: 2,            // kleinere stippen
+        pointHoverRadius: 5,       // worden wel groter bij hover
+        pointBackgroundColor: '#01689B',
+        showLine: true,            // lijn blijft behouden
       }]
     },
     options: {
@@ -1200,11 +1233,21 @@ function tekenResultatenHoverGrafiek() {
       },
       scales: {
         x: {
-          ticks: { autoSkip: false, maxRotation: 0 },
+          title: { display: true, text: 'Poging #' },
+          ticks: {
+            callback: function (value, index) {
+              // Toon enkel elke 'stap'-de label (automatisch minder bij veel data)
+              return index % stap === 0 ? this.getLabelForValue(value) : '';
+            },
+            autoSkip: false,
+            maxRotation: 0,
+            minRotation: 0
+          },
           grid: { display: false }
         },
         y: {
           beginAtZero: true,
+          suggestedMax: 50,
           title: { display: true, text: 'Woordjes per minuut' },
           grid: { color: 'rgba(0,0,0,0.05)' }
         }
@@ -1213,6 +1256,7 @@ function tekenResultatenHoverGrafiek() {
     }
   });
 }
+
 
 
 function toonVoortgang() {
@@ -1281,13 +1325,18 @@ function toonVoortgang() {
 document.addEventListener('DOMContentLoaded', () => {
   const oefentypeInput = document.querySelector('input[name="type"]:checked');
   const oefentype = oefentypeInput ? oefentypeInput.value : null;
-  const resetBtn = document.getElementById('btnReset');
 
-  if (resetBtn) {
+  // ✅ Zoek beide knoppen (popup én resultatenpagina)
+  const resetBtns = [
+    document.getElementById('btnResetPopup'),
+    document.getElementById('btnResetResultaat')
+  ].filter(Boolean);
+
+  // ✅ Koppel de klikfunctie aan beide
+  resetBtns.forEach(resetBtn => {
     resetBtn.addEventListener('click', () => {
       if (oefentype === 'ankers') {
-        // 🔽 Hier komt de nieuwe confirm-regel
-        toonBevestiging('Weet je zeker dat je alle resultaten wilt wissen?', (bevestig) => {
+        toonBevestiging('Weet je zeker dat je alle resultaten wilt wissen?', bevestig => {
           if (bevestig) {
             localStorage.removeItem('resultaten');
             if (window.resultChartInstance) {
@@ -1301,8 +1350,9 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Resultaten worden alleen bijgehouden bij de ankers.');
       }
     });
-  }
+  });
 });
+
 
 function toonBevestiging(boodschap, callback) {
   const overlay = document.getElementById('confirmOverlay');
@@ -1336,4 +1386,26 @@ function toonMelding(boodschap) {
   okBtn.onclick = () => {
     overlay.style.display = 'none';
   };
+}
+
+function wisResultaten() {
+  if (!confirm('Weet je zeker dat je alle resultaten wilt wissen?')) return;
+
+  try {
+    localStorage.removeItem('resultaten');
+    localStorage.removeItem('statistieken');
+  } catch (e) {
+    console.error('Kon resultaten niet wissen:', e);
+  }
+
+  // visueel resetten
+  const resultaatEl = document.getElementById('resultaat');
+  if (resultaatEl) resultaatEl.textContent = '';
+
+  const pillTijd = document.getElementById('pill-tijd');
+  const pillSnel = document.getElementById('pill-snel');
+  if (pillTijd) pillTijd.textContent = 'Tijd: -- s';
+  if (pillSnel) pillSnel.textContent = 'Snelheid: -- ipm';
+
+  alert('Resultaten zijn gewist.');
 }
