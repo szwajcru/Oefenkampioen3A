@@ -19,13 +19,17 @@
       }
     })();
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="index/style.css">
 </head>
 
 <body>
-  <div id="versionTopGlobal">versie <strong>1.11</strong> · <span id="feedbackLink" tabindex="0"
-      title="Vragen of feedback? Vraag pappa Louis">feedback?</span> · <span id="changelogLink" tabindex="0"
-      title="Bekijk wijzigingen">changelog</span></div>
+  <div id="versionTopGlobal">
+    ️versie <strong>1.12</strong> ·
+    💬&nbsp;<span id="feedbackLink" tabindex="0" title="Vragen of feedback? Vraag pappa Louis">feedback?</span> ·
+    📋&nbsp;<span id="changelogLink" tabindex="0" title="Bekijk wijzigingen">changelog</span> ·
+    📊&nbsp;<span id="resultatenLink" tabindex="0" title="Bekijk resultaten">resultaten</span>
+  </div>
 
   <!-- Pagina 1: Intro -->
   <div id="page1" class="page active">
@@ -232,6 +236,20 @@
       <div style="text-align:center; margin-top:10px;">
         <button class="btn" id="btnAgain">opnieuw beginnen</button>
       </div>
+      <div style="text-align:left; margin-top:10px;" class="reset-wrap">
+        <button id="btnReset" class="icon-only" title="">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"
+            style="vertical-align:middle;margin-right:6px;">
+            <path d="M3 6h18M9 6V4h6v2m-7 4v8m4-8v8m4-8v8M5 6h14l-1 14H6L5 6z" />
+          </svg>
+          Resultaten wissen
+        </button>
+      </div>
+      <!-- Resultaatgrafiek -->
+      <div id="chartContainer" style="display:none; text-align:center; margin-top:20px;">
+        <canvas id="resultChart"></canvas>
+      </div>
     </div>
   </div>
 
@@ -259,6 +277,36 @@
         <!-- Wordt door JS gevuld -->
       </tbody>
     </table>
+  </div>
+
+  <!-- Resultaten hover popup -->
+  <div id="resultatenTip" class="infoPopup" style="display:none;">
+    <h2>Resultaten</h2>
+    <div id="resultatenChartContainer">
+      <canvas id="resultatenChart"></canvas>
+    </div>
+    <button id="btnWisResultaten" class="icon-only delete-btn">🗑️ Resultaten wissen</button>
+  </div>
+
+  <!-- Bevestigingspopup voor wissen resultaten -->
+  <div id="confirmOverlay" class="confirm-overlay" style="display:none;">
+    <div class="confirm-box">
+      <p id="confirmMessage">Weet je zeker dat je alle resultaten wilt wissen?</p>
+      <div class="confirm-buttons">
+        <button id="confirmJa">Ja</button>
+        <button id="confirmNee">Nee</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Melding-popup -->
+  <div id="meldingOverlay" class="confirm-overlay" style="display:none;">
+    <div class="confirm-box">
+      <p id="meldingMessage">Alle resultaten zijn gewist.</p>
+      <div class="confirm-buttons">
+        <button id="meldingOk">OK</button>
+      </div>
+    </div>
   </div>
 
   <!-- externe changelog css/js -->

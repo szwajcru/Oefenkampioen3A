@@ -609,11 +609,6 @@ fieldset.optiegroep legend {
   }
 }
 
-
-
-
-
-
 #versionTopGlobal span#feedbackLink {
   text-decoration: underline;
   cursor: pointer;
@@ -834,4 +829,207 @@ fieldset.optiegroep legend {
 
 #page2 #woord.zin-woord {
   color: #000 !important;
+}
+
+#resultChart {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.btn.secondary {
+  background-color: #475569;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, .18);
+}
+
+.btn.secondary:hover {
+  background-color: #334155;
+}
+
+/* --- Resetknop links boven de grafiek --- */
+.reset-top-left {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* Plaats de hele container links boven in de card */
+#page3 .reset-top-left {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+/* Kleine ronde knop met icoon */
+.icon-only-btn {
+  font-size: 20px;
+  border: none;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.icon-only-btn:hover {
+  background-color: var(--ebx-d);
+}
+
+.icon-only-btn:active {
+  transform: translateY(2px);
+}
+
+.reset-label {
+  font-size: 15px;
+  color: #0f172a;
+}
+
+/* standaard verborgen; alleen bij ankers zichtbaar via JS */
+#btnReset {
+  display: none;
+}
+
+#chartContainer:empty {
+  display: none;
+}
+
+#chartContainer {
+  height: auto;
+  margin-top: 20px;
+  text-align: center;
+}
+
+#chartContainer.hidden {
+  display: none !important;
+}
+
+.icon-only {
+  background: none;
+  border: none;
+  color: var(--ebx);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  box-shadow: none;
+}
+
+.icon-only:hover {
+  background: var(--ebx);
+  color: #fff;
+}
+
+
+/* Popup voor resultaten */
+#resultatenTip {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  background: #fff;
+  border: 2px solid var(--ebx);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  z-index: 1000;
+  display: none;
+  width: 480px;
+}
+
+#resultatenChartContainer {
+  max-width: 440px;
+  height: 280px;
+  margin-top: 10px;
+}
+
+#resultatenTip h2 {
+  margin-top: 0;
+  color: var(--ebx);
+  text-align: left;
+}
+
+#versionTopGlobal span#resultatenLink {
+  text-decoration: underline;
+  cursor: pointer;
+  color: #01689B;
+}
+
+#btnWisResultaten {
+  margin-top: 15px;
+  background: var(--ebx);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.15s ease;
+}
+
+#btnWisResultaten:hover {
+  background: #014d73;
+  /* iets donkerder EBX-blauw */
+}
+
+.confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.confirm-box {
+  background: #fff;
+  border: 2px solid var(--ebx);
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 25px 30px;
+  max-width: 360px;
+  text-align: center;
+}
+
+.confirm-box p {
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.confirm-buttons button {
+  background: var(--ebx);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.confirm-buttons button:hover {
+  background: #014d73;
 }

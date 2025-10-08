@@ -1,7 +1,13 @@
 // changelog.js: data + renderlogica
 
 const changelog = [
-  {
+	{
+	  version: '1.12',
+	  changes: [
+		{ type: 'Toegevoegd', description: 'Gebruikers zien nu hun voortgang in een grafiek bij oefentype "ankers".' },
+	  ]
+	},
+	{
     version: '1.11',
     changes: [
       { type: 'Toegevoegd', description: 'Anker woordjes voor anker 2 tm 8' },
