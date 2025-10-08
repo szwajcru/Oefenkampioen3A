@@ -1019,14 +1019,26 @@ function tekenResultaatGrafiek() {
   }
 
   // --- Slimme x-as labeldichtheid ---
-  const total = labels.length;
+  const total = labels.length; // bijv. 51 (0 t/m 50)
   let stap = 1;
   if (total > 60) stap = 6;
-  else if (total > 40) stap = 5;
-  else if (total > 25) stap = 4;
-  else if (total > 15) stap = 3;
-  else if (total > 10) stap = 2;
+  else if (total > 40) stap = 4;
+  else if (total > 25) stap = 2;
+  else stap = 1;
 
+  const xTicks = {
+    stepSize: stap,
+    autoSkip: false,
+    maxRotation: 0,
+    callback: function (value) {
+      // Toon altijd 0 en laatste waarde (bijv. 50)
+      if (value === 0 || value === labels.length - 1 || value % stap === 0) {
+        return value;
+      }
+      return '';
+    }
+  };
+  
   window.resultChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
@@ -1079,22 +1091,22 @@ function tekenResultaatGrafiek() {
         }
       },
       scales: {
-        x: {
-          title: { display: true, text: 'Poging #' },
-          ticks: {
-            callback: function (value, index) {
-              // Toon alleen elke 'stap'-de waarde om de x-as rustig te houden
-              return index % stap === 0 ? this.getLabelForValue(value) : '';
-            },
-            autoSkip: false,
-            maxRotation: 0,
-            minRotation: 0
-          },
-          grid: { display: false }
-        },
+		x: {
+		  beginAtZero: true,
+		  min: 0,
+		  max: labels.length - 1,
+		  ticks: xTicks,
+		  grid: { display: false },
+		  title: {                    // 🔹 dit is de ontbrekende titel
+		        display: true,
+		        text: 'Poging #',
+		        color: '#333',
+		        font: { size: 14, weight: 'bold' }
+		      },
+		},
         y: {
           beginAtZero: true,
-          suggestedMax: 50,
+          suggestedMax: 51,
           title: { display: true, text: 'Woordjes per minuut' },
           grid: { color: 'rgba(0,0,0,0.05)' }
         }
@@ -1172,22 +1184,194 @@ function tekenResultatenHoverGrafiek() {
     window.resultatenChartInstance.destroy();
   }
 
-  // --- Slimme x-as labeldichtheid ---
   const total = labels.length;
   let stap = 1;
   if (total > 60) stap = 6;
   else if (total > 40) stap = 5;
-  else if (total > 25) stap = 4;
-  else if (total > 15) stap = 3;
-  else if (total > 10) stap = 2;
+  else if (total > 25) stap = 5;
+  else stap = 1;
 
-  // --- Chart.js aanroep ---
   window.resultatenChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
       labels: labels,
       datasets: [{
         label: 'Snelheid (IPM)',
+        data: laatste.map(d => d.ipm || 0),
+        borderColor: '#01689B',
+        backgroundColor: 'rgba(1,104,155,0.15)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: '#01689B',
+        pointHoverBackgroundColor: 'red',
+        pointHoverBorderColor: '#ff6666',
+        pointHoverBorderWidth: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          type: 'linear',
+          min: 1,
+          max: 50,
+          beginAtZero: true,
+          title: { display: true, text: 'Metingnummer' },
+          ticks: {
+            stepSize: stap,
+            autoSkip: false,
+            maxRotation: 0,
+            callback: function (value) {
+              if (value === 0 || value === 50 || value % stap === 0) {
+                return value;
+              }
+              return '';
+            }
+          },
+          grid: { display: false }
+        },
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Woordjes per minuut' },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          backgroundColor: '#01689B',
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          callbacks: {
+            title: (tooltipItems) => {
+              const index = tooltipItems[0].dataIndex;
+              const d = laatste[index];
+              return d ? d.datum : '';
+            },
+            label: (context) => {
+              const index = context.dataIndex;
+              const d = laatste[index];
+              if (!d) return '';
+              const goed = d.goed ?? 0;
+              const fout = d.fout ?? 0;
+              const totaal = d.totaal ?? 0;
+              const ipm = d.ipm ?? 0;
+              const percentage = totaal > 0 ? Math.round((goed / totaal) * 100) : 0;
+              return [
+                `Woordjes per minuut: ${ipm}`,
+                `Juist: ${goed}`,
+                `Fout: ${fout}`,
+                `Totaal: ${totaal}`,
+                `Percentage: ${percentage}%`
+              ];
+            },
+            afterBody: () => ['Klik om deze meting te verwijderen']
+          }
+        }
+      },
+      layout: {
+        padding: { right: 20 }
+      },
+      onClick: (evt, activeEls, chart) => {
+        if (!activeEls.length) return;
+
+        const idx = activeEls[0].index;
+
+        // 1️⃣ Volledige resultaten ophalen
+        let alleResultaten = JSON.parse(localStorage.getItem('resultaten') || '[]');
+        if (alleResultaten.length === 0) {
+          const cookie = document.cookie.split('; ').find(r => r.startsWith('resultaten='));
+          if (cookie) {
+            try {
+              alleResultaten = JSON.parse(decodeURIComponent(cookie.split('=')[1]));
+            } catch (e) {
+              alleResultaten = [];
+            }
+          }
+        }
+
+        // 2️⃣ Subset die in de grafiek staat
+        const laatste = alleResultaten
+          .filter(r => r.type === 'ankers')
+          .slice(-50);
+
+        const geselecteerde = laatste[idx];
+        if (!geselecteerde) return;
+
+        // 3️⃣ Bevestiging
+        const bevestig = confirm(
+          `Weet je zeker dat je meting #${idx + 1} (${geselecteerde.datum}, ${geselecteerde.ipm} wpm) wilt verwijderen?`
+        );
+        if (!bevestig) return;
+
+        // 4️⃣ Zoek de echte index in de volledige lijst
+        const echteIndex = alleResultaten.findIndex(r =>
+          r.type === geselecteerde.type &&
+          r.datum === geselecteerde.datum &&
+          r.ipm === geselecteerde.ipm
+        );
+
+        if (echteIndex === -1) {
+          alert('Kon de juiste meting niet vinden.');
+          return;
+        }
+
+        // 5️⃣ Verwijder en update
+        alleResultaten.splice(echteIndex, 1);
+        localStorage.setItem('resultaten', JSON.stringify(alleResultaten));
+        document.cookie = `resultaten=${encodeURIComponent(JSON.stringify(alleResultaten))}; path=/; max-age=31536000; SameSite=Lax`;
+
+        // 6️⃣ Update grafiek
+        chart.data.datasets[0].data.splice(idx, 1);
+        chart.data.labels.splice(idx, 1);
+        chart.update();
+
+        alert(`Meting van ${geselecteerde.datum} is verwijderd.`);
+      },
+      onHover: (event, elements, chart) => {
+        chart.canvas.style.cursor = elements.length ? 'pointer' : 'default';
+      }
+    }
+  });
+}
+
+
+
+function toonVoortgang() {
+  const data = JSON.parse(localStorage.getItem('resultaten') || '[]');
+  if (data.length === 0) {
+    alert('Nog geen resultaten opgeslagen.');
+    return;
+  }
+  document.getElementById('resultChart').style.display = 'block';
+  document.getElementById('btnToonVoortgang').style.display = 'none';
+
+  const labels = data.map(d => d.datum);
+  const snelheden = data.map(d => d.snelheid);
+  const goed = data.map(d => d.score);
+  const totaal = data.map(d => d.totaal);
+
+  const ctx = document.getElementById('resultChart').getContext('2d');
+  if (window.resultChartInstance) window.resultChartInstance.destroy();
+
+
+  let stap = 1;
+  if (total > 60) stap = 6;
+  else if (total > 40) stap = 2;
+  else if (total > 25) stap = 2;
+  else if (total > 15) stap = 1;
+  else if (total > 10) stap = 1;
+
+  window.resultChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Snelheid (woordjes per minuut)',
         data: laatste.map(d => d.ipm || 0),
         borderColor: '#01689B',
         backgroundColor: 'rgba(1,104,155,0.15)',
@@ -1223,101 +1407,16 @@ function tekenResultatenHoverGrafiek() {
               const goed = d.goed ?? 0;
               const totaal = d.totaal ?? 0;
               const ipm = d.ipm ?? 0;
+              const percentage = totaal > 0 ? Math.round((goed / totaal) * 100) : 0;
               return [
-                `Score: ${goed} van ${totaal}`,
-                `Woordjes per minuut: ${ipm}`
+                `Woordjes per minuut: ${ipm}`,
+                `Juist: ${goed} van ${totaal}`,
+                `Percentage: ${percentage}%`
               ];
             }
           }
         }
       },
-      scales: {
-        x: {
-          title: { display: true, text: 'Poging #' },
-          ticks: {
-            callback: function (value, index) {
-              // Toon enkel elke 'stap'-de label (automatisch minder bij veel data)
-              return index % stap === 0 ? this.getLabelForValue(value) : '';
-            },
-            autoSkip: false,
-            maxRotation: 0,
-            minRotation: 0
-          },
-          grid: { display: false }
-        },
-        y: {
-          beginAtZero: true,
-          suggestedMax: 50,
-          title: { display: true, text: 'Woordjes per minuut' },
-          grid: { color: 'rgba(0,0,0,0.05)' }
-        }
-      },
-      interaction: { mode: 'nearest', axis: 'x', intersect: false }
-    }
-  });
-}
-
-
-
-function toonVoortgang() {
-  const data = JSON.parse(localStorage.getItem('resultaten') || '[]');
-  if (data.length === 0) {
-    alert('Nog geen resultaten opgeslagen.');
-    return;
-  }
-  document.getElementById('resultChart').style.display = 'block';
-  document.getElementById('btnToonVoortgang').style.display = 'none';
-
-  const labels = data.map(d => d.datum);
-  const snelheden = data.map(d => d.snelheid);
-  const goed = data.map(d => d.score);
-  const totaal = data.map(d => d.totaal);
-
-  const ctx = document.getElementById('resultChart').getContext('2d');
-  if (window.resultChartInstance) window.resultChartInstance.destroy();
-
-  window.resultChartInstance = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Snelheid (ipm)',
-          data: snelheden,
-          borderColor: '#01689B',
-          backgroundColor: 'rgba(1,104,155,0.1)',
-          fill: true, tension: 0.3
-        },
-        {
-          label: 'Goed gelezen',
-          data: goed,
-          borderColor: '#22c55e',
-          backgroundColor: 'rgba(34,197,94,0.1)',
-          fill: true, tension: 0.3
-        },
-        {
-          label: 'Fout gelezen',
-          data: fout,
-          borderColor: '#22c55e',
-          backgroundColor: 'rgba(34,197,94,0.1)',
-          fill: true, tension: 0.3
-        },
-        {
-          label: 'Totaal gelezen',
-          data: totaal,
-          borderColor: '#94a3b8',
-          backgroundColor: 'rgba(148,163,184,0.1)',
-          fill: true, tension: 0.3
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { position: 'bottom' } },
-      scales: {
-        y: { beginAtZero: true },
-        x: { title: { display: true, text: 'Datum + tijd' } }
-      }
     }
   });
 }

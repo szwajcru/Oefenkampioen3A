@@ -947,7 +947,7 @@ fieldset.optiegroep legend {
   padding: 20px;
   z-index: 100;
   display: none;
-  width: 40%;
+  width: 60%;
   max-width: 600px;
   /* voorkomt te brede weergave op grote schermen */
 }
@@ -972,7 +972,7 @@ fieldset.optiegroep legend {
 
 
 #resultatenChartContainer {
-  max-width: 440px;
+  max-width: 750px;
   height: 280px;
   margin-top: 10px;
 }
