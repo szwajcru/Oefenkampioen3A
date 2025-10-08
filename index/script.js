@@ -1536,35 +1536,67 @@ function toonVoortgang() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  const oefentypeInput = document.querySelector('input[name="type"]:checked');
-  const oefentype = oefentypeInput ? oefentypeInput.value : null;
-
-  // ✅ Zoek beide knoppen (popup én resultatenpagina)
+  // Zoek alle varianten (popup, resultatenpagina, oude id)
   const resetBtns = [
     document.getElementById('btnResetPopup'),
-    document.getElementById('btnResetResultaat')
+    document.getElementById('btnResetResultaat'),
+    document.getElementById('btnReset')
   ].filter(Boolean);
 
-  // ✅ Koppel de klikfunctie aan beide
-  resetBtns.forEach(resetBtn => {
+  // Koppel de klikfunctie aan alle resetknoppen
+  resetBtns.forEach((resetBtn) => {
     resetBtn.addEventListener('click', () => {
-      if (oefentype === 'ankers') {
-        toonBevestiging('Weet je zeker dat je alle resultaten wilt wissen?', bevestig => {
-          if (bevestig) {
-            localStorage.removeItem('resultaten');
-            if (window.resultChartInstance) {
-              window.resultChartInstance.destroy();
-              window.resultChartInstance = null;
-            }
-            toonMelding('Alle resultaten zijn gewist.');
-          }
-        });
-      } else {
-        alert('Resultaten worden alleen bijgehouden bij de ankers.');
-      }
+      // Bevestiging tonen
+      toonBevestiging('Weet je zeker dat je alle resultaten wilt wissen?', (bevestig) => {
+        if (!bevestig) {
+          return;
+        }
+
+        // 1) Verwijder opgeslagen resultaten
+        localStorage.removeItem('resultaten');
+
+        // 2) Vernietig beide Chart.js instanties (resultatenpagina + hover)
+        if (window.resultChartInstance) {
+          window.resultChartInstance.destroy();
+          window.resultChartInstance = null;
+        }
+        if (window.resultatenChartInstance) {
+          window.resultatenChartInstance.destroy();
+          window.resultatenChartInstance = null;
+        }
+
+        // 3) Canvassen leegmaken (voorkomt oude pixels)
+        const resultChartCanvas = document.getElementById('resultChart');
+        if (resultChartCanvas && resultChartCanvas.getContext) {
+          const ctx = resultChartCanvas.getContext('2d');
+          ctx.clearRect(0, 0, resultChartCanvas.width, resultChartCanvas.height);
+        }
+
+        const hoverChartCanvas = document.getElementById('resultatenChart');
+        if (hoverChartCanvas && hoverChartCanvas.getContext) {
+          const hctx = hoverChartCanvas.getContext('2d');
+          hctx.clearRect(0, 0, hoverChartCanvas.width, hoverChartCanvas.height);
+        }
+
+        // 4) Hoverpopup verbergen
+        const tip = document.getElementById('resultatenTip');
+        if (tip) {
+          tip.style.display = 'none';
+        }
+
+        // 5) Container met grafiek verbergen (optioneel)
+        const chartContainer = document.getElementById('chartContainer');
+        if (chartContainer) {
+          chartContainer.classList.add('hidden');
+        }
+
+        // 6) Terugkoppeling
+        toonMelding('Alle resultaten zijn gewist.');
+      });
     });
   });
 });
+
 
 
 function toonBevestiging(boodschap, callback) {
