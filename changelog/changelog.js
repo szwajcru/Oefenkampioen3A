@@ -2,6 +2,12 @@
 
 const changelog = [
 	{
+	  version: '1.13',
+	  changes: [
+		{ type: 'Toegevoegd', description: 'Optie om foute metingen te verwijderen.' },
+	  ]
+	},
+  {
 	  version: '1.12',
 	  changes: [
 		{ type: 'Toegevoegd', description: 'Gebruikers zien nu hun voortgang in een grafiek bij oefentype "ankers".' },
