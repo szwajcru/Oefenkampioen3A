@@ -51,7 +51,7 @@
       'we zingen een lied',
       'ik werk in het boek',
       'ik zit naast jou',
-      'ik krijg een sticker',
+      'ik krijg een stempel',
       'de meester lacht',
       'ik zwaai dag juf',
 
@@ -70,10 +70,10 @@
       'het varken rolt in de modder',
       'de geit eet gras',
       'de uil is wakker',
-      'de haan kraait vroeg',
-      'de bij zoemt zacht',
-      'de slak kruipt traag',
-      'het paard rent snel',
+      'de haan kraait',
+      'de bij zoemt',
+      'de slak kruipt',
+      'het paard rent',
 
       // extra
       'klein is fijn!',
