@@ -1399,3 +1399,22 @@ fieldset.optiegroep legend {
 .meldingKnoppen:has(button:only-child) {
   justify-content: center;
 }
+
+/* Compactere 'opnieuw beginnen' knop */
+#btnAgain {
+  font-size: 16px;        /* was 20px */
+  padding: 10px 22px;     /* was 14px 36px */
+  border-radius: 10px;    /* iets subtieler */
+  box-shadow: 0 3px 8px rgba(0,0,0,0.22); /* iets lichter */
+}
+
+#btnAgain:hover {
+  transform: scale(1.03); /* was 1.05 */
+}
+
+/* Bijtje-pictogram iets kleiner en dichterbij de knop */
+#btnAgain::after {
+  font-size: 20px;        /* was 24px */
+  top: 6px;               /* was 8px */
+  left: calc(100% + 6px); /* was + 8px */
+}

@@ -43,6 +43,17 @@
       'de bel gaat',
       'ik ben ik',
       'jij bent jij',
+      'ik maak een som',
+      'ik pak mijn pen',
+      'ik schrijf mijn naam',
+      'ik tel tot tien',
+      'ik speel op het plein',
+      'we zingen een lied',
+      'ik werk in het boek',
+      'ik zit naast jou',
+      'ik krijg een sticker',
+      'de meester lacht',
+      'ik zwaai dag juf',
 
       // dieren
       'de kat zit op de stoel',
@@ -51,6 +62,18 @@
       'de koe zegt boe',
       'een mier is klein',
       'ik zoek beer',
+      'de vis zwemt snel',
+      'de vogel vliegt hoog',
+      'de eend zegt kwak',
+      'de kikker springt ver',
+      'het schaap is wit',
+      'het varken rolt in de modder',
+      'de geit eet gras',
+      'de uil is wakker',
+      'de haan kraait vroeg',
+      'de bij zoemt zacht',
+      'de slak kruipt traag',
+      'het paard rent snel',
 
       // extra
       'klein is fijn!',
@@ -60,13 +83,36 @@
       'de bal is rond',
       'fietsen is leuk',
       'een braam is lekker',
+      'hoe oud ben jij',
+      'ik kan dat!',
+      'dat is knap!',
+      'ik ben blij!',
+      'ik ben jarig!',
+      'kom je mee?',
+      'ik tel mee',
+      'ik zie jou',
+      'we gaan naar buiten',
+      'het regent zacht',
+      'de zon schijnt',
+      'dat is mijn tas',
+      'ik heb dorst',
 
-      //Verzorging
+      // verzorging
       'was je handen',
       'poets je tanden',
       'kam je haren',
-
-
+      'doe je jas aan',
+      'strik je veters',
+      'trek je sokken aan',
+      'ruim je tas op',
+      'neem een slok water',
+      'veeg je mond',
+      'snuit je neus',
+      'doe je pyjama aan',
+      'ga op tijd naar bed',
+      'pak je kam',
+      'smeer je in',
+      'knip je nagels',
     ]
   }
 
@@ -1067,9 +1113,9 @@ function tekenResultaatGrafiek() {
           grid: { display: false },
           title: {
             display: true,
-            text: 'Poging #',
+            text: 'Meetmoment #',
             color: '#333',
-            font: { size: 14, weight: 'bold' }
+            font: { size: 14 }
           }
         },
         y: {
@@ -1269,7 +1315,7 @@ function tekenResultatenHoverGrafiek() {
           min: 1,
           max: 50,
           beginAtZero: true,
-          title: { display: true, text: 'Metingnummer' },
+          title: { display: true, text: 'Meetmoment #' },
           ticks: {
             autoSkip: true,          // 🔹 Chart.js bepaalt automatisch welke labels passen
             maxTicksLimit: 10,       // 🔹 toon max. 10 labels
