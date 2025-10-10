@@ -799,9 +799,9 @@
     }
 
     const tijdMs = Date.now() - startTijd;
-    const tijdSeconden = Math.max(1, Math.round(tijdMs / 1000)); // voorkom delen door 0
+    const tijdSeconden = Math.max(1, Math.round(tijdMs / 1000));
   
-    // Gebruik werkelijke getoonde aantal (fallback: items.length)
+    // ✅ Gebruik het werkelijke aantal getoonde woorden, niet de lijstlengte
     const totaal = getoond > 0 ? getoond : (items.length || 1);
     const veiligScore = Math.min(score, totaal);
     const fout = Math.max(0, totaal - veiligScore);
