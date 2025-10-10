@@ -799,11 +799,16 @@
     }
 
     const tijdMs = Date.now() - startTijd;
-    const tijdSeconden = Math.round(tijdMs / 1000);
-    const percentage = Math.round((score / items.length) * 100);
-    const ipm = Math.round((score / tijdSeconden) * 60);
-    const goed = score;
-    const fout = items.length - goed;
+    const tijdSeconden = Math.max(1, Math.round(tijdMs / 1000)); // voorkom delen door 0
+  
+    // Gebruik werkelijke getoonde aantal (fallback: items.length)
+    const totaal = getoond > 0 ? getoond : (items.length || 1);
+    const veiligScore = Math.min(score, totaal);
+    const fout = Math.max(0, totaal - veiligScore);
+    const percentage = Math.min(100, Math.round((veiligScore / totaal) * 100));
+    const ipm = Math.round((veiligScore / tijdSeconden) * 60);
+    const goed = veiligScore;
+    
     let msg = ''; if (percentage < 40) msg = 'Goed geprobeerd, herhalen helpt!'; else if (percentage < 70) msg = 'Mooi zo, je bent op de goede weg.'; else if (percentage < 90) msg = 'Top! Nog even oefenen en je hebt het helemaal.'; else msg = 'Geweldig! Erg knap gedaan.';
 
     // basisresultaattekst
