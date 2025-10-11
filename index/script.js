@@ -1140,9 +1140,9 @@ function renderResultaatGrafiekOp(canvasId, instanceKey = '_chart') {
               const d = laatste[ctx.dataIndex];
               if (!d) return '';
               const goed = d.goed ?? 0, fout = d.fout ?? 0, totaal = d.totaal ?? 0, ipm = d.ipm ?? 0;
-              const fout = d.fout ?? 0,
-              const totaal = goed+fout;
-              const perc = d.percentage;
+              fout = d.fout ?? 0,
+              totaal = goed+fout;
+              perc = d.percentage;
               return [
                 `Woordjes per minuut: ${ipm}`,
                 `Juist: ${goed}`,
