@@ -1608,8 +1608,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (aangepast > 0) {
       localStorage.setItem(key, JSON.stringify(data, null, 2));
       console.log(`✔️ ${aangepast} meting(en) in localStorage gecorrigeerd.`);
-    } else {
-      console.log('✅ Alle metingen in localStorage zijn al correct.');
     }
   } catch (err) {
     console.error('Fout bij cookiecorrectie:', err);
