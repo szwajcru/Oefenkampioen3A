@@ -1553,3 +1553,9 @@ function wisResultaten() {
 
   alert('Resultaten zijn gewist.');
 }
+
+// ===== COOKIE / RESULTAAT CORRECTIE =====
+document.addEventListener('DOMContentLoaded', () => {
+  ...
+});
+
