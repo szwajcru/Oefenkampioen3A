@@ -1556,6 +1556,62 @@ function wisResultaten() {
 
 // ===== COOKIE / RESULTAAT CORRECTIE =====
 document.addEventListener('DOMContentLoaded', () => {
-  ...
-});
+  try {
+    const key = 'resultaten';
+    const data = JSON.parse(localStorage.getItem(key) || '[]');
+    let aangepast = 0;
 
+    data.forEach(r => {
+      if (r.type === 'ankers') {
+        let goed = Number(r.goed) || 0;
+        let fout = Number(r.fout) || 0;
+        let totaal = Number(r.totaal) || 0;
+        let huidigPerc = Number(r.percentage) || 0;
+        let gewijzigd = false;
+
+        // 1️⃣ Controleer of totaal klopt met goed + fout
+        const berekendTotaal = goed + fout;
+        if (totaal !== berekendTotaal) {
+          // als totaal kleiner is dan goed, verhogen we totaal
+          if (totaal < goed) {
+            totaal = berekendTotaal;
+          } else if (totaal > berekendTotaal && fout === 0) {
+            // als totaal groter is dan goed maar fout 0, stel fout = totaal - goed
+            fout = totaal - goed;
+          } else {
+            totaal = berekendTotaal;
+          }
+          r.totaal = totaal;
+          r.fout = fout;
+          gewijzigd = true;
+        }
+
+        // 2️⃣ Controleer of fout klopt met totaal - goed
+        const berekendFout = totaal - goed;
+        if (fout !== berekendFout) {
+          fout = berekendFout;
+          r.fout = fout;
+          gewijzigd = true;
+        }
+
+        // 3️⃣ Herbereken percentage
+        const correctPerc = totaal > 0 ? Math.round((goed / totaal) * 100) : 0;
+        if (huidigPerc !== correctPerc) {
+          r.percentage = correctPerc;
+          gewijzigd = true;
+        }
+
+        if (gewijzigd) aangepast++;
+      }
+    });
+
+    if (aangepast > 0) {
+      localStorage.setItem(key, JSON.stringify(data, null, 2));
+      console.log(`✔️ ${aangepast} meting(en) in localStorage gecorrigeerd.`);
+    } else {
+      console.log('✅ Alle metingen in localStorage zijn al correct.');
+    }
+  } catch (err) {
+    console.error('Fout bij cookiecorrectie:', err);
+  }
+});
