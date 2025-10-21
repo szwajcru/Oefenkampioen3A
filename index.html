@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Ankers & Klanken oefenen helpt kinderen spelenderwijs beter lezen. Oefen met ankers, klanken, functiewoorden en zinnetjes in een leuke en overzichtelijke omgeving." />
+  <meta name="description"
+    content="Ankers & Klanken oefenen helpt kinderen spelenderwijs beter lezen. Oefen met ankers, klanken, functiewoorden en zinnetjes in een leuke en overzichtelijke omgeving." />
   <meta name="robots" content="index, follow" />
 
   <!-- Forceer HTTPS voor alle (per ongeluk) http-resources -->
@@ -32,16 +33,40 @@
       }
     })();
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init('ebuAY4czJubG6YOVY');
+    })();
+  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="index/style.css">
+
+  <!-- Nieuwe losse module voor de resultaten-grafiek -->
+  <script defer src="index/resultaatGrafiek.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (document.getElementById('resultatenChart')) {
+        window.renderResultaatGrafiekOp('resultatenChart', 'hoverChart');
+      }
+      if (document.getElementById('resultChart')) {
+        window.renderResultaatGrafiekOp('resultChart', 'resultPageChart');
+      }
+    });
+  </script>
+
 </head>
 
 <body>
   <div id="versionTopGlobal">
-    ️versie <strong>1.13</strong> ·
-    💬&nbsp;<span id="feedbackLink" tabindex="0" title="Vragen of feedback? Vraag pappa Louis">feedback?</span> ·
-    📋&nbsp;<span id="changelogLink" tabindex="0" title="Bekijk wijzigingen">changelog</span> ·
-    📊&nbsp;<span id="resultatenLink" tabindex="0" title="Bekijk resultaten">resultaten</span>
+    ️📋<strong></strong>&nbsp;<span id="changelogLink" tabindex="0" title="">versie 1.15</span> ·
+    💬&nbsp; <span id="feedbackLink" tabindex="0" title="">Feedback</span> ·
+    📚📖&nbsp;<span id="mijnHerkansjesLink" tabindex="0" title="Bekijk woordjes die je lastig vond">Mijn
+      herkansjes</span> ·
+    📊&nbsp;<span id="resultatenLink" tabindex="0" title="Bekijk de resultaten">mijn resultaten</span> ·
   </div>
 
   <!-- Pagina 1: Intro -->
@@ -51,8 +76,9 @@
       <div class="intro">
         <p>⚓️ <strong>Anker klaar? Oefenen maar!</strong></p>
         <p>Kies het oefentype.</p>
-        <p>Bij <em>ankers</em> oefen je volledige woorden.</p>
+        <p>Bij <em>ankers</em> oefen je de normale of uitdagende (snuffel) woorden.</p>
         <p>Bij <em>klanken</em> kies je de klanken waar je extra op wil oefenen.</p>
+        <p>Bij <em>lezen</em> oefen je functiewoorden en zinnetjes.</p>
         <p><strong>Jij bent de coach:</strong> klik steeds of het woord goed of fout gelezen is.</p>
         <p>Veel oefenplezier!</p>
       </div>
@@ -99,13 +125,32 @@
               <input type="radio" name="lezenCat" value="functiewoorden" checked>
               Functiewoorden
             </label>
+
+            <!-- Vergrootglas-knop -->
+            <button id="btnFunctiewoordjes" class="btnReset" title="Bekijk alle functiewoordjes">
+              <svg xmlns="https://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M10 2a8 8 0 0 1 6.32 12.906l5.387 5.388-1.414 1.414-5.388-5.387A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
+              </svg>
+            </button>
           </div>
+
 
           <div class="row lezen-row" data-lezen="zinnetjes" tabindex="0">
             <label>
               <input type="radio" name="lezenCat" value="zinnetjes">
               Zinnetjes
             </label>
+
+
+            <!-- Vergrootglas-knop -->
+            <button id="btnZinnetjes" class="btnReset" title="Bekijk alle zinnetjes">
+              <svg xmlns="https://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M10 2a8 8 0 0 1 6.32 12.906l5.387 5.388-1.414 1.414-5.388-5.387A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
+              </svg>
+            </button>
+
           </div>
 
           <div style="font-size:14px; color:#64748b;">
@@ -113,37 +158,138 @@
           </div>
         </fieldset>
 
-
-
-        <!-- Ankers (alleen voor Ankers) -->
         <fieldset class="optiegroep" id="fieldset-anker">
           <legend>Kies een anker</legend>
-          <div class="row anker-row" data-anker="1" tabindex="0">
-            <label><input type="radio" name="anker" value="1" checked> Anker 1</label>
-          </div>
-          <div class="row anker-row" data-anker="2" tabindex="0">
-            <label><input type="radio" name="anker" value="2"> Anker 2</label>
-          </div>
-          <div class="row anker-row" data-anker="3" tabindex="0">
-            <label><input type="radio" name="anker" value="3"> Anker 3</label>
-          </div>
-          <div class="row anker-row" data-anker="4" tabindex="0">
-            <label><input type="radio" name="anker" value="4"> Anker 4</label>
-          </div>
-          <div class="row anker-row" data-anker="5" tabindex="0">
-            <label><input type="radio" name="anker" value="5"> Anker 5</label>
-          </div>
-          <div class="row anker-row" data-anker="6" tabindex="0">
-            <label><input type="radio" name="anker" value="6"> Anker 6</label>
-          </div>
-          <div class="row anker-row" data-anker="7" tabindex="0">
-            <label><input type="radio" name="anker" value="7"> Anker 7</label>
-          </div>
-          <div class="row anker-row" data-anker="8" tabindex="0">
-            <label><input type="radio" name="anker" value="8"> Anker 8</label>
-          </div>
-          <div style="font-size:14px; color:#64748b;">Tip: hover over een anker/klanken om de woordjes te zien.</div>
+
+          <table class="anker-tabel">
+            <thead>
+              <tr>
+                <th>Anker ⚓️</th>
+                <th>Modus</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 8 rijen -->
+              <tr data-anker="1">
+                <td><label><input type="radio" name="anker" value="1">Anker 1</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="1">
+                    <input type="radio" id="a1n" name="mode" value="1-normaal">
+                    <label for="a1n">Normaal</label>
+                    <input type="radio" id="a1s" name="mode" value="1-snuffel">
+                    <label for="a1s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="2">
+                <td><label><input type="radio" name="anker" value="2">Anker 2</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="2">
+                    <input type="radio" id="a2n" name="mode" value="2-normaal">
+                    <label for="a2n">Normaal</label>
+                    <input type="radio" id="a2s" name="mode" value="2-snuffel">
+                    <label for="a2s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="3">
+                <td><label><input type="radio" name="anker" value="3">Anker 3</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="3">
+                    <input type="radio" id="a3n" name="mode" value="3-normaal">
+                    <label for="a3n">Normaal</label>
+                    <input type="radio" id="a3s" name="mode" value="3-snuffel">
+                    <label for="a3s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="4">
+                <td><label><input type="radio" name="anker" value="4">Anker 4</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="4">
+                    <input type="radio" id="a4n" name="mode" value="4-normaal">
+                    <label for="a4n">Normaal</label>
+                    <input type="radio" id="a4s" name="mode" value="4-snuffel">
+                    <label for="a4s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="5">
+                <td><label><input type="radio" name="anker" value="5">Anker 5</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="5">
+                    <input type="radio" id="a5n" name="mode" value="5-normaal">
+                    <label for="a5n">Normaal</label>
+                    <input type="radio" id="a5s" name="mode" value="5-snuffel">
+                    <label for="a5s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="6">
+                <td><label><input type="radio" name="anker" value="6">Anker 6</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="6">
+                    <input type="radio" id="a6n" name="mode" value="6-normaal">
+                    <label for="a6n">Normaal</label>
+                    <input type="radio" id="a6s" name="mode" value="6-snuffel">
+                    <label for="a6s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="7">
+                <td><label><input type="radio" name="anker" value="7">Anker 7</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="7">
+                    <input type="radio" id="a7n" name="mode" value="7-normaal">
+                    <label for="a7n">Normaal</label>
+                    <input type="radio" id="a7s" name="mode" value="7-snuffel">
+                    <label for="a7s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="8">
+                <td><label><input type="radio" name="anker" value="8">Anker 8</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="8">
+                    <input type="radio" id="a8n" name="mode" value="8-normaal">
+                    <label for="a8n">Normaal</label>
+                    <input type="radio" id="a8s" name="mode" value="8-snuffel">
+                    <label for="a8s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="9">
+                <td><label><input type="radio" name="anker" value="9">Herkansjes oefenen</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="9">
+                    <input type="radio" id="a9n" name="mode" value="9-">
+                    <label for="a9n">Mijn herkansjes</label>
+                  </div>
+                <td></td>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="tip">Tip: hover over een anker om de woordjes te zien.</div>
         </fieldset>
+
 
         <!-- Ankers (aantal woorden of minuten) -->
         <fieldset class="optiegroep" id="fieldset-modus">
@@ -250,15 +396,15 @@
         <button class="btn" id="btnAgain">opnieuw beginnen</button>
       </div>
       <div style="text-align:left; margin-top:10px;" class="reset-wrap">
-        <button id="btnReset" class="icon-only" data-tooltip="Resultaat verwijderen">
+        <button id="btnReset" class="icon-only has-label" aria-label="Resultaat verwijderen">
           <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="#3391c3" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"
-            style="vertical-align:middle;margin-right:6px;">
+            stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 6 5 6 21 6"></polyline>
             <path d="M19 6l-1 14H6L5 6m5-2h4a1 1 0 0 1 1 1v1H9V5a1 1 0 0 1 1-1z"></path>
             <line x1="10" y1="11" x2="10" y2="17"></line>
             <line x1="14" y1="11" x2="14" y2="17"></line>
           </svg>
+          <span class="label">Resultaat verwijderen</span>
         </button>
 
       </div>
@@ -275,9 +421,6 @@
   <div id="tapFeedback" aria-hidden="true">
     <div class="badge"></div>
   </div>
-
-  <!-- Feedback -->
-  <div id="feedbackTip">Vragen of feedback? Vraag pappa Louis</div>
 
   <!-- Changelog -->
   <div id="changelogTip">
@@ -296,33 +439,16 @@
   </div>
 
   <!-- Resultaten hover popup -->
-<div id="resultatenTip" class="resultaten-popup">
-      <h2 class="resultaten-title">Resultaten</h2>
+  <div id="resultatenTip" class="resultaten-popup">
+    <h2 class="resultaten-title">Resultaten</h2>
 
+    <!-- Chart-container -->
     <div id="resultatenChartContainer">
       <canvas id="resultatenChart"></canvas>
     </div>
 
-
-    <div class="reset-wrap" style="text-align:left; margin-top:10px;">
-      <button id="btnResetPopup" class="icon-only" data-tooltip="Resultaten wissen">
-        <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3391c3"
-          stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"
-          style="vertical-align:middle;margin-right:6px;">
-          <polyline points="3 6 5 6 21 6"></polyline>
-          <path d="M19 6l-1 14H6L5 6m5-2h4a1 1 0 0 1 1 1v1H9V5a1 1 0 0 1 1-1z"></path>
-          <line x1="10" y1="11" x2="10" y2="17"></line>
-          <line x1="14" y1="11" x2="14" y2="17"></line>
-        </svg>
-      </button>
-    </div>
-
-
+    <!-- Knoppen onderaan -->
   </div>
-  </div>
-
-
-
 
   <!-- Bevestigingspopup voor wissen resultaten -->
   <div id="confirmOverlay" class="confirm-overlay" style="display:none;">
@@ -348,6 +474,9 @@
   <!-- externe changelog css/js -->
   <link rel="stylesheet" href="changelog/changelog.css">
   <script src="changelog/changelog.js"></script>
+  <script src="index/ankers.js"></script>
+  <script src="index/klanken.js"></script>
+  <script src="index/lezen.js"></script>
   <script src="index/script.js"></script>
 
 
@@ -362,6 +491,134 @@
     </div>
   </div>
 
+
+  <!-- Popup voor oefenherkansjes -->
+  <div id="popupHerkansjes" class="popup-overlay" style="display:none;">
+    <div class="popup-card">
+      <div class="popup-header">
+        <h2>Mijn herkansjes</h2>
+        <button id="btnSluitHerkansjes" class="btn-close">×</button>
+      </div>
+      <div id="popupHerkansjesContent" class="popup-body">
+        <p>Geen oefenherkansjes gevonden.</p>
+      </div>
+      <div class="popup-footer">
+        <button id="btnOkHerkansjes" class="btn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup voor Mijn Herkansjes -->
+  <div id="herkansjesPopup" style="display:none;">
+    <div class="resultCard">
+      <h2>Mijn herkansjes 💪</h2>
+      <div id="herkansjesList"></div>
+      <div style="text-align:right; margin-top: 12px;">
+        <button id="btnMijnHerkansjesSluiten" class="btn secondary">Sluiten</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Popup zinnetjes -->
+  <div id="zinnetjesPopup" class="popup">
+    <div class="popup-content popup-zinnetjes">
+      <h3 class="popup-title">Alle zinnetjes</h3>
+
+      <div class="popup-scroll">
+        <table class="popup-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Zin</th>
+            </tr>
+          </thead>
+          <tbody id="zinnetjesList"></tbody>
+        </table>
+      </div>
+
+      <div class="popup-buttons">
+        <button id="btnSluitZinnetjes" class="btnPopup">Sluiten</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup functiewoordjes -->
+  <div id="functiewoordjesPopup" class="popup">
+    <div class="popup-content popup-functiewoordjes">
+      <h3 class="popup-title">Alle functiewoordjes</h3>
+      <div class="popup-scroll">
+        <table class="popup-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Woord</th>
+            </tr>
+          </thead>
+          <tbody id="functiewoordjesList"></tbody>
+        </table>
+      </div>
+      <div class="popup-buttons">
+        <button id="btnSluitFunctiewoordjes" class="btnPopup">Sluiten</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="feedbackForm" class="popup" style="display:none;">
+    <div class="popup-content popup-feedback">
+      <div class="feedback-header">
+        <img src="favicon-32x32.png" alt="Klankenfontein logo" class="feedback-icon">
+        <h3>Feedback geven 💬</h3>
+      </div>
+
+      <form id="formFeedback" class="feedback-layout">
+        <div class="form-row">
+          <label for="user_name">Naam</label>
+          <input type="text" id="user_name" name="user_name" required>
+        </div>
+        <div class="form-row">
+          <label for="user_email">E-mail</label>
+          <input type="email" id="user_email" name="user_email" required>
+        </div>
+        <div class="form-row">
+          <label for="message">Bericht</label>
+          <textarea id="message" name="message" rows="15" required></textarea>
+        </div>
+        <div class="form-buttons">
+          <button type="submit" class="btn">Versturen</button>
+          <button type="button" id="btnCloseFeedback" class="btn">Sluiten</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Popup Woordenlijst (zelfde layout als Mijn Herkansjes) -->
+  <div id="woordenPopup" class="resultCard" style="display:none;">
+    <div class="card">
+      <button id="closePopup" class="popup-close">×</button>
+      <h3 id="popupTitle" style="text-align:center;">Woordenlijst</h3>
+      <div id="popupScroll" style="max-height:70vh; overflow-y:auto; margin-top:10px;">
+        <h4 id="popupNormaalTitel" style="color:var(--ebx); margin-bottom:4px;">Normale woorden</h4>
+        <table id="popupTableNormaal" class="woordenTabel">
+          <tbody></tbody>
+        </table>
+        <h4 id="popupSnuffelTitel" style="color:var(--ebx); margin-top:16px; margin-bottom:4px;">Snuffel woorden</h4>
+        <table id="popupTableSnuffel" class="woordenTabel">
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup voor resultaten per anker -->
+  <div id="resultatenPopup">
+    <div class="popup-card">
+      <button class="popup-close">×</button>
+      <div class="popupTitle">Resultaten – Anker 1</div>
+      <canvas></canvas>
+    </div>
+  </div>
 
 </body>
 

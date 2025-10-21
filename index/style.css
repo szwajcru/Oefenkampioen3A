@@ -832,7 +832,7 @@ fieldset.optiegroep legend {
 }
 
 #resultChart {
-  animation: fadeIn 0.6s ease forwards;
+  height:300px;
 }
 
 @keyframes fadeIn {
@@ -937,9 +937,8 @@ fieldset.optiegroep legend {
 /* Popup voor resultaten */
 #resultatenTip {
   position: fixed;
-  top: 80px;
-  left: 30%;
-  right: 20px;
+  top: 350px;
+  left: 50%;
   background: #fff;
   border: 2px solid var(--ebx);
   border-radius: 10px;
@@ -949,27 +948,29 @@ fieldset.optiegroep legend {
   display: none;
   width: 60%;
   max-width: 600px;
+  height:80vh;
   /* voorkomt te brede weergave op grote schermen */
 }
 
-/* 📱 Mobiel: maak popup bijna schermvullend */
+/* 📱 Mobiel: popup schaalt automatisch mee */
 @media (max-width: 768px) {
   #resultatenTip {
-    left: 5%;
-    right: 5%;
-    width: 90%;
-    top: 60px;
-    padding: 15px;
+    left: 50%;
+    width: 100%;
+    max-height: 90vh;
+    height: auto;              /* automatische hoogte */
+    top: 310px;
+    padding: 14px;
+    overflow-y: auto;          /* scrolbaar als het te hoog wordt */
   }
 
   #resultatenTip canvas {
     width: 100% !important;
-    height: 300px !important;
-    /* meer hoogte op mobiel */
+    height: auto !important;
+    aspect-ratio: 4 / 3;       /* juiste verhoudingen */
+    max-height: 300px;         /* limiet zodat hij niet te groot wordt */
   }
 }
-
-
 
 #resultatenChartContainer {
   max-width: 750px;
@@ -1179,7 +1180,6 @@ fieldset.optiegroep legend {
   left: 50%;
   transform: translateX(-50%);
   border-width: 6px;
-  border-style: solid;
   border-color: #01689B transparent transparent transparent;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
@@ -1402,19 +1402,1937 @@ fieldset.optiegroep legend {
 
 /* Compactere 'opnieuw beginnen' knop */
 #btnAgain {
-  font-size: 16px;        /* was 20px */
-  padding: 10px 22px;     /* was 14px 36px */
-  border-radius: 10px;    /* iets subtieler */
-  box-shadow: 0 3px 8px rgba(0,0,0,0.22); /* iets lichter */
+  font-size: 16px;
+  /* was 20px */
+  padding: 10px 22px;
+  /* was 14px 36px */
+  border-radius: 10px;
+  /* iets subtieler */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22);
+  /* iets lichter */
 }
 
 #btnAgain:hover {
-  transform: scale(1.03); /* was 1.05 */
+  transform: scale(1.03);
+  /* was 1.05 */
 }
 
 /* Bijtje-pictogram iets kleiner en dichterbij de knop */
 #btnAgain::after {
-  font-size: 20px;        /* was 24px */
-  top: 6px;               /* was 8px */
-  left: calc(100% + 6px); /* was + 8px */
+  font-size: 20px;
+  /* was 24px */
+  top: 6px;
+  /* was 8px */
+  left: calc(100% + 6px);
+  /* was + 8px */
+}
+
+/* ===== Toggle-segment-stijl voor Ankers ===== */
+.anker-tabel {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 15px;
+}
+
+.anker-tabel th {
+  text-align: center;
+  color: var(--ebx);
+  font-weight: 600;
+  border-bottom: 2px solid #cbd5e1;
+  padding-bottom: 6px;
+}
+
+.anker-tabel td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.toggle-segment {
+  display: inline-flex;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.toggle-segment input {
+  display: none;
+}
+
+.toggle-segment label {
+  padding: 5px 7px;
+  font-size: 12px;
+  cursor: pointer;
+  background-color: #f8fafc;
+  color: var(--ebx);
+  border-right: 1px solid #cbd5e1;
+  transition: background-color 0.2s, color 0.2s;
+  user-select: none;
+}
+
+.toggle-segment label:last-child {
+  border-right: none;
+}
+
+.toggle-segment input:checked+label {
+  background-color: var(--ebx);
+  color: white;
+}
+
+.toggle-segment label:hover {
+  background-color: #e2e8f0;
+}
+
+.anker-tabel input[type="radio"][name="anker"] {
+  accent-color: var(--ebx);
+  transform: scale(1.1);
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.tip {
+  font-size: 14px;
+  color: #64748b;
+  margin-top: 8px;
+}
+
+.anker-tabel th {
+  border-bottom: 2px solid #cbd5e1;
+  padding-bottom: 6px;
+  font-weight: 600;
+  color: #0369a1;
+}
+
+.anker-tabel th:first-child {
+  text-align: left;
+  padding-left: 10px;
+  width: 45%;
+}
+
+.anker-tabel th:last-child {
+  text-align: left;
+  padding-left: 62px;
+  /* schuif Modus visueel naar links */
+}
+
+/* Verberg radiobuttons van de ankers, maar behoud functionaliteit */
+.anker-tabel input[type="radio"][name="anker"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: auto;
+  /* laat klikken via het label toe */
+}
+
+
+/*foute woordjes */
+.ebx-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.ebx-popup-content {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
+  width: 640px;
+  max-width: 95%;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  animation: popupIn 0.2s ease-out;
+}
+
+@keyframes popupIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.ebx-popup-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #01689B;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.ebx-popup-body {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 20px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.ebx-popup-body table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ebx-popup-body th {
+  background-color: #f0f4f7;
+  color: #01689B;
+  font-weight: bold;
+  padding: 8px;
+  border-bottom: 1px solid #c8d8e2;
+  text-align: left;
+}
+
+.ebx-popup-body td {
+  padding: 8px;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: top;
+}
+
+.ebx-popup-body td small {
+  color: #777;
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.ebx-popup-footer {
+  text-align: center;
+}
+
+.ebx-button {
+  background-color: #01689B;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.15s;
+}
+
+.ebx-button:hover {
+  background-color: #005a8b;
+}
+
+/* === Centrale popup voor oefenherkansjes === */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.popup-card {
+  background: #fff;
+  border-radius: 14px;
+  border: 2px solid var(--ebx);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  width: clamp(320px, 90vw, 680px);
+  padding: 0;
+  animation: fadeInPopup 0.2s ease-out forwards;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 10px 16px;
+  border-radius: 12px 12px 0 0;
+}
+
+.popup-header h2 {
+  color: var(--ebx);
+  margin: 0;
+  font-size: 18px;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.btn-close:hover {
+  color: #334155;
+}
+
+.popup-body {
+  padding: 12px 16px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.popup-body table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.popup-body th,
+.popup-body td {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.popup-body th {
+  background: #f1f5f9;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.popup-footer {
+  text-align: right;
+  padding: 10px 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn {
+  background: var(--ebx);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn:hover {
+  background: #014f7d;
+}
+
+.btn-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px;
+  transition: transform 0.1s ease;
+}
+
+.btn-delete:hover {
+  transform: scale(1.2);
+}
+
+.popup-empty {
+  text-align: center;
+  color: #475569;
+  font-style: italic;
+}
+
+@keyframes fadeInPopup {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Voorkom dat de Oefenherkansjes-knop (btnToonFoutjes) wit wordt bij hover */
+#btnToonFoutjes,
+#btnToonFoutjes:hover,
+#btnToonFoutjes:focus,
+#btnToonFoutjes:active {
+  background: transparent !important;
+  color: #3391c3 !important;
+  /* behoud EBX-blauw */
+  border: none !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+
+/* Houd ook het vergrootglas blauw bij hover */
+#btnToonFoutjes svg,
+#btnToonFoutjes:hover svg {
+  stroke: #3391c3 !important;
+}
+
+
+/* === Actierij onder resultaten === */
+.resultaten-acties {
+  display: flex;
+  justify-content: space-between;
+  /* één knop links, één rechts */
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* Zorg dat beide knoppen mooi uitgelijnd blijven */
+.resultaten-acties .icon-only {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #3391c3;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease;
+}
+
+/* Hover subtiel blauw, geen witte tekst */
+.resultaten-acties .icon-only:hover {
+  background-color: rgba(51, 145, 195, 0.08);
+  border-radius: 6px;
+  color: #3391c3;
+}
+
+.resultaten-acties .icon-only svg {
+  stroke: #3391c3;
+}
+
+.resultaten-acties .icon-only:hover svg {
+  stroke: #3391c3;
+}
+
+#mijnHerkansjesLink {
+  text-decoration: underline;
+  cursor: pointer;
+  color: #01689B;
+}
+
+.foutje-item {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin: 4px 0;
+  font-size: 15px;
+  color: #0f172a;
+}
+
+/* Popup die verschijnt bij hover */
+.popup {
+  display: none;
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 2px solid var(--ebx);
+  border-radius: 12px;
+  padding: 14px 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  z-index: 120;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+}
+
+.popup-content h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: var(--ebx);
+}
+
+#herkansjesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+#herkansjesList .chip {
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #f1f5f9;
+  font-size: 14px;
+}
+
+/* --- Popup 'Mijn herkansjes' in resultatenstijl --- */
+/* === Herkansjes-popup compleet gestyled en altijd zichtbaar === */
+#herkansjesPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.35); /* semi-transparante achtergrond */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Inhoud van de popup */
+#herkansjesPopup .resultCard {
+  background: #fff;
+  border: 3px solid var(--ebx);
+  border-radius: 16px;
+  padding: 24px 28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+  color: #0f172a;
+  text-align: left;
+
+  max-width: 800px;
+  width: min(90vw, 720px);    /* responsive breedte */
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  max-height: 80vh;           /* nooit hoger dan 80% van het scherm */
+  overflow-y: auto;           /* scrolbaar bij veel inhoud */
+}
+
+
+
+
+
+#herkansjesPopup h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: var(--ebx);
+  text-align: center;
+}
+
+#herkansjesPopup h4 {
+  color: var(--ebx);
+  margin: 10px 0 6px 0;
+  font-size: 16px;
+}
+
+#herkansjesPopup table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+#herkansjesPopup th {
+  background: #f1f5f9;
+  color: #0f172a;
+  font-weight: 700;
+  padding: 6px 8px;
+  border-bottom: 2px solid #e2e8f0;
+  text-align: left;
+}
+
+#herkansjesPopup td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: top;
+}
+
+#herkansjesPopup td small {
+  color: #475569;
+}
+
+#herkansjesPopup .popup-empty {
+  color: #64748b;
+  font-style: italic;
+  text-align: center;
+  margin: 10px 0;
+}
+
+#herkansjesPopup .btn {
+  background: var(--ebx);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color .15s ease;
+}
+
+#herkansjesPopup .btn:hover {
+  background: var(--ebx-d);
+}
+
+#herkansjesPopup .btn-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn-row {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.btn {
+  background: var(--ebx);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color .15s ease;
+}
+
+.btn:hover {
+  background: var(--ebx-d);
+}
+
+.btnReset {
+  background-color: white;
+  color: var(--ebx);
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btnReset:hover {
+  background-color: var(--ebx);
+  /* geen kleurverandering bij hover */
+  color: white;
+}
+
+/* =======================================================
+   Popup-stijl: "Zinnetjes" (in lijn met Mijn Herkansjes)
+   ======================================================= */
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.popup-content {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+  width: 92%;
+  max-width: 800px;
+  max-height: 80vh;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  animation: popupFade 0.18s ease-out;
+}
+
+.popup-title {
+  margin: 0 0 12px 0;
+  font-size: 1.3em;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.popup-scroll {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 6px;
+}
+
+.popup-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+
+.popup-table th,
+.popup-table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.popup-table th {
+  background-color: var(--ebx, #01689B);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.popup-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+
+.popup-table tr:hover td {
+  background-color: #e0f2fe;
+}
+
+.popup-buttons {
+  margin-top: 16px;
+  text-align: right;
+}
+
+.btnPopup {
+  background-color: var(--ebx, #01689B);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btnPopup:hover {
+  background-color: #025b87;
+}
+
+@keyframes popupFade {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* --- Popup fix: altijd schermgebaseerd, niet binnen containers --- */
+body,
+html {
+  transform: none !important;
+  perspective: none !important;
+  overflow: visible !important;
+}
+
+#zinnetjesPopup,
+#zinnetjesPopup .popup-content {
+  position: fixed !important;
+  transform: none !important;
+  left: 50% !important;
+  top: 50% !important;
+  translate: -50% -50% !important;
+  /* moderne vervanger van transform */
+}
+
+#functiewoordjesPopup,
+#functiewoordjesPopup .popup-content {
+  position: fixed;
+  transform: none;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  /* moderne vervanger van transform */
+}
+
+#feedbackForm,
+#feedbackForm .popup-content {
+  position: fixed !important;
+  transform: none !important;
+  left: 50% !important;
+  top: 44.5% !important;
+  translate: -50% -50% !important;
+  /* moderne vervanger van transform */
+}
+
+.feedback-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.popup-feedback .form-row label {
+  flex: 0 0 80px;
+  font-weight: bold;
+  text-align: right;
+  margin-top: 4px;
+}
+
+
+.form-row input,
+.form-row textarea {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.form-row textarea {
+  min-height: 15em;
+  /* ongeveer 15 regels */
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+/* Popup voor feedback (uitgelijnd met resultaten-popup) */
+/* Zelfde positie en breedte als resultaten-popup */
+#feedbackForm {
+  display: none;
+  position: fixed;
+  top: 80px;
+  /* zelfde hoogte als resultatenTip */
+  left: 30%;
+  /* zelfde horizontale positie */
+  right: 20px;
+  width: 60%;
+  max-width: 600px;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  z-index: 200;
+  /* iets hoger zodat hij erboven ligt indien nodig */
+}
+
+
+/* Popup zelf, nu met zachtere rand en schaduw */
+.popup-content.popup-feedback {
+  position: fixed;
+  top: 80px;
+  left: 30%;
+  right: 20px;
+  background: #fff;
+  border: 2px solid var(--ebx);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  z-index: 100;
+  display: inline-block;
+  width: 460px;
+  max-width: 95vw;
+  height:500px;
+}
+
+/* Header met favicon en titel */
+.feedback-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.feedback-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+}
+
+/* Formulier layout */
+.feedback-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Fade-in animatie */
+@keyframes fadeInPopup {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.popup-feedback {
+  animation: fadeInPopup 0.25s ease-out;
+}
+
+/* === Popup venster voor woordenlijst === */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 120
+}
+
+.popup-card {
+  background: #fff;
+  border: 3px solid var(--ebx);
+  border-radius: 16px;
+  padding: 20px;
+  width: clamp(320px, 80vw, 640px);
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
+  text-align: left;
+  position: relative
+}
+
+.popup-card h3 {
+  margin-top: 0;
+  color: var(--ebx);
+  text-align: center
+}
+
+.popup-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  justify-content: center
+}
+
+.popup-content .chip {
+  margin: 4px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1
+}
+
+.popup-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  border: none;
+  background: #dc2626;
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  line-height: 28px
+}
+
+.popup-close:hover {
+  background: #b91c1c
+}
+
+/* --- Forceer popuppositie gelijk aan resultCard --- */
+#woordenPopup {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  display: none;
+  /* standaard verborgen */
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#woordenPopup .popup-card {
+  background: #fff;
+  border: 3px solid var(--ebx);
+  border-radius: 16px;
+  padding: 20px;
+  width: clamp(320px, 80vw, 640px);
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  text-align: left;
+  position: relative;
+}
+
+.popup-card {
+  position: relative !important;
+  margin: 0 auto;
+}
+
+/* --- Popup-tabel voor Woordenlijst --- */
+/* --- Compactere Woordenlijst-popup --- */
+#woordenPopup .card {
+  width: clamp(280px, 55vw, 480px);
+  /* was 80vw → nu max 480px */
+  padding: 14px 16px;
+  /* minder lucht rondom */
+  border-radius: 12px;
+}
+
+/* compact raster met dunne lijnen */
+.woordenTabel {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  margin-top: 6px;
+  table-layout: fixed;
+}
+
+.woordenTabel td {
+  padding: 3px 6px;
+  /* compacter */
+  vertical-align: top;
+  width: 33%;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* laatste kolom/rij zonder lijn */
+.woordenTabel td:last-child {
+  border-right: none;
+}
+
+.woordenTabel tr:last-child td {
+  border-bottom: none;
+}
+
+/* woordchip */
+.woordenTabel td span {
+  display: inline-block;
+  margin: 1px 0;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  /* iets kleiner font */
+  background: rgba(1, 104, 155, 0.08);
+  transition: background 0.25s ease, transform 0.15s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* hover: oplichten */
+.woordenTabel td span:hover {
+  background: rgba(1, 104, 155, 0.35);
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+/* responsieve correctie */
+@media (max-width: 700px) {
+  #woordenPopup .card {
+    width: 90vw;
+  }
+
+  .woordenTabel td {
+    width: 50%;
+  }
+}
+
+/* --- Compactere Modus-knoppen --- */
+tr[data-anker] .modusBtn,
+tr[data-anker] button.modusBtn {
+  font-size: 0.85rem;
+  /* iets kleinere tekst */
+  padding: 4px 10px;
+  /* minder breed en hoog */
+  border-radius: 6px;
+  /* iets minder rond */
+  margin: 0 2px;
+  /* minder ruimte tussen de knoppen */
+  min-width: 68px;
+  /* zodat Normaal/Snuffel nog net passen */
+  height: auto;
+}
+
+/* actief geselecteerde modus-knop */
+tr[data-anker] .modusBtn.active,
+tr[data-anker] button.modusBtn.active {
+  font-size: 0.85rem;
+  padding: 4px 10px;
+}
+
+/* responsieve correctie voor smalle schermen */
+@media (max-width: 600px) {
+  tr[data-anker] .modusBtn {
+    font-size: 0.8rem;
+    padding: 3px 8px;
+    min-width: 60px;
+  }
+}
+
+#resultatenPopup .popup-card {
+  position: fixed !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* toevoegen */
+}
+
+
+#resultatenPopup canvas {
+  width: 100% !important;
+  height: auto !important;
+  margin-top: 10px;
+}
+
+
+.resultaten-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#resultatenChartContainer {
+  width: 100%;
+  margin-bottom: 12px;
+  height:600px
+}
+
+/* Knoppenrij mooi onder grafiek */
+.knoppen-rij {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* Wis-knop zelf wat kleiner en in lijn */
+.icon-only {
+  background: none;
+  border: none;
+  color: #01689B;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.2s;
+}
+
+.icon-only:hover {
+  opacity: 0.75;
+}
+
+
+/* === Resultaten-popup: exact dezelfde positionering als woordenPopup === */
+#resultatenPopup {
+  position: fixed;
+  inset: 0; /* vult volledig scherm */
+  background: rgba(0, 0, 0, 0.45); /* zwart schemerend vlak */
+  display: none; /* standaard verborgen */
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Zelfde kaartstijl als woordenPopup */
+
+
+/* Titel boven de grafiek */
+#resultatenPopup .popupTitle {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: var(--ebx);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Grafiek */
+
+
+/* Sluitknop (zoals woordenPopup) */
+#resultatenPopup .popup-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  border: none;
+  background: #dc2626;
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  line-height: 28px;
+}
+
+#resultatenPopup .popup-close:hover {
+  background: #b91c1c;
+}
+
+/* Resultaten-popup mag hoog staan, maar niet hoger dan confirm */
+#resultatenPopup {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;            /* bv. 5000 */
+}
+
+#resultatenPopup .popup-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5100;            /* popup-card boven overlay, maar onder confirm */
+}
+
+/* Bevestigings-overlay: ALTIJD boven alles */
+#confirmOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;           /* hoger dan resultatenPopup */
+  background: rgba(15, 23, 42, .45);
+  pointer-events: auto;
+}
+
+/* Bevestigings-kaart */
+#confirmCard {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100000;          /* boven overlay */
+  max-width: min(520px, 92vw);
+  background: #fff;
+  color: #0f172a;
+  border: 2px solid var(--ebx, #01689B);
+  border-radius: 12px;
+  box-shadow: 0 16px 50px rgba(0,0,0,.25);
+  padding: 16px 18px;
+}
+
+/* === Resultaten-popup (desktop + mobiel) === */
+#resultatenPopup {
+  position: fixed;
+  inset: 0; /* schermvullend zwart vlak */
+  background: rgba(0, 0, 0, 0.45);
+  display: none; /* standaard verborgen */
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Popup-kaart */
+#resultatenPopup .popup-card {
+  background: #fff;
+  border: 3px solid var(--ebx);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  width: clamp(320px, 92vw, 640px);
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px;
+  position: relative;
+}
+
+/* Titel */
+#resultatenPopup .popupTitle {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: var(--ebx);
+  text-align: center;
+  margin: 0 0 12px;
+}
+
+/* Grafiek netjes schalend */
+#resultatenPopup canvas {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  max-height: 360px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+/* Wis-knop onder grafiek */
+#btnWisResultaten {
+  align-self: center;
+  margin-top: 14px;
+  background: var(--ebx);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.15s ease;
+}
+
+#btnWisResultaten:hover {
+  background: #014d73;
+}
+
+/* Sluitknop */
+#resultatenPopup .popup-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+#resultatenPopup .popup-close:hover {
+  background: #b91c1c;
+}
+
+/* 📱 Mobiel: iets meer ruimte en hogere grafiek */
+@media (max-width: 720px) {
+  #resultatenPopup .popup-card {
+    width: 94vw;
+    padding: 14px 16px;
+  }
+
+  #resultatenPopup canvas {
+    aspect-ratio: 4 / 3;
+    max-height: 300px;
+  }
+
+  #btnWisResultaten {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}
+
+
+/* Layout boven en onder de grafiek */
+.resultToolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0 0 10px 0;
+}
+.resultFooter {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* 1..8 knoppen */
+.resultToolbar .numberBar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.resultToolbar .numberBar .nb {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid #cfd6de;
+  background: #fff;
+  color: #0A4B68;
+  font: 600 15px/1 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  cursor: pointer;
+  user-select: none;
+  transition: background .15s ease, box-shadow .15s ease, transform .05s ease;
+}
+.resultToolbar .numberBar .nb:hover {
+  background: #f5f9fc;
+}
+.resultToolbar .numberBar .nb:active {
+  transform: translateY(1px);
+}
+.resultToolbar .numberBar .nb.active {
+  background: #eef6fb;
+  box-shadow: 0 0 0 2px rgba(1, 104, 155, .25) inset;
+  border-color: #cfe4ef;
+}
+
+.resultToolbar .spacer {
+  flex: 1;
+}
+
+/* Modus-icon knoppen */
+.resultToolbar .modeBar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.resultToolbar .modeBar button.icon {
+  background: none;
+  border: none;
+  padding: 6px 8px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #01689B;
+  transition: background-color .15s ease, transform .04s ease;
+}
+.resultToolbar .modeBar button.icon:hover {
+  background: rgba(1, 104, 155, .08);
+}
+.resultToolbar .modeBar button.icon[data-active="true"] {
+  background: rgba(1, 104, 155, .12);
+}
+.resultToolbar .modeBar button.icon:active {
+  transform: scale(.97);
+}
+
+.gauge .needle {
+  transition: transform 180ms ease;
+  transform-origin: 12px 14px;
+}
+.gauge .glabel {
+  font: 700 8px/1 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  letter-spacing: .2px;
+  user-select: none;
+}
+
+/* Mobiel */
+@media (max-width: 560px) {
+  .resultToolbar {
+    justify-content: center;
+    gap: 10px;
+  }
+  .resultToolbar .spacer {
+    display: none;
+  }
+  .resultToolbar .numberBar {
+    justify-content: center;
+  }
+  .resultToolbar .modeBar {
+    justify-content: center;
+    width: 100%;
+  }
+  .resultFooter {
+    justify-content: center;
+  }
+}
+
+/* ========== POPUP RESPONSIVE FIX ========== */
+
+/* Basisinstelling (desktop en tablet) */
+#resultatenTip {
+  max-height: 60vh !important;   /* gebruik dynamische viewporthoogte */
+  overflow-y: auto !important;
+}
+
+/* Mobiele modus – iets meer ruimte gebruiken */
+@media (max-width: 560px) {
+  html body #resultatenTip {
+    max-height: 98dvh !important;
+    max-height: 98vh !important;
+    overflow-y: auto !important;
+    height:62vh;
+  }
+}
+
+
+/* === Resultaten: grafiekcontainer goed zichtbaar, ook op mobiel === */
+#resultatenChartContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  height: 90vh;        /* vult 70% van het scherm — aanpasbaar */
+  max-height: 75vh;
+  min-height: 300px;   /* nooit kleiner dan dit */
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Canvas neemt alle beschikbare ruimte in binnen de container */
+#resultatenChartContainer canvas {
+  flex: 1 1 auto;
+  width: 100% !important;
+  height: 30vh !important;
+  box-sizing: border-box;
+}
+
+/* Mobiele optimalisatie */
+@media (max-width: 768px) {
+  #resultatenChartContainer {
+    height: 75vh;       /* iets meer ruimte op kleinere schermen */
+    min-height: 250px;
+  }
+}
+
+/* === Resultaten grafiek groter weergeven === */
+#resultatenChartContainer {
+  height: auto;
+  min-height: 400px; /* verhoog deze waarde om de grafiek hoger te maken */
+  max-height: 75vh;
+  box-sizing: border-box;
+}
+
+#resultatenChart {
+  height: 350px !important;  /* hoogte van de grafiek zelf */
+  width: 100% !important;
+  display: block;
+}
+
+/* === Resultaten grafiek vaste hoogte === */
+#resultatenChartContainer {
+  min-height: 342px;
+}
+
+#resultatenChart {
+  height: 342px !important;
+  width: 100% !important;
+  display: block;
+  box-sizing: border-box;
+}
+
+/* Kleur direct goed en icoon volgt mee */
+#btnReset,
+#btnReset:visited,
+#btnReset:focus,
+#btnReset:active {
+  color: #01689B !important;
+}
+#btnReset svg { stroke: currentColor !important; }
+
+/* Geen hover-achtergrond/schaduw (geen “rondje”) */
+#btnReset:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #01689B !important;
+}
+#btnReset:hover svg { stroke: currentColor !important; }
+
+/* Kill alle pseudo-tooltips voor deze knop (ook generieke tooltip-CSS) */
+#btnReset::before,
+#btnReset::after,
+#btnReset[data-tooltip]::before,
+#btnReset[data-tooltip]::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Veiligheidshalve: in de resultaten-footer helemaal niets laten injecteren */
+.resultaten-popup .resultFooter button::before,
+.resultaten-popup .resultFooter button::after {
+  content: none !important;
+  display: none !important;
+}
+
+
+/* ===== FUNCTIEWOORDJES POPUP — titel boven, tabel eronder, knop onder ===== */
+
+/* 1) Stop met fixed/translate op de content */
+#functiewoordjesPopup .popup-content.popup-functiewoordjes,
+#zinnetjesPopup .popup-content.popup-zinnetjes {
+  position: relative !important;
+  left: 50 !important;
+  top: auto !important;
+  inset: auto !important;
+  transform: none !important;
+  translate: none !important;
+
+  /* 2) Grid: kop | scroll | footer */
+  display: grid !important;
+  grid-template-rows: auto 1fr auto !important;
+  align-items: stretch !important;
+  gap: 12px !important;
+
+  width: min(100%, 100%) !important;
+  max-height: 85vh !important;
+  padding: 16px 18px !important;
+  box-sizing: border-box !important;
+}
+
+/* 3) Reset alles binnen de content */
+#functiewoordjesPopup .popup-content.popup-functiewoordjes *,
+#zinnetjesPopup .popup-content.popup-zinnetjes * {
+  float: none !important;
+  position: static !important;
+  max-width: 100% !important;
+}
+
+/* 4) Titel = rij 1 */
+#functiewoordjesPopup .popup-title,
+#zinnetjesPopup .popup-title {
+  grid-row: 1 !important;
+  margin: 0 0 8px 0 !important;
+  color: var(--ebx);
+}
+
+/* 5) Scrollvak = rij 2 */
+#functiewoordjesPopup .popup-scroll,
+#zinnetjesPopup .popup-scroll {
+  grid-row: 2 !important;
+  overflow: auto !important;
+  min-height: 0 !important;  /* cruciaal met grid/flex */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 6) Tabel schaalt binnen scrollvak */
+#functiewoordjesPopup .popup-table,
+#zinnetjesPopup .popup-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+
+/* 7) Footer/knop = rij 3 */
+#functiewoordjesPopup .popup-buttons,
+#zinnetjesPopup .popup-buttons {
+  grid-row: 3 !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  margin-top: 4px !important;
+}
+
+/* (optioneel) sticky header in de tabel */
+#functiewoordjesPopup .popup-table thead th,
+#zinnetjesPopup .popup-table thead th {
+  position: sticky !important;
+  top: 0 !important;
+  background: #01689B !important;
+  color: #fff !important;
+  z-index: 1 !important;
+}
+
+/* Smalle #-kolom in beide popups */
+#functiewoordjesPopup .popup-table,
+#zinnetjesPopup .popup-table {
+  table-layout: fixed; /* al gezet, maar nog eens voor zekerheid */
+}
+
+#functiewoordjesPopup .popup-table th:first-child,
+#functiewoordjesPopup .popup-table td:first-child,
+#zinnetjesPopup .popup-table th:first-child,
+#zinnetjesPopup .popup-table td:first-child {
+  width: 44px;           /* << maak smaller naar wens (bv. 36px) */
+  min-width: 36px;
+  max-width: 56px;
+  text-align: center;
+  white-space: nowrap;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+/* Tweede kolom neemt de rest */
+#functiewoordjesPopup .popup-table th:nth-child(2),
+#functiewoordjesPopup .popup-table td:nth-child(2),
+#zinnetjesPopup .popup-table th:nth-child(2),
+#zinnetjesPopup .popup-table td:nth-child(2) {
+  width: auto;
+}
+
+/* Extra compact op kleine schermen */
+@media (max-width: 600px) {
+  #functiewoordjesPopup .popup-table th:first-child,
+  #functiewoordjesPopup .popup-table td:first-child,
+  #zinnetjesPopup .popup-table th:first-child,
+  #zinnetjesPopup .popup-table td:first-child {
+    width: 36px;
+    min-width: 32px;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+}
+
+/* Maak de eerste kolom (Anker X) duidelijk klikbaar */
+.anker-tabel td.anker-naam {
+  cursor: pointer;
+  position: relative;
+  transition: background 120ms ease, color 120ms ease;
+  border-radius: 8px;                 /* subtiele ronding binnen de cel */
+}
+
+/* Hele rij subtiel highlighten bij hover */
+.anker-tabel tbody tr:hover td { background: #f2f8fc; }
+.anker-tabel tbody tr:hover td.anker-naam { background: #eaf4fb; }
+
+/* Alleen de anker-tekst onderstrepen + kleuraccent bij hover */
+.anker-tabel td.anker-naam:hover,
+.anker-tabel td.anker-naam:hover * {
+  color: #01689B;
+  text-decoration-thickness: 2px;
+}
+
+/* Toetsenbord-navigatie: duidelijke focus */
+.anker-tabel td.anker-naam:focus,
+.anker-tabel td.anker-naam:focus-visible {
+  outline: 2px solid #01689B;
+  outline-offset: 2px;
+}
+
+/* Press-feedback */
+.anker-tabel td.anker-naam:active { background: #e2f0f8; }
+
+/* (Optioneel) subtiele caret die op hover verschijnt */
+.anker-tabel td.anker-naam::after {
+  content: '›';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%) translateX(-2px);
+  opacity: 0;
+  transition: opacity 120ms, transform 120ms;
+  color: #01689B;
+  pointer-events: none;
+  font-weight: 600;
+}
+.anker-tabel td.anker-naam:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* === Herbruikbare tooltip-klasse (EBX-stijl) === */
+.tooltip-bubble {
+  position: absolute;
+  background: #01689B;
+  color: #fff;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+.tooltip-bubble.show {
+  opacity: 1;
+}
+
+/* ───────────────────────────────
+   Grafiekknoppen + EBX Tooltip
+   ─────────────────────────────── */
+.btnResultGrafiek {
+  background: none;
+  border: none;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #01689B;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btnResultGrafiek:hover {
+  background-color: rgba(1, 104, 155, 0.08);
+  transform: scale(1.05);
+}
+
+.tooltip-floating {
+  position: absolute;
+  background: #01689B;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  font-size: 13px;
+  white-space: nowrap;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  animation: fadeInTooltip 0.15s ease forwards;
+}
+
+.tooltip-floating::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #01689B transparent transparent transparent;
+}
+
+@keyframes fadeInTooltip {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* ───────────────────────────────
+   Popup stijl voor ankerresultaten
+   ─────────────────────────────── */
+.resultaten-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.resultaten-popup {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px 24px;
+  width: clamp(340px, 80vw, 640px);
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInPopup 0.2s ease forwards;
+}
+
+@keyframes fadeInPopup {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.resultaten-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.resultaten-header h2 {
+  font-size: 20px;
+  margin: 0;
+  color: #01689B;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: #64748b;
+  transition: color 0.15s ease;
+}
+
+.close-btn:hover {
+  color: #01689B;
+}
+
+/* ───────────────────────────────
+   Popup stijl voor resultaten per anker (gecentreerd)
+   ─────────────────────────────── */
+.resultaten-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  z-index: 9999;
+}
+
+/* Centreringscontainer */
+.resultaten-overlay::before {
+  content: "";
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.resultaten-popup {
+  display: inline-block;
+  vertical-align: middle;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px 24px;
+  width: clamp(340px, 80vw, 640px);
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  animation: fadeInPopup 0.25s ease forwards;
+}
+
+@keyframes fadeInPopup {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.resultaten-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.resultaten-header h2 {
+  font-size: 20px;
+  margin: 0;
+  color: #01689B;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: #64748b;
+  transition: color 0.15s ease;
+}
+
+.close-btn:hover {
+  color: #01689B;
+}
+.tooltip-floating {
+  background: #01689B;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  font-size: 13px;
+  white-space: nowrap;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  animation: fadeInTooltip 0.15s ease forwards;
+}
+
+.tooltip-floating::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #01689B transparent transparent transparent;
+}
+
+@keyframes fadeInTooltip {
+  from { opacity: 0; transform: translateY(2px); }
+  to   { opacity: 1; transform: translateY(0); }
 }

@@ -1,19 +1,34 @@
 // changelog.js: data + renderlogica
 
 const changelog = [
-	{
-	  version: '1.13',
-	  changes: [
-		{ type: 'Toegevoegd', description: 'Optie om foute metingen te verwijderen.' },
-	  ]
-	},
   {
-	  version: '1.12',
-	  changes: [
-		{ type: 'Toegevoegd', description: 'Gebruikers zien nu hun voortgang in een grafiek bij oefentype "ankers".' },
-	  ]
-	},
-	{
+    version: '1.15',
+    changes: [
+      { type: 'Toegevoegd', description: 'Individuele resultaten (grafieken) per anker' },
+      { type: 'Toegevoegd', description: 'Snuffel woordjes bij anker 2' },
+    ]
+  },
+  {
+    version: '1.14',
+    changes: [
+      { type: 'Toegevoegd', description: 'Registratie van fout gelezen woordjes per meting' },
+      { type: 'Toegevoegd', description: 'Mogelijkheid om te oefenen met de woordjes uit "Mijn herkansjes"' },
+      { type: 'Toegevoegd', description: 'Optie om individuele woordjes te verwijderen uit "Mijn herkansjes"' },
+    ]
+  },
+  {
+    version: '1.13',
+    changes: [
+      { type: 'Toegevoegd', description: 'Optie om foute metingen te verwijderen.' },
+    ]
+  },
+  {
+    version: '1.12',
+    changes: [
+      { type: 'Toegevoegd', description: 'Gebruikers zien nu hun voortgang in een grafiek bij oefentype "ankers".' },
+    ]
+  },
+  {
     version: '1.11',
     changes: [
       { type: 'Toegevoegd', description: 'Anker woordjes voor anker 2 tm 8' },
