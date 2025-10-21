@@ -231,212 +231,230 @@
     window._chartsById = window._chartsById || {};
     let chart = window._chartsById[instanceKey];
 
-function render() {
-  const { labels, indexToData, dataNormaal, dataSnuffel } = buildSeries(state.anker, state.mode);
-  const modeLabel = state.mode === 'snuffel' ? 'Snuffel' : 'Normaal';
+    function render() {
+      const { labels, indexToData, dataNormaal, dataSnuffel } = buildSeries(state.anker, state.mode);
+      const modeLabel = state.mode === 'snuffel' ? 'Snuffel' : 'Normaal';
 
-  if (!labels.length) {
-    if (chart) { chart.destroy(); chart = null; window._chartsById[instanceKey] = null; }
-    const w = canvas.width, h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-    ctx.font = '16px Arial'; ctx.fillStyle = '#444';
-    ctx.textAlign = 'center';
-    ctx.fillText(`Nog geen resultaten voor anker ${state.anker}`, w / 2, h / 2);
-    return;
-  }
-
-  if (chart) {
-    chart.data.labels = labels;
-    chart.data.datasets[0].data = dataNormaal;
-    chart.data.datasets[1].data = dataSnuffel;
-    chart.indexToData = indexToData;
-    chart.options.scales.x.title.text = `Meetmoment # – Anker ${state.anker} (${modeLabel})`;
-    chart.update();
-    return;
-  }
-
-  chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Snelheid (IPM)',
-          data: dataNormaal,
-          borderColor: '#01689B',
-          backgroundColor: 'rgba(1,104,155,0.15)',
-          fill: true,
-          tension: 0.4,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          pointHitRadius: 12,
-          pointHoverBackgroundColor: '#dc2626', // 🔴 rood bij hover
-          pointHoverBorderColor: '#ff6666',
-          pointHoverBorderWidth: 3
-        },
-        {
-          label: 'Snuffel (IPM)',
-          data: dataSnuffel,
-          borderColor: '#f59e0b',
-          backgroundColor: 'rgba(245,158,11,0.15)',
-          fill: true,
-          tension: 0.4,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          pointHitRadius: 12,
-          pointHoverBackgroundColor: '#dc2626', // 🔴 rood bij hover
-          pointHoverBorderColor: '#ff6666',
-          pointHoverBorderWidth: 3
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'nearest', intersect: true },
-      elements: { point: { radius: 4, hitRadius: 10, hoverRadius: 6 } },
-      onHover: (e, els) => {
-        e.native.target.style.cursor = els?.length ? 'pointer' : 'default';
-      },
-      scales: {
-        x: {
-          title: { display: true, text: `Meetmoment # – Anker ${state.anker} (${modeLabel})` },
-          grid: { display: false }
-        },
-        y: { beginAtZero: true, title: { display: true, text: 'Woordjes per minuut' } }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          displayColors: false,
-          backgroundColor: '#01689B',
-          titleColor: '#fff',
-          bodyColor: '#fff',
-          padding: 10,
-          cornerRadius: 8,
-          caretSize: 6,
-          caretPadding: 20, // extra afstand t.o.v. het punt
-          titleFont: { weight: '700' },
-          bodyFont: { weight: '500' },
-          callbacks: {
-            title: (items) => {
-              const d = chart.indexToData?.[items[0].dataIndex];
-              return d ? d.datum : '';
-            },
-            label: (ctx) => {
-              const d = chart.indexToData?.[ctx.dataIndex];
-              if (!d) return '';
-              const goed = d.goed ?? 0;
-              const fout = d.fout ?? 0;
-              const totaal = goed + fout;
-              const ipm = d.ipm ?? 0;
-              const perc = totaal ? Math.round((goed / totaal) * 100) : 0;
-              return [
-                `Woordjes per minuut: ${ipm}`,
-                `Juist: ${goed}`,
-                `Fout: ${fout}`,
-                `Totaal: ${totaal}`,
-                `Percentage: ${perc}%`,
-                'Dubbelklik om meting te verwijderen' // 👈 aangepaste hint
-              ];
-            }
-          }
-        }
-      },
-
-      // Klik = selecteren (tooltip tonen), géén verwijderen
-      onClick: (evt, activeEls) => {
-        if (!activeEls.length) return;
-        const idx = activeEls[0].index;
-
-        chart.setActiveElements([
-          { datasetIndex: 0, index: idx },
-          { datasetIndex: 1, index: idx }
-        ]);
-        // Toon tooltip netjes bij het geselecteerde punt
-        chart.tooltip.setActiveElements([{ datasetIndex: 0, index: idx }], { x: 0, y: 0 });
-        chart.update();
+      if (!labels.length) {
+        if (chart) { chart.destroy(); chart = null; window._chartsById[instanceKey] = null; }
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        ctx.font = '16px Arial'; ctx.fillStyle = '#444';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Nog geen resultaten voor anker ${state.anker}`, w / 2, h / 2);
+        return;
       }
-    }
-  });
 
-  chart.indexToData = indexToData;
-  window._chartsById[instanceKey] = chart;
+      if (chart) {
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = dataNormaal;
+        chart.data.datasets[1].data = dataSnuffel;
+        chart.indexToData = indexToData;
+        chart.options.scales.x.title.text = `Meetmoment # – Anker ${state.anker} (${modeLabel})`;
+        chart.update();
+        return;
+      }
 
-  // ===== Dubbelklik (desktop) + double-tap (mobiel) om te verwijderen =====
-  if (!chart._dblBound) {
-    const cvs = chart.canvas;
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Snelheid (IPM)',
+              data: dataNormaal,
+              borderColor: '#01689B',
+              backgroundColor: 'rgba(1,104,155,0.15)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              pointHitRadius: 12,
+              pointHoverBackgroundColor: '#dc2626', // 🔴 rood bij hover
+              pointHoverBorderColor: '#ff6666',
+              pointHoverBorderWidth: 3
+            },
+            {
+              label: 'Snuffel (IPM)',
+              data: dataSnuffel,
+              borderColor: '#f59e0b',
+              backgroundColor: 'rgba(245,158,11,0.15)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              pointHitRadius: 12,
+              pointHoverBackgroundColor: '#dc2626', // 🔴 rood bij hover
+              pointHoverBorderColor: '#ff6666',
+              pointHoverBorderWidth: 3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'nearest', intersect: true },
+          elements: { point: { radius: 4, hitRadius: 10, hoverRadius: 6 } },
+          onHover: (e, els) => {
+            e.native.target.style.cursor = els?.length ? 'pointer' : 'default';
+          },
+          scales: {
+            x: {
+              title: { display: true, text: `Meetmoment # – Anker ${state.anker} (${modeLabel})` },
+              grid: { display: false }
+            },
+            y: { beginAtZero: true, title: { display: true, text: 'Woordjes per minuut' } }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              displayColors: false,
+              backgroundColor: '#01689B',
+              titleColor: '#fff',
+              bodyColor: '#fff',
+              padding: 10,
+              cornerRadius: 8,
+              caretSize: 6,
+              caretPadding: 20, // extra afstand t.o.v. het punt
+              titleFont: { weight: '700' },
+              bodyFont: { weight: '500' },
+              callbacks: {
+                title: (items) => {
+                  const d = chart.indexToData?.[items[0].dataIndex];
+                  return d ? d.datum : '';
+                },
+                label: (ctx) => {
+                  const d = chart.indexToData?.[ctx.dataIndex];
+                  if (!d) return '';
+                  const goed = d.goed ?? 0;
+                  const fout = d.fout ?? 0;
+                  const totaal = goed + fout;
+                  const ipm = d.ipm ?? 0;
+                  const perc = totaal ? Math.round((goed / totaal) * 100) : 0;
+                  return [
+                    `Woordjes per minuut: ${ipm}`,
+                    `Juist: ${goed}`,
+                    `Fout: ${fout}`,
+                    `Totaal: ${totaal}`,
+                    `Percentage: ${perc}%`,
+                    'Dubbelklik om meting te verwijderen' // 👈 aangepaste hint
+                  ];
+                }
+              }
+            }
+          },
 
-    // Desktop: dubbelklik
-    cvs.addEventListener('dblclick', (evt) => {
-      const pts = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
-      if (!pts.length) return;
+          // Klik = selecteren (tooltip tonen), géén verwijderen
+          onClick: (evt, activeEls) => {
+            if (!activeEls.length) return;
+            const idx = activeEls[0].index;
 
-      const idx = pts[0].index;
-      const d = chart.indexToData?.[idx];
-      if (!d) return;
-
-      toonBevestiging(
-        `Weet je zeker dat je meting #${idx + 1} (${d.datum}, ${d.ipm} wpm) wilt verwijderen?`,
-        (ok) => {
-          if (!ok) return;
-          const key = `resultaten_anker_${state.anker}_${state.mode}`;
-          const arr = read(key);
-          const echteIndex = arr.findIndex(r => r.datum === d.datum && r.ipm === d.ipm);
-          if (echteIndex >= 0) {
-            arr.splice(echteIndex, 1);
-            localStorage.setItem(key, JSON.stringify(arr));
-            chart.data.labels.splice(idx, 1);
-            chart.data.datasets[0].data.splice(idx, 1);
-            chart.data.datasets[1].data.splice(idx, 1);
-            chart.indexToData.splice(idx, 1);
+            chart.setActiveElements([
+              { datasetIndex: 0, index: idx },
+              { datasetIndex: 1, index: idx }
+            ]);
+            // Toon tooltip netjes bij het geselecteerde punt
+            chart.tooltip.setActiveElements([{ datasetIndex: 0, index: idx }], { x: 0, y: 0 });
             chart.update();
-            toonOK(`Meting van ${d.datum} is verwijderd.`);
           }
         }
-      );
-    });
+      });
 
-    // Mobiel: double-tap detectie (ongeveer binnen 350ms)
-    let lastTap = 0;
-    cvs.addEventListener('pointerdown', (evt) => {
-      const now = Date.now();
-      if (now - lastTap < 350) {
-        const pts = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
-        if (!pts.length) { lastTap = 0; return; }
+      chart.indexToData = indexToData;
+      window._chartsById[instanceKey] = chart;
 
-        const idx = pts[0].index;
-        const d = chart.indexToData?.[idx];
-        if (!d) { lastTap = 0; return; }
+      // ===== Dubbelklik (desktop) + double-tap (mobiel) om te verwijderen =====
+      if (!chart._dblBound) {
+        const cvs = chart.canvas;
 
-        toonBevestiging(
-          `Weet je zeker dat je meting #${idx + 1} (${d.datum}, ${d.ipm} wpm) wilt verwijderen?`,
-          (ok) => {
-            if (!ok) return;
-            const key = `resultaten_anker_${state.anker}_${state.mode}`;
-            const arr = read(key);
-            const echteIndex = arr.findIndex(r => r.datum === d.datum && r.ipm === d.ipm);
-            if (echteIndex >= 0) {
-              arr.splice(echteIndex, 1);
+        // Gedeelde verwijder-handler voor dblclick / double-tap
+        const handleDelete = (evt) => {
+          const pts = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: false }, true);
+          if (!pts.length) return;
+
+          const { index: idx } = pts[0];
+          const d = chart.indexToData?.[idx];
+          if (!d) return;
+
+          // 👇 Nieuw: modus uit UI i.p.v. datasetIndex/state
+          const activeBtn =
+            modeBar.querySelector('button.icon[data-active="true"]') ||
+            document.querySelector('.resultToolbar .modeBar button.icon[data-active="true"]');
+
+
+          // Leid de modus af uit de zichtbare dataset op de geklikte index
+          const titleText = chart?.options?.scales?.x?.title?.text || '';
+
+          // Haal "Anker NN (Snuffel|Normaal)" uit de titel
+          const m = titleText.match(/Anker\s+(\d+)\s*\(\s*(Snuffel|Normaal)\s*\)/i);
+
+          let ankerPadded, modeForDelete;
+          if (m) {
+            const ankerNum = parseInt(m[1], 10);
+            ankerPadded = String(ankerNum).padStart(2, '0');   // bv. "02"
+            modeForDelete = m[2].toLowerCase();                  // "snuffel" of "normaal"
+          } else {
+            // Fallbacks als de titel onverhoopt afwijkt
+            ankerPadded = state.anker;
+            // desnoods afleiden uit datasets:
+            const dsN = chart.data.datasets[0]?.data || [];
+            const dsS = chart.data.datasets[1]?.data || [];
+            modeForDelete = (Number.isFinite(dsS[idx]) && !Number.isFinite(dsN[idx])) ? 'snuffel' : 'normaal';
+          }
+
+
+          const key = `resultaten_anker_${m[1]}_${modeForDelete}`;
+
+          toonBevestiging(
+            `Weet je zeker dat je meting #${idx + 1} (${d.datum}, ${d.ipm} wpm) wilt verwijderen?`,
+            (ok) => {
+              if (!ok) return;
+
+              const arr = read(key);
+              const sorted = arr.slice().sort((a, b) => parseDatum(a.datum) - parseDatum(b.datum));
+              const target = sorted[idx];
+              if (!target) return;
+
+              const realIdx = arr.findIndex(r =>
+                (r.datum || '').trim() === (target.datum || '').trim() &&
+                Number(r.ipm) === Number(target.ipm)
+              );
+              if (realIdx < 0) return;
+
+              arr.splice(realIdx, 1);
               localStorage.setItem(key, JSON.stringify(arr));
+
               chart.data.labels.splice(idx, 1);
               chart.data.datasets[0].data.splice(idx, 1);
               chart.data.datasets[1].data.splice(idx, 1);
               chart.indexToData.splice(idx, 1);
               chart.update();
+
               toonOK(`Meting van ${d.datum} is verwijderd.`);
             }
-          }
-        );
-        lastTap = 0;
-      } else {
-        lastTap = now;
-      }
-    });
+          );
+        };
 
-    chart._dblBound = true; // zorg dat we niet dubbel binden
-  }
-}
+
+        // Desktop: dubbelklik
+        cvs.addEventListener('dblclick', handleDelete);
+
+        // Mobiel: double-tap (±350ms)
+        let lastTap = 0;
+        cvs.addEventListener('pointerdown', (evt) => {
+          const now = Date.now();
+          if (now - lastTap < 350) {
+            handleDelete(evt);
+            lastTap = 0;
+          } else {
+            lastTap = now;
+          }
+        });
+
+        chart._dblBound = true; // niet dubbel binden
+      }
+
+    }
 
 
     // ---------- Events ----------
