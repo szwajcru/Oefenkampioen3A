@@ -2873,3 +2873,48 @@ function isConfirmOpen() {
   const ov = document.getElementById('confirmOverlay');
   return ov && ov.style.display !== 'none';
 }
+
+// --- MIGRATIE: alleen uitvoeren als 'resultaten' bestaat en
+// 'resultaten_anker_01_normaal' nog NIET bestaat. Draait idempotent. ---
+(function migrateAnker01IfNeeded() {
+  const OLD_KEY   = 'resultaten';
+  const NEW_N_KEY = 'resultaten_anker_01_normaal';
+  const NEW_S_KEY = 'resultaten_anker_01_snuffel';
+
+  if (!localStorage.getItem(OLD_KEY)) return;
+  if (localStorage.getItem(NEW_N_KEY)) {
+    return;
+  }
+
+  try {
+    const raw = localStorage.getItem(OLD_KEY);
+    const old = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(old) || !old.length) return;
+
+    // eenmalige backup
+    if (!localStorage.getItem('backup_resultaten_voor_migratie_anker01')) {
+      localStorage.setItem('backup_resultaten_voor_migratie_anker01', raw);
+    }
+
+    // filter uitsluitend ANKER 01
+    const isAnker01 = (r) => {
+      if (!r) return false;
+      if (r.anker != null) return String(r.anker).padStart(2, '0') === '01';
+      // fallback op oude structuur
+      return r.type === 'ankers';
+    };
+
+    const anker01Data = old.filter(isAnker01);
+    if (!anker01Data.length) return;
+
+    const normaal = anker01Data.filter(r => !r?.snuffel);
+    const snuffel = anker01Data.filter(r => !!r?.snuffel);
+
+    localStorage.setItem(NEW_N_KEY, JSON.stringify(normaal));
+    localStorage.setItem(NEW_S_KEY, JSON.stringify(snuffel));
+
+    console.log('Migratie anker 01 voltooid ✅');
+  } catch (e) {
+    console.error('Migratie anker 01 mislukt:', e);
+  }
+})();
