@@ -30,9 +30,9 @@
 /* Formulier-layout */
 .feedback-layout {
   display: grid;
-  grid-template-columns: 110px 1fr;     /* labels + velden */
+  grid-template-columns: 110px 1fr;
   gap: 10px 14px;
-  align-items: start;                   /* labels bovenaan uitgelijnd */
+  align-items: start;
 }
 .feedback-layout .form-row {
   display: contents;
@@ -45,7 +45,7 @@
   text-align: left;
   margin: 0;
   padding-top: 6px;
-  align-self: start;                    /* label zelf bovenaan */
+  align-self: start;
 }
 
 /* Velden */
@@ -120,12 +120,12 @@
 @media (max-width: 640px) {
   #feedbackForm .popup-content.popup-feedback {
     width: 92vw;
-    max-height: calc(100vh - 400px);   /* voorkomt witruimte onderaan */
+    max-height: calc(100dvh - 200px);  /* ⬅ gebruikt dynamische hoogte, stabieler op mobiel */
     padding: 12px 14px 0;
   }
 
   .feedback-layout {
-    grid-template-columns: 80px 1fr;    /* labels links, iets smaller */
+    grid-template-columns: 80px 1fr;
     gap: 8px 10px;
   }
 
@@ -156,22 +156,21 @@
 
 /* Feedback knop + popup samen als 1 blok */
 .feedback-wrapper {
-  position: relative;     /* referentiepunt voor de popup */
-  display: inline-block;  /* laat de popup direct onder de knop verschijnen */
+  position: relative;
+  display: inline-block;
 }
 
 /* Popup positie */
 #feedbackForm {
   position: absolute;
   top: 10px; /* 10px onder de knop */
-  right: 0;               /* uitlijnen met rechterrand van de knop */
-  transform: none !important; /* verwijder middenuitlijning */
+  right: 0;
+  transform: none !important;
   z-index: 1000;
 }
 
 /* Popup stijl zelf */
 #feedbackForm .popup-content.popup-feedback {
-  width: clamp(340px, 70vw, 620px);
   background: #fff;
   border: 2px solid #01689B;
   border-radius: 14px;
