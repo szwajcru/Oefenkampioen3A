@@ -1,0 +1,1 @@
+const SITE_VERSION = 'v20251024-7';

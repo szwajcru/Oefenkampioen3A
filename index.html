@@ -12,6 +12,10 @@
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
 
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -568,41 +572,41 @@
     </div>
   </div>
 
-<!-- Feedback (changelog-stijl) -->
-<!-- === FEEDBACK FORMULIER (afgeleid van changelog-stijl) === -->
-<div id="feedbackForm" class="popup" style="display:none;">
-  <div class="popup-content popup-feedback">
-    <form id="formFeedback">
-      <table id="feedbackTable" class="feedback-table">
-        <thead>
-          <tr>
-            <th colspan="2">Feedback geven 💬</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="label-cell">Naam:</td>
-            <td><input type="text" name="user_name" required></td>
-          </tr>
-          <tr>
-            <td class="label-cell">E-mail:</td>
-            <td><input type="email" name="user_email" required></td>
-          </tr>
-          <tr>
-            <td class="label-cell">Bericht:</td>
-            <td><textarea name="message" rows="8" required></textarea></td>
-          </tr>
-          <tr>
-            <td colspan="2" class="button-row">
-              <button type="submit" class="btn">Versturen</button>
-              <button type="button" id="btnCloseFeedback" class="btn">Sluiten</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
+  <!-- Feedback (changelog-stijl) -->
+  <!-- === FEEDBACK FORMULIER (afgeleid van changelog-stijl) === -->
+  <div id="feedbackForm" class="popup" style="display:none;">
+    <div class="popup-content popup-feedback">
+      <form id="formFeedback">
+        <table id="feedbackTable" class="feedback-table">
+          <thead>
+            <tr>
+              <th colspan="2">Feedback geven 💬</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="label-cell">Naam:</td>
+              <td><input type="text" name="user_name" required></td>
+            </tr>
+            <tr>
+              <td class="label-cell">E-mail:</td>
+              <td><input type="email" name="user_email" required></td>
+            </tr>
+            <tr>
+              <td class="label-cell">Bericht:</td>
+              <td><textarea name="message" rows="8" required></textarea></td>
+            </tr>
+            <tr>
+              <td colspan="2" class="button-row">
+                <button type="submit" class="btn">Versturen</button>
+                <button type="button" id="btnCloseFeedback" class="btn">Sluiten</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+    </div>
   </div>
-</div>
 
 
 
@@ -635,6 +639,97 @@
     </div>
   </div>
 
+<script src="/version/version.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    console.log('Service Worker geregistreerd:', reg.scope);
+
+    // 🔍 Controleer of alles up-to-date is
+    if (!reg.waiting && !reg.installing && navigator.serviceWorker.controller) {
+      toonStatusMelding('✅ veel plezier!', '#28a745');
+    }
+
+    // 🔁 Detecteer updates
+    reg.addEventListener('updatefound', () => {
+      const nieuweSW = reg.installing;
+      nieuweSW.addEventListener('statechange', () => {
+        if (nieuweSW.state === 'installed' && navigator.serviceWorker.controller) {
+          toonUpdateMelding(nieuweSW);
+        }
+      });
+    });
+  }).catch(err => {
+    console.error('❌ Fout bij registreren Service Worker:', err);
+  });
+}
+
+/**
+ * 🔵 Toont melding bij nieuwe versie
+ */
+function toonUpdateMelding(nieuweSW) {
+  const div = document.createElement('div');
+  div.style.position = 'fixed';
+  div.style.bottom = '0';
+  div.style.left = '0';
+  div.style.width = '100%';
+  div.style.background = '#01689B';
+  div.style.color = 'white';
+  div.style.textAlign = 'center';
+  div.style.padding = '10px';
+  div.style.fontFamily = 'sans-serif';
+  div.style.fontSize = '15px';
+  div.style.zIndex = '9999';
+  div.style.opacity = '0';
+  div.style.transition = 'opacity 0.5s ease-in';
+  div.innerHTML =
+    'Nieuwe versie beschikbaar — ' +
+    '<button id="refreshBtn" style="background:white;color:#01689B;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;">Klik om te verversen</button>';
+  document.body.appendChild(div);
+  requestAnimationFrame(() => (div.style.opacity = '1'));
+
+  document.getElementById('refreshBtn').addEventListener('click', () => {
+    nieuweSW.postMessage('SKIP_WAITING');
+  });
+
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+}
+
+/**
+ * 🟢 Toont melding voor status (alles up-to-date)
+ */
+function toonStatusMelding(tekst, kleur) {
+  const div = document.createElement('div');
+  div.style.position = 'fixed';
+  div.style.bottom = '0';
+  div.style.left = '0';
+  div.style.width = '100%';
+  div.style.background = kleur;
+  div.style.color = 'white';
+  div.style.textAlign = 'center';
+  div.style.padding = '8px';
+  div.style.fontFamily = 'sans-serif';
+  div.style.fontSize = '14px';
+  div.style.zIndex = '9999';
+  div.style.opacity = '0';
+  div.style.transition = 'opacity 0.5s ease-in';
+  div.innerText = tekst;
+  document.body.appendChild(div);
+  requestAnimationFrame(() => (div.style.opacity = '1'));
+  setTimeout(() => div.remove(), 4000);
+}
+
+/**
+ * 💾 Eénmalige forced refresh bij nieuwe versie
+ */
+if (localStorage.getItem('siteVersie') !== SITE_VERSION) {
+  localStorage.setItem('siteVersie', SITE_VERSION);
+  location.reload(true);
+}
+</script>
+  
 </body>
 
 </html>
