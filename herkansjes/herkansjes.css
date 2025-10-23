@@ -1,0 +1,287 @@
+/* === HERKANSJES (popup + tabel, EBX-stijl) ================================ */
+:root {
+  --ebx: #01689B;
+  --ebx-dark: #014b73;
+  --ink: #0f172a;
+}
+
+/* === Popup-container === */
+#herkansjesTip {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(92vw, 500px);
+  max-height: min(72vh, 560px);
+  background: #fff;
+  border: 2px solid var(--ebx);
+  border-radius: 14px;
+  box-shadow: 0 18px 60px rgba(1, 104, 155, .18);
+  color: var(--ink);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 48px;
+  /* ruimte onderin voor melding */
+  transition: opacity .14s ease;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+
+#herkansjesTip.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* === Titelbalk === */
+#herkansjesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--ebx);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+#herkansjesClose {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* === Ankerblokken === */
+#herkansjesContainer .anker-blok {
+  margin-bottom: 18px;
+  background: #fdfefe;
+  border-radius: 10px;
+  padding: 4px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#herkansjesContainer .anker-blok h3 {
+  color: var(--ebx);
+  font-size: 15px;
+  font-weight: 700;
+  margin: 10px 0 6px 10px;
+}
+
+/* === Tabellen (alleen binnen Herkansjes) === */
+#herkansjesContainer .anker-tabel {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#herkansjesContainer .anker-tabel th {
+  background: #fff;
+  border-bottom: 2px solid var(--ebx);
+  color: var(--ebx);
+  text-align: left;
+  padding: 8px;
+  font-weight: 700;
+}
+
+#herkansjesContainer .anker-tabel td {
+  border-bottom: 1px solid rgba(1, 104, 155, .14);
+  padding: 8px;
+  vertical-align: top;
+  color: var(--ink);
+}
+
+/* === Kleuren zoals changelog.css === */
+#herkansjesContainer .anker-tabel tbody tr:nth-child(odd) {
+  background-color: #f3f9fe;
+  /* eerst lichtblauw */
+}
+
+#herkansjesContainer .anker-tabel tbody tr:nth-child(even) {
+  background-color: #ffffff;
+  /* dan wit */
+}
+
+#herkansjesContainer .anker-tabel tbody tr:hover td {
+  background-color: #d9eefb;
+  /* diepere EBX-hoverkleur */
+}
+
+/* Geen linkerkleurige lijn meer */
+#herkansjesContainer .anker-tabel tbody tr {
+  transition: background-color 0.15s ease-in-out;
+  border-left: none;
+}
+
+/* === Kolommen compact === */
+#herkansjesContainer .anker-tabel th:nth-child(1),
+#herkansjesContainer .anker-tabel td:nth-child(1) {
+  width: 60px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+#herkansjesContainer .anker-tabel th:nth-child(4),
+#herkansjesContainer .anker-tabel td:nth-child(4) {
+  white-space: nowrap;
+}
+
+/* === Verwijderknop === */
+#herkansjesContainer .verwijder-knop {
+  background: none;
+  border: none;
+  color: var(--ebx);
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.1s;
+}
+
+#herkansjesContainer .verwijder-knop:hover {
+  color: var(--ebx-dark);
+  transform: scale(1.1);
+}
+
+/* === Tooltip === */
+#herkansjesContainer .tooltipcel {
+  position: relative;
+  cursor: pointer;
+  color: var(--ebx);
+  white-space: nowrap;
+}
+
+#herkansjesContainer .tooltip-ballon {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 110%;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 1px solid var(--ebx);
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+#herkansjesContainer .tooltip-ballon.show {
+  display: block;
+}
+
+#herkansjesContainer .tooltip-ballon::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid var(--ebx);
+}
+
+/* === EBX-bevestigingsvenster === */
+.ebx-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.ebx-popup {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.ebx-popup h3 {
+  color: var(--ebx);
+  margin-bottom: 10px;
+}
+
+.ebx-popup .knoppen button {
+  margin: 8px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#ebxJa {
+  background: var(--ebx);
+  color: #fff;
+}
+
+#ebxNee {
+  background: #ccc;
+}
+
+/* === Responsief === */
+@media (max-width: 600px) {
+  #herkansjesTip {
+    width: 94vw;
+  }
+
+  #herkansjesContainer .anker-tabel th,
+  #herkansjesContainer .anker-tabel td {
+    font-size: 13px;
+    padding: 8px;
+  }
+}
+
+/* === Melding onderaan popup (EBX-stijl) === */
+/* === Altijd-zichtbare melding onderaan popup (vaste positie) === */
+#herkansjesMelding {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  background: #e8f7ee;
+  color: #137333;
+  border-top: 1px solid #c6e9d3;
+  font-weight: 500;
+  padding: 10px 14px;
+  font-size: 14px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 20;
+}
+
+#herkansjesMelding.show {
+  opacity: 1;
+}
+
+#ebxTooltip {
+  position: absolute;
+  background: #01689B;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  font-size: 13px;
+  line-height: 1.4;
+  max-width: 240px;
+  z-index: 9999;
+  pointer-events: none;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+}

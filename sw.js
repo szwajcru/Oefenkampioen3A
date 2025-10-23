@@ -8,10 +8,12 @@ const FILES_TO_CACHE = [
   '/index/style.css',
   '/index/script.js',
   '/index/resultaatGrafiek.js',
+  '/changelog/changelog.css',
+  '/changelog/changelog.js',
+  '/herkansjes/herkansjes.js',
+  '/herkansjes/herkansjes.css',
   '/index/feedback.js',
   '/index/feedback.css',
-  '/changelog/changelog.css',
-  '/changelog/changelog.js'
 ];
 
 /**

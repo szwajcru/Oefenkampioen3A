@@ -5,6 +5,7 @@ const changelog = [
     version: '1.17',
     changes: [
       { type: 'Toegevoegd', description: 'Oefensite maakt gebruik van serviceworker, voor betere UI ervaring' },
+      { type: 'Gewijzigd', description: 'Mijn herkansjes compactere weergave' },
     ]
   },
   {

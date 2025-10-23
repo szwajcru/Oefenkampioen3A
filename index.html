@@ -48,6 +48,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="index/style.css">
   <link rel="stylesheet" href="index/feedback.css">
+  <link rel="stylesheet" href="herkansjes/herkansjes.css">
 
 
   <!-- Nieuwe losse module voor de resultaten-grafiek -->
@@ -64,11 +65,14 @@
     });
   </script>
 
+  <script defer src="/herkansjes/herkansjes.js"></script>
+
+
 </head>
 
 <body>
   <div id="versionTopGlobal">
-    ️📋<strong></strong>&nbsp;<span id="changelogLink" tabindex="0" title="">versie 1.17</span> ·
+    ️📋<strong></strong>&nbsp;<span id="changelogLink" tabindex="0" title="">V 1.17</span> ·
     💬&nbsp; <span id="feedbackLink" tabindex="0" title="">Feedback</span> ·
     📚📖&nbsp;<span id="mijnHerkansjesLink" tabindex="0" title="Bekijk woordjes die je lastig vond">Mijn
       herkansjes</span> ·
@@ -500,32 +504,17 @@
   </div>
 
 
-  <!-- Popup voor oefenherkansjes -->
-  <div id="popupHerkansjes" class="popup-overlay" style="display:none;">
-    <div class="popup-card">
-      <div class="popup-header">
-        <h2>Mijn herkansjes</h2>
-        <button id="btnSluitHerkansjes" class="btn-close">×</button>
-      </div>
-      <div id="popupHerkansjesContent" class="popup-body">
-        <p>Geen oefenherkansjes gevonden.</p>
-      </div>
-      <div class="popup-footer">
-        <button id="btnOkHerkansjes" class="btn">OK</button>
-      </div>
+  <!-- Popup: Mijn herkansjes -->
+  <div id="herkansjesTip" role="dialog" aria-modal="true" aria-labelledby="herkansjesTitle">
+    <div id="herkansjesHeader">
+      <span id="herkansjesTitle">📚 Mijn herkansjes 💪</span>
+      <button id="herkansjesClose" aria-label="Sluiten">×</button>
     </div>
+
+    <!-- 🔽 Voeg dit element toe -->
+    <div id="herkansjesContainer"></div>
   </div>
 
-  <!-- Popup voor Mijn Herkansjes -->
-  <div id="herkansjesPopup" style="display:none;">
-    <div class="resultCard">
-      <h2>Mijn herkansjes 💪</h2>
-      <div id="herkansjesList"></div>
-      <div style="text-align:right; margin-top: 12px;">
-        <button id="btnMijnHerkansjesSluiten" class="btn secondary">Sluiten</button>
-      </div>
-    </div>
-  </div>
 
 
   <!-- Popup zinnetjes -->
@@ -639,97 +628,100 @@
     </div>
   </div>
 
-<script src="/version/version.js"></script>
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').then(reg => {
-    console.log('Service Worker geregistreerd:', reg.scope);
+  /**
+    * Service Worker + versiebeheer
+    */
+  <script src="/version/version.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').then(reg => {
+        console.log('Service Worker geregistreerd:', reg.scope);
 
-    // 🔍 Controleer of alles up-to-date is
-    if (!reg.waiting && !reg.installing && navigator.serviceWorker.controller) {
-      toonStatusMelding('✅ veel plezier!', '#28a745');
+        // 🔍 Controleer of alles up-to-date is
+        if (!reg.waiting && !reg.installing && navigator.serviceWorker.controller) {
+          toonStatusMelding('✅ veel plezier!', '#28a745');
+        }
+
+        // 🔁 Detecteer updates
+        reg.addEventListener('updatefound', () => {
+          const nieuweSW = reg.installing;
+          nieuweSW.addEventListener('statechange', () => {
+            if (nieuweSW.state === 'installed' && navigator.serviceWorker.controller) {
+              toonUpdateMelding(nieuweSW);
+            }
+          });
+        });
+      }).catch(err => {
+        console.error('❌ Fout bij registreren Service Worker:', err);
+      });
     }
 
-    // 🔁 Detecteer updates
-    reg.addEventListener('updatefound', () => {
-      const nieuweSW = reg.installing;
-      nieuweSW.addEventListener('statechange', () => {
-        if (nieuweSW.state === 'installed' && navigator.serviceWorker.controller) {
-          toonUpdateMelding(nieuweSW);
-        }
+    /**
+     * 🔵 Toont melding bij nieuwe versie
+     */
+    function toonUpdateMelding(nieuweSW) {
+      const div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.bottom = '0';
+      div.style.left = '0';
+      div.style.width = '100%';
+      div.style.background = '#01689B';
+      div.style.color = 'white';
+      div.style.textAlign = 'center';
+      div.style.padding = '10px';
+      div.style.fontFamily = 'sans-serif';
+      div.style.fontSize = '15px';
+      div.style.zIndex = '9999';
+      div.style.opacity = '0';
+      div.style.transition = 'opacity 0.5s ease-in';
+      div.innerHTML =
+        'Nieuwe versie beschikbaar — ' +
+        '<button id="refreshBtn" style="background:white;color:#01689B;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;">Klik om te verversen</button>';
+      document.body.appendChild(div);
+      requestAnimationFrame(() => (div.style.opacity = '1'));
+
+      document.getElementById('refreshBtn').addEventListener('click', () => {
+        nieuweSW.postMessage('SKIP_WAITING');
       });
-    });
-  }).catch(err => {
-    console.error('❌ Fout bij registreren Service Worker:', err);
-  });
-}
 
-/**
- * 🔵 Toont melding bij nieuwe versie
- */
-function toonUpdateMelding(nieuweSW) {
-  const div = document.createElement('div');
-  div.style.position = 'fixed';
-  div.style.bottom = '0';
-  div.style.left = '0';
-  div.style.width = '100%';
-  div.style.background = '#01689B';
-  div.style.color = 'white';
-  div.style.textAlign = 'center';
-  div.style.padding = '10px';
-  div.style.fontFamily = 'sans-serif';
-  div.style.fontSize = '15px';
-  div.style.zIndex = '9999';
-  div.style.opacity = '0';
-  div.style.transition = 'opacity 0.5s ease-in';
-  div.innerHTML =
-    'Nieuwe versie beschikbaar — ' +
-    '<button id="refreshBtn" style="background:white;color:#01689B;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;">Klik om te verversen</button>';
-  document.body.appendChild(div);
-  requestAnimationFrame(() => (div.style.opacity = '1'));
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      });
+    }
 
-  document.getElementById('refreshBtn').addEventListener('click', () => {
-    nieuweSW.postMessage('SKIP_WAITING');
-  });
+    /**
+     * 🟢 Toont melding voor status (alles up-to-date)
+     */
+    function toonStatusMelding(tekst, kleur) {
+      const div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.bottom = '0';
+      div.style.left = '0';
+      div.style.width = '100%';
+      div.style.background = kleur;
+      div.style.color = 'white';
+      div.style.textAlign = 'center';
+      div.style.padding = '8px';
+      div.style.fontFamily = 'sans-serif';
+      div.style.fontSize = '14px';
+      div.style.zIndex = '9999';
+      div.style.opacity = '0';
+      div.style.transition = 'opacity 0.5s ease-in';
+      div.innerText = tekst;
+      document.body.appendChild(div);
+      requestAnimationFrame(() => (div.style.opacity = '1'));
+      setTimeout(() => div.remove(), 4000);
+    }
 
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    window.location.reload();
-  });
-}
+    /**
+     * 💾 Eénmalige forced refresh bij nieuwe versie
+     */
+    if (localStorage.getItem('siteVersie') !== SITE_VERSION) {
+      localStorage.setItem('siteVersie', SITE_VERSION);
+      location.reload(true);
+    }
+  </script>
 
-/**
- * 🟢 Toont melding voor status (alles up-to-date)
- */
-function toonStatusMelding(tekst, kleur) {
-  const div = document.createElement('div');
-  div.style.position = 'fixed';
-  div.style.bottom = '0';
-  div.style.left = '0';
-  div.style.width = '100%';
-  div.style.background = kleur;
-  div.style.color = 'white';
-  div.style.textAlign = 'center';
-  div.style.padding = '8px';
-  div.style.fontFamily = 'sans-serif';
-  div.style.fontSize = '14px';
-  div.style.zIndex = '9999';
-  div.style.opacity = '0';
-  div.style.transition = 'opacity 0.5s ease-in';
-  div.innerText = tekst;
-  document.body.appendChild(div);
-  requestAnimationFrame(() => (div.style.opacity = '1'));
-  setTimeout(() => div.remove(), 4000);
-}
-
-/**
- * 💾 Eénmalige forced refresh bij nieuwe versie
- */
-if (localStorage.getItem('siteVersie') !== SITE_VERSION) {
-  localStorage.setItem('siteVersie', SITE_VERSION);
-  location.reload(true);
-}
-</script>
-  
 </body>
 
 </html>
