@@ -1,121 +1,206 @@
-/* === FEEDBACK POPUP — compacte desktop, nette mobiele layout === */
-/* Alleen overlay van het feedback-popup transparant maken */
-#feedbackForm.popup {
-  background: transparent !important;  /* geen zwarte sluier */
-  border: 0 !important;                /* geen overlay-rand */
-  box-shadow: none !important;
-  outline: none !important;
+/* === FEEDBACK (changelog-stijl) ========================================= */
+:root{
+  --ebx:#01689B;
+  --ebx-dark:#014b73;
+  --ink:#0f172a;
 }
 
-/* Mocht je thema pseudo-elementen gebruiken voor de sluier: uitzetten */
-#feedbackForm.popup::before,
-#feedbackForm.popup::after {
-  content: none !important;
-  display: none !important;
-}
-
-/* Overlay klik-doorlaatbaar, kaart vangt de interactie op */
-#feedbackForm { pointer-events: none; }
-#feedbackForm .popup-content { pointer-events: auto; }
-
-/* Laat de kaart juist wél de originele rand houden */
-#feedbackForm .popup-content,
-#feedbackForm .popup-content.popup-feedback {
-  border: 2px solid var(--ebx, #01689B) !important; /* EBX-blauw */
-  border-radius: 14px;                               /* zoals voorheen */
-  box-shadow: 0 18px 60px rgba(1,104,155,.18);       /* zachte schaduw */
+/* Container: licht, gecentreerd, alleen verticaal scrollen */
+#feedbackTip{
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(92vw, 620px);
+  max-height: min(72vh, 560px);
   background: #fff;
+  border: 2px solid var(--ebx);
+  border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(1,104,155,.18);
+  color: var(--ink);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  z-index: 1000;
+  /* simpele show/hide via [hidden] attribuut */
+}
+#feedbackTip[hidden]{ display:none; }
+
+/* Tabelbasis */
+#feedbackTable{
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
-/* Container zelf */
-#feedbackForm .popup-content.popup-feedback {
-  width: clamp(340px, 70vw, 620px);
-  max-height: 55vh;
-  left:50%;
-  overflow: auto;
-  padding: 18px 22px 6px;   /* kleine bottom padding, geen groot wit vlak meer */
-  margin: 0 auto;
-  box-sizing: border-box;
-}
-
-/* Kop */
-.feedback-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-.feedback-header .feedback-icon {
-  width: 26px;
-  height: 26px;
-}
-.feedback-header h3 {
-  margin: 0;
-  font-size: 21px;
-  line-height: 1.2;
-}
-
-/* Formulier-layout */
-.feedback-layout {
-  display: grid;
-  grid-template-columns: 110px 1fr;
-  gap: 10px 14px;
-  align-items: start;
-}
-.feedback-layout .form-row {
-  display: contents;
-}
-
-/* Labels */
-.feedback-layout label {
-  font-weight: 700;
-  color: #0f172a;
+/* Header: EBX-blauw, wit tekst, dunne onderlijn */
+#feedbackTable thead th{
+  position: sticky; top: 0; z-index: 1;
+  background: var(--ebx);
+  color: #fff;
+  border-bottom: 3px solid var(--ebx-dark);
   text-align: left;
-  margin: 0;
-  padding-top: 6px;
-  align-self: start;
+  padding: 12px 16px;
+  font-weight: 800;
+  letter-spacing:.2px;
 }
 
-/* Velden */
-.feedback-layout input,
-.feedback-layout textarea {
+/* Cellen: hele dunne randen + nette spacing */
+#feedbackTable td{
+  border-bottom: 1px solid rgba(1,104,155,.14);
+  padding: 10px 14px;
+  vertical-align: top;
+  color: var(--ink);
+}
+
+/* Labels smal, velden breed (desktop) */
+#feedbackTable td.label{ width: 140px; white-space: nowrap; font-weight: 700; }
+#feedbackTable td.field{ width: auto; }
+
+/* Inputs */
+#feedbackTable input,
+#feedbackTable textarea{
   width: 100%;
   padding: 8px 10px;
   border: 2px solid #cfe4ef;
   border-radius: 10px;
   font: inherit;
-  background: #fff;
   outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+  box-sizing: border-box;
+}
+#feedbackTable textarea{ min-height: 120px; resize: vertical; }
+
+#feedbackTable input:focus,
+#feedbackTable textarea:focus{
+  border-color: var(--ebx);
+  box-shadow: 0 0 0 3px rgba(1,104,155,.12);
 }
 
-.feedback-layout textarea {
-  min-height: 120px;
-  max-height: 50vh;
-  resize: vertical;
-}
-
-.feedback-layout input:focus,
-.feedback-layout textarea:focus {
-  border-color: #01689B;
-  box-shadow: 0 0 0 3px rgba(39, 17, 82, 0.12);
-}
-
-/* Knoppenbalk onderaan */
-.form-buttons {
-  grid-column: 1 / -1;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+/* Actie-knoppen (samengevoegde rij) */
+#feedbackTable td.actions{
+  text-align: right;
+  padding: 12px 14px;
   position: sticky;
   bottom: 0;
-  background: linear-gradient(to top, #fff, rgba(255,255,255,0.92) 60%, rgba(255,255,255,0));
-  padding: 10px 0 14px;
-  margin-top: 10px;
+  background: linear-gradient(to top, #fff, rgba(255,255,255,.96) 60%, rgba(255,255,255,0));
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
 }
 
-/* Knoppen */
-.form-buttons .btn {
+/* Knoppenstijl */
+#feedbackTable .btn{
+  appearance: none;
+  border: 0;
+  border-radius: 10px;
+  padding: 9px 16px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .1s ease, background-color .15s ease;
+  box-shadow: 0 2px 0 rgba(0,0,0,.15);
+}
+#feedbackTable .btn.primary{ background: var(--ebx); color:#fff; }
+#feedbackTable .btn.primary:hover{ transform: translateY(-1px); }
+#feedbackTable .btn.secondary{ background:#ecf4f9; color:var(--ink); border:1px solid rgba(1,104,155,.15); }
+
+/* Hover-rij subtiel */
+#feedbackTable tbody tr:hover td{ background:#f6fbff; }
+
+/* Mobiel: labels links naast veld blijven staan; compacter */
+@media (max-width: 640px){
+  #feedbackTip{ width: 94vw; max-height: calc(100vh - 160px); }
+  #feedbackTable td{ padding: 10px 12px; }
+  #feedbackTable td.label{ width: 96px; }
+  #feedbackTable textarea{ min-height: 100px; }
+  #feedbackTable td.actions{
+    justify-content: space-between;
+    padding: 10px 12px;
+  }
+  #feedbackTable .btn{ flex: 1 1 0; font-size:14px; padding:8px 10px; }
+}
+
+/* === FEEDBACK POPUP — afgeleid van changelog === */
+
+#feedbackForm {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  display: none;
+}
+
+#feedbackForm .popup-content.popup-feedback {
+  background: #fff;
+  border: 2px solid #01689B;
+  border-radius: 14px;
+  box-shadow: 0 18px 60px rgba(1,104,155,.18);
+  padding: 0;
+  width: clamp(340px, 70vw, 540px);
+  overflow: hidden;
+}
+
+/* Tabel-opmaak */
+.feedback-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+/* Header met EBX-blauw */
+.feedback-table thead th {
+  background: #01689B;
+  color: #fff;
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 17px;
+  border-bottom: 2px solid #014b73;
+}
+
+/* Cellen */
+.feedback-table td {
+  border: 1px solid rgba(1,104,155,.15);
+  padding: 10px 12px;
+  vertical-align: top;
+}
+
+/* Labels */
+.feedback-table .label-cell {
+  width: 100px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Velden */
+.feedback-table input,
+.feedback-table textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 2px solid #cfe4ef;
+  border-radius: 10px;
+  font: inherit;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.feedback-table input:focus,
+.feedback-table textarea:focus {
+  border-color: #01689B;
+  box-shadow: 0 0 0 3px rgba(1,104,155,.12);
+}
+
+/* Knoppenrij */
+.feedback-table .button-row {
+  text-align: right;
+  background: #f7fbfd;
+}
+
+.feedback-table .btn {
   appearance: none;
   border: 0;
   border-radius: 10px;
@@ -124,17 +209,18 @@
   font-weight: 700;
   cursor: pointer;
   transition: transform .1s ease, background-color .15s ease;
+  margin-left: 6px;
 }
 
-.form-buttons .btn[type="submit"] {
+.feedback-table .btn[type="submit"] {
   background: #01689B;
   color: #fff;
   box-shadow: 0 2px 0 #014b73;
 }
-.form-buttons .btn[type="submit"]:hover {
+.feedback-table .btn[type="submit"]:hover {
   transform: translateY(-1px);
 }
-.form-buttons .btn[type="submit"]:active {
+.feedback-table .btn[type="submit"]:active {
   transform: translateY(0);
 }
 
@@ -144,62 +230,62 @@
   border: 1px solid rgba(1,104,155,.15);
 }
 
-/* === MOBIEL === */
+/* Mobiel */
 @media (max-width: 640px) {
   #feedbackForm .popup-content.popup-feedback {
     width: 92vw;
-    max-height: calc(100dvh - 200px);  /* ⬅ gebruikt dynamische hoogte, stabieler op mobiel */
-    padding: 12px 14px 0;
   }
 
-  .feedback-layout {
-    grid-template-columns: 80px 1fr;
-    gap: 8px 10px;
+  .feedback-table td {
+    padding: 8px 10px;
   }
 
-  .feedback-layout label {
-    font-size: 15px;
-    padding-top: 0;
+  .feedback-table .label-cell {
+    width: 80px;
   }
 
-  .feedback-layout input {
-    height: 36px;
-  }
-
-  .feedback-layout textarea {
+  .feedback-table textarea {
     min-height: 100px;
   }
 
-  .form-buttons {
-    justify-content: space-between;
-    padding: 8px 0 12px;
-  }
-
-  .form-buttons .btn {
-    flex: 1 1 0;
+  .feedback-table .btn {
     font-size: 14px;
-    padding: 8px 10px;
+    padding: 8px 12px;
   }
 }
 
-/* Feedback knop + popup samen als 1 blok */
-.feedback-wrapper {
-  position: relative;
-  display: inline-block;
+/* Inline melding na verzenden */
+#feedbackMessageBox {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
 }
 
-/* Popup positie */
-#feedbackForm {
-  position: absolute;
-  top: 20px; /* 10px onder de knop */
-  left:50%;
-  z-index: 1000;
+.feedback-success {
+  background-color: #e6f4ea;
+  color: #0f5132;
+  border: 1px solid #bcd9c6;
 }
 
-/* Popup stijl zelf */
-#feedbackForm .popup-content.popup-feedback {
-  background: #fff;
-  border: 2px solid #01689B;
-  border-radius: 14px;
-  box-shadow: 0 18px 60px rgba(1,104,155,.18);
+.feedback-error {
+  background-color: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+}
+
+/* --- Zwarte overlay uit style.css uitschakelen specifiek voor feedback --- */
+#feedbackForm.popup,
+#feedbackForm.popup[style],
+#feedbackForm.popup-content {
+  position: fixed !important;
+  background: transparent !important;  /* 🟢 verwijdert zwarte sluier */
+}
+
+/* --- Popup-stijl uit style.css overrulen voor feedback --- */
+#feedbackForm.popup {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }

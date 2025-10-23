@@ -1053,18 +1053,6 @@
   };
 })();
 
-(function () {
-  const link = document.getElementById('feedbackLink');
-  const tip = document.getElementById('feedbackTip');
-  if (link && tip) {
-    function show() { tip.classList.add('show'); }
-    function hide() { tip.classList.remove('show'); }
-    link.addEventListener('mouseenter', show);
-    link.addEventListener('mouseleave', hide);
-    link.addEventListener('focus', show);
-    link.addEventListener('blur', hide);
-  }
-})();
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -2187,75 +2175,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 })();
 
-document.addEventListener('DOMContentLoaded', function () {
-  const feedbackLink = document.getElementById('feedbackLink'); // knop of icoon om te openen
-  const feedbackPopup = document.getElementById('feedbackForm');
-  const feedbackContent = feedbackPopup.querySelector('.popup-content');
-  const closeBtn = document.getElementById('btnCloseFeedback');
-  const form = document.getElementById('formFeedback');
-
-  if (!feedbackPopup || !form) return;
-
-  // Openen van popup
-  if (feedbackLink) {
-    feedbackLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      feedbackPopup.style.display = 'block';
-    });
-  }
-
-  // Sluiten via knop
-  closeBtn.addEventListener('click', () => {
-    feedbackPopup.style.display = 'none';
-  });
-
-  // ✅ Sluiten bij klik buiten het witte frame
-  document.addEventListener('click', (e) => {
-    const isClickInside = feedbackContent.contains(e.target) || (feedbackLink && feedbackLink.contains(e.target));
-    if (!isClickInside && feedbackPopup.style.display === 'block') {
-      feedbackPopup.style.display = 'none';
-    }
-  });
-
-  // Sluiten met Escape-toets
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && feedbackPopup.style.display === 'block') {
-      feedbackPopup.style.display = 'none';
-    }
-  });
-
-  // Formulier verzenden met EmailJS
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const now = new Date().toLocaleString('nl-NL', {
-      dateStyle: 'full',
-      timeStyle: 'short'
-    });
-
-    const templateParams = {
-      user_name: form.user_name.value,
-      user_email: form.user_email.value,
-      message: form.message.value,
-      time: now
-    };
-
-    emailjs.send('service_v6m2jaa', 'tmpl_feedback_8060i6f', templateParams)
-      .then(() => {
-        alert('Bedankt voor je feedback!');
-        feedbackPopup.style.display = 'none';
-        form.reset();
-      })
-      .catch((error) => {
-        console.error('Fout bij versturen:', error);
-        alert('Er ging iets mis bij het versturen. Probeer later opnieuw.');
-      });
-  });
-
-});
-
-
 // ==================== EBX-tooltips voor grafiekknoppen ====================
 
 // Tooltip helpers
@@ -2955,4 +2874,9 @@ function isConfirmOpen() {
     console.error('Migratie anker 01 mislukt:', e);
   }
 })();
+
+
+
+
+
 
