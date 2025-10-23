@@ -2,11 +2,16 @@
 
 const changelog = [
   {
+    version: '1.16',
+    changes: [
+      { type: 'Bugfix', description: 'Feedback formulier uitlijning' },
+    ]
+  },
+  {
     version: '1.15',
     changes: [
       { type: 'Toegevoegd', description: 'Individuele resultaten (grafieken) per anker' },
       { type: 'Toegevoegd', description: 'Snuffel woordjes bij anker 2' },
-      { type: 'Bugfix', description: 'Feedback formulier uitlijning' },
     ]
   },
   {

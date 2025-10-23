@@ -3,7 +3,7 @@
 /* Container zelf */
 #feedbackForm .popup-content.popup-feedback {
   width: clamp(340px, 70vw, 620px);
-  max-height: 45vh;
+  max-height: 55vh;
   overflow: auto;
   padding: 18px 22px 6px;   /* kleine bottom padding, geen groot wit vlak meer */
   margin: 0 auto;
