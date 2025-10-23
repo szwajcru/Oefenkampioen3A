@@ -770,13 +770,24 @@
       const perAnkerKey = `resultaten_anker_${ankerPadded}_${modus}`;
       const perAnker = JSON.parse(localStorage.getItem(perAnkerKey) || '[]');
 
-      if (ankerPadded !== '09') {
+      if (ankerPadded === '09') {
+        // Verberg de grafiekcontainer in plaats van verwijderen
+        const chartContainer = document.getElementById('chartContainer');
+        if (chartContainer) {
+          chartContainer.style.display = 'none';
+        }
+      } else {
+        // Zorg dat de grafiekcontainer weer zichtbaar is
+        const chartContainer = document.getElementById('chartContainer');
+        if (chartContainer) {
+          chartContainer.style.display = '';
+        }
+
         perAnker.push(record);
         localStorage.setItem(perAnkerKey, JSON.stringify(perAnker));
 
-        //Teken de grafiek
+        // Teken de grafiek
         tekenResultaatGrafiek();
-
       }
     }
 
@@ -1072,18 +1083,38 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+//Changelog
 document.addEventListener('DOMContentLoaded', function () {
-  var link = document.getElementById('changelogLink');
-  var tip = document.getElementById('changelogTip');
-  if (link && tip) {
-    function show() { tip.classList.add('show'); }
-    function hide() { tip.classList.remove('show'); }
-    link.addEventListener('mouseenter', show);
-    link.addEventListener('mouseleave', hide);
-    link.addEventListener('focus', show);
-    link.addEventListener('blur', hide);
-  }
+  const link = document.getElementById('changelogLink');
+  const tip = document.getElementById('changelogTip');
+  if (!link || !tip) return;
 
+  const show = () => tip.classList.add('show');
+  const hide = () => tip.classList.remove('show');
+
+  // Desktop hover/toetsenbord
+  link.addEventListener('mouseenter', show);
+  //link.addEventListener('mouseleave', hide);
+  link.addEventListener('focus', show);
+  link.addEventListener('blur', hide);
+
+  // ✅ Mobiel / algemeen: klik toggle
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    tip.classList.toggle('show');
+  });
+
+  // ✅ Sluiten bij klik buiten de tip
+  document.addEventListener('click', (e) => {
+    if (!tip.classList.contains('show')) return;
+    const clickedLink = e.target === link || link.contains(e.target);
+    const clickedTip = e.target === tip || tip.contains(e.target);
+    if (!clickedLink && !clickedTip) hide();
+  });
+});
+
+document.getElementById('clCloseBtn')?.addEventListener('click', () => {
+  document.getElementById('changelogTip')?.classList.remove('show');
 });
 
 
@@ -2242,6 +2273,11 @@ function initAnkerResultaatGrafieken() {
       return;
     }
 
+    // ⛔ Sla anker 09 ("Herkansjes") over
+    if (ankerNummer === '9' || ankerNummer === 9) {
+      return;
+    }
+
     // Maak de knop
     const btn = document.createElement('button');
     btn.className = 'btnResultGrafiek';
@@ -2274,6 +2310,7 @@ function initAnkerResultaatGrafieken() {
     btn.addEventListener('mouseleave', hideTooltip);
   });
 }
+
 
 
 // Start na DOM load
@@ -2408,7 +2445,7 @@ function openResultatenPopupVoorAnker(nr) {
     // Canvas schoon en boodschap tekenen
     const w = canvas.width, h = canvas.height;
     ctx.clearRect(0, 0, w, h);
-    ctx.font = '16px Arial';
+    ctx.font = '14px Arial';
     ctx.fillStyle = '#444';
     ctx.textAlign = 'center';
     ctx.fillText(`Nog geen resultaten beschikbaar voor anker ${nrStr}`, w / 2, h / 2);
@@ -2877,7 +2914,7 @@ function isConfirmOpen() {
 // --- MIGRATIE: alleen uitvoeren als 'resultaten' bestaat en
 // 'resultaten_anker_01_normaal' nog NIET bestaat. Draait idempotent. ---
 (function migrateAnker01IfNeeded() {
-  const OLD_KEY   = 'resultaten';
+  const OLD_KEY = 'resultaten';
   const NEW_N_KEY = 'resultaten_anker_01_normaal';
   const NEW_S_KEY = 'resultaten_anker_01_snuffel';
 
@@ -2918,3 +2955,4 @@ function isConfirmOpen() {
     console.error('Migratie anker 01 mislukt:', e);
   }
 })();
+

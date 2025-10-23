@@ -1,0 +1,179 @@
+/* === FEEDBACK POPUP — compacte desktop, nette mobiele layout === */
+
+/* Container zelf */
+#feedbackForm .popup-content.popup-feedback {
+  width: clamp(340px, 70vw, 620px);
+  max-height: 45vh;
+  overflow: auto;
+  padding: 18px 22px 6px;   /* kleine bottom padding, geen groot wit vlak meer */
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Kop */
+.feedback-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.feedback-header .feedback-icon {
+  width: 26px;
+  height: 26px;
+}
+.feedback-header h3 {
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+/* Formulier-layout */
+.feedback-layout {
+  display: grid;
+  grid-template-columns: 110px 1fr;     /* labels + velden */
+  gap: 10px 14px;
+  align-items: start;                   /* labels bovenaan uitgelijnd */
+}
+.feedback-layout .form-row {
+  display: contents;
+}
+
+/* Labels */
+.feedback-layout label {
+  font-weight: 700;
+  color: #0f172a;
+  text-align: left;
+  margin: 0;
+  padding-top: 6px;
+  align-self: start;                    /* label zelf bovenaan */
+}
+
+/* Velden */
+.feedback-layout input,
+.feedback-layout textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 2px solid #cfe4ef;
+  border-radius: 10px;
+  font: inherit;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.feedback-layout textarea {
+  min-height: 120px;
+  max-height: 50vh;
+  resize: vertical;
+}
+
+.feedback-layout input:focus,
+.feedback-layout textarea:focus {
+  border-color: #01689B;
+  box-shadow: 0 0 0 3px rgba(1,104,155,.12);
+}
+
+/* Knoppenbalk onderaan */
+.form-buttons {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(to top, #fff, rgba(255,255,255,0.92) 60%, rgba(255,255,255,0));
+  padding: 10px 0 14px;
+  margin-top: 10px;
+}
+
+/* Knoppen */
+.form-buttons .btn {
+  appearance: none;
+  border: 0;
+  border-radius: 10px;
+  padding: 9px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .1s ease, background-color .15s ease;
+}
+
+.form-buttons .btn[type="submit"] {
+  background: #01689B;
+  color: #fff;
+  box-shadow: 0 2px 0 #014b73;
+}
+.form-buttons .btn[type="submit"]:hover {
+  transform: translateY(-1px);
+}
+.form-buttons .btn[type="submit"]:active {
+  transform: translateY(0);
+}
+
+#btnCloseFeedback {
+  background: #ecf4f9;
+  color: #0f172a;
+  border: 1px solid rgba(1,104,155,.15);
+}
+
+/* === MOBIEL === */
+@media (max-width: 640px) {
+  #feedbackForm .popup-content.popup-feedback {
+    width: 92vw;
+    max-height: calc(100vh - 400px);   /* voorkomt witruimte onderaan */
+    padding: 12px 14px 0;
+  }
+
+  .feedback-layout {
+    grid-template-columns: 80px 1fr;    /* labels links, iets smaller */
+    gap: 8px 10px;
+  }
+
+  .feedback-layout label {
+    font-size: 15px;
+    padding-top: 0;
+  }
+
+  .feedback-layout input {
+    height: 36px;
+  }
+
+  .feedback-layout textarea {
+    min-height: 100px;
+  }
+
+  .form-buttons {
+    justify-content: space-between;
+    padding: 8px 0 12px;
+  }
+
+  .form-buttons .btn {
+    flex: 1 1 0;
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+}
+
+/* Feedback knop + popup samen als 1 blok */
+.feedback-wrapper {
+  position: relative;     /* referentiepunt voor de popup */
+  display: inline-block;  /* laat de popup direct onder de knop verschijnen */
+}
+
+/* Popup positie */
+#feedbackForm {
+  position: absolute;
+  top: 10px; /* 10px onder de knop */
+  right: 0;               /* uitlijnen met rechterrand van de knop */
+  transform: none !important; /* verwijder middenuitlijning */
+  z-index: 1000;
+}
+
+/* Popup stijl zelf */
+#feedbackForm .popup-content.popup-feedback {
+  width: clamp(340px, 70vw, 620px);
+  background: #fff;
+  border: 2px solid #01689B;
+  border-radius: 14px;
+  box-shadow: 0 18px 60px rgba(1,104,155,.18);
+}

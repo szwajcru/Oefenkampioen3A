@@ -6,6 +6,7 @@ const changelog = [
     changes: [
       { type: 'Toegevoegd', description: 'Individuele resultaten (grafieken) per anker' },
       { type: 'Toegevoegd', description: 'Snuffel woordjes bij anker 2' },
+      { type: 'Bugfix', description: 'Feedback formulier uitlijning' },
     ]
   },
   {
@@ -109,14 +110,23 @@ changelog.forEach(entry => {
     // versie alleen in de eerste rij tonen
     if (index === 0) {
       const tdVersion = document.createElement('td');
+      tdVersion.className = 'version-cell';        // 👈 voeg deze toe
       tdVersion.textContent = entry.version;
       tdVersion.rowSpan = entry.changes.length;
       tr.appendChild(tdVersion);
     }
 
+
+    // Type-kolom
     const tdType = document.createElement('td');
-    tdType.textContent = change.type;
+    tdType.classList.add('type-cell');
+    const rawType = (change.type || '').trim();
+    const normType = rawType.toLowerCase();           // 'toegevoegd' | 'gewijzigd' | 'bugfix'
+    tdType.dataset.type = normType;                   // bepaalt icoon via CSS
+    tdType.setAttribute('title', rawType);            // tooltip op hover
+    tdType.textContent = '';                          // geen tekst tonen (compact)
     tr.appendChild(tdType);
+
 
     const tdDesc = document.createElement('td');
     tdDesc.textContent = change.description;

@@ -43,6 +43,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="index/style.css">
+  <link rel="stylesheet" href="index/feedback.css">
+
 
   <!-- Nieuwe losse module voor de resultaten-grafiek -->
   <script defer src="index/resultaatGrafiek.js"></script>
@@ -422,7 +424,6 @@
     <div class="badge"></div>
   </div>
 
-  <!-- Changelog -->
   <div id="changelogTip">
     <table id="changelogTable" class="tg">
       <thead>
@@ -437,6 +438,7 @@
       </tbody>
     </table>
   </div>
+
 
   <!-- Resultaten hover popup -->
   <div id="resultatenTip" class="resultaten-popup">
@@ -582,7 +584,7 @@
         </div>
         <div class="form-row">
           <label for="message">Bericht</label>
-          <textarea id="message" name="message" rows="15" required></textarea>
+          <textarea id="message" name="message" rows="10" required></textarea>
         </div>
         <div class="form-buttons">
           <button type="submit" class="btn">Versturen</button>

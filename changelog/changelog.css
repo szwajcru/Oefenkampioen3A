@@ -1,20 +1,182 @@
-.tg {
-  border-collapse: collapse;
-  border-spacing: 0;
-  width: 100%;
+/* === EBX kleuren (fallbacks) === */
+:root{
+  --ebx:#01689B; --ebx-dark:#014b73; --ink:#0f172a; --bg-soft:#f0f7fb;
 }
 
-.tg td,
-.tg th {
-  border: 1px solid black;
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-  padding: 8px;
-  text-align: left;
-  vertical-align: top;
+/* === Container === */
+#changelogTip{
+  position:fixed; top:30px; left:50%; transform:translateX(-50%);
+  width:min(92vw,420px);
+  max-height:min(72vh,560px);
+  background:#fff; border:2px solid var(--ebx); border-radius:14px;
+  box-shadow:0 18px 60px rgba(1,104,155,.18);
+  color:var(--ink);
+  overflow:auto; -webkit-overflow-scrolling:touch;
+  opacity:0; pointer-events:none; transition:opacity .14s ease; z-index:1000;
+}
+#changelogTip.show{ opacity:1; pointer-events:auto; }
+
+/* === Tabel basis (hard grid 70 | 60 | 290) === */
+#changelogTable{
+  border-collapse:collapse;
+  table-layout:fixed;
+  width:420px;                       /* 70 + 60 + 290 */
+  font-size:14px; line-height:1.45;
 }
 
-.tg th {
-  background-color: solid black;
-  color: #ffffff;
+/* Sticky header: wit + EBX tekst */
+#changelogTable thead th{
+  position:sticky; top:0; z-index:1;
+  background:#fff; color:var(--ebx);
+  border-bottom:2px solid var(--ebx);
+  font-weight:700; padding:12px 10px;
+  text-align:left;
 }
+
+/* Cellen: consistent box model + wrapping */
+#changelogTable th, #changelogTable td{
+  box-sizing:border-box; min-width:0;
+  border:0; border-bottom:1px solid rgba(1,104,155,.14);
+  padding:10px;
+  vertical-align:top; color:var(--ink);
+  text-align:left;
+  white-space:normal; overflow-wrap:break-word; word-break:normal; hyphens:auto;
+}
+
+/* Zebra per rij + hover */
+#changelogTable tbody tr:nth-child(odd){ background:#f3f9fe; }
+#changelogTable tbody tr:nth-child(even){ background:#fff; }
+#changelogTable tbody tr:hover{ background:#d9eefb; }
+
+/* === Kolombreedtes === */
+/* Kolom 1: Versie (70px) – links uitgelijnd, altijd wit, scheidslijn rechts */
+#changelogTable thead th:nth-child(1),
+#changelogTable tbody td.version-cell{
+  width:70px; max-width:70px;
+  white-space:nowrap; font-variant-numeric:tabular-nums; font-weight:600;
+  text-align:left;                     /* ⬅ links */
+  padding-left:10px; padding-right:8px;
+  background:#fff;                     /* blijft wit */
+  border-right:1px solid rgba(1,104,155,.14);
+}
+
+/* Kolom 2: Type (60px) – icoon gecentreerd */
+#changelogTable thead th:nth-child(2),
+#changelogTable tbody td.type-cell{
+  width:60px; max-width:60px;
+  text-align:center; padding-left:0; padding-right:0;
+}
+
+/* Kolom 3: Omschrijving (290px) – nette left align en wrapping */
+#changelogTable thead th:nth-child(3),
+#changelogTable tbody td:nth-child(3){
+  width:290px; max-width:290px;
+  text-align:left; padding-left:10px; padding-right:10px;
+}
+
+/* Lijstjes in omschrijving (veilig) */
+#changelogTable ul{ list-style:none; padding:0; margin:0; }
+
+/* === Type-icoontjes (slank in EBX-stijl) === */
+#changelogTable td.type-cell{ font-size:0; white-space:nowrap; }
+#changelogTable td.type-cell::before{
+  content:""; display:inline-block; width:16px; height:16px;
+  margin:0; vertical-align:-2px;
+  background-position:center; background-repeat:no-repeat; background-size:16px 16px;
+}
+#changelogTable td.type-cell[data-type="toegevoegd" i]::before{
+  background-image:url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+<path d='M12 5v14M5 12h14' stroke='%2301689B' stroke-width='2' stroke-linecap='round'/></svg>");
+}
+#changelogTable td.type-cell[data-type="gewijzigd" i]::before{
+  background-image:url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+<path d='M3 17.25V21h3.75L17.81 9.94 14.06 6.19 3 17.25zM13.5 6.5l4 4' \
+stroke='%2301689B' stroke-width='2' stroke-linejoin='round' fill='none'/></svg>");
+}
+#changelogTable td.type-cell[data-type="bugfix" i]::before{
+  background-image:url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+<circle cx='12' cy='8' r='2' fill='none' stroke='%2301689B' stroke-width='2'/>\
+<circle cx='12' cy='14' r='5' fill='none' stroke='%2301689B' stroke-width='2'/>\
+<path d='M5 14h14M7 11l-2-2M17 11l2-2M7 17l-2 2M17 17l2 2' \
+stroke='%2301689B' stroke-width='2' stroke-linecap='round' fill='none'/></svg>");
+}
+/* subtiele hover op icoon */
+#changelogTable tbody tr:hover td.type-cell::before{ filter: brightness(0.9); }
+
+/* === Mobiel (optioneel iets compacter) === */
+@media (max-width: 420px){
+  #changelogTable{ font-size:13px; }
+  #changelogTable th, #changelogTable td{ padding:10px 8px; }
+  #changelogTable td.type-cell::before{
+    width:14px; height:14px; background-size:14px 14px;
+  }
+}
+
+/* Header in EBX-blauw, óók voor de eerste (Versie) kolom */
+#changelogTable thead th{
+  background:#01689B;
+  color:#fff;
+  border-bottom:2px solid #014b73;
+}
+
+/* expliciet: zorg dat de eerste headerkolom niet wit wordt overschreven */
+#changelogTable thead th:nth-child(1){
+  background:#01689B !important;
+  color:#fff !important;
+  border-right:1px solid rgba(255,255,255,.18); /* subtiele scheidslijn */
+}
+
+/* body: Versie blijft wit (zoals je wilde) */
+#changelogTable tbody td.version-cell{
+  background:#fff !important;
+}
+
+/* 📱 Mobiel fix: geen vaste 420px, kolom 3 flexibel */
+@media (max-width: 420px){
+  #changelogTip{
+    width: 94vw;                 /* popup past in viewport */
+    max-height: 72vh;
+  }
+
+  #changelogTable{
+    width: 100%;                 /* niet meer vast op 420px */
+    table-layout: fixed;         /* respecteer kolombreedtes */
+    font-size: 13.5px;
+  }
+
+  /* Kolom 1 (Versie) iets compacter */
+  #changelogTable thead th:nth-child(1),
+  #changelogTable tbody td.version-cell{
+    width: 64px; max-width: 64px;
+    padding-left: 8px; padding-right: 6px;
+  }
+
+  /* Kolom 2 (Type) compacter */
+  #changelogTable thead th:nth-child(2),
+  #changelogTable tbody td.type-cell{
+    width: 50px; max-width: 50px;
+    padding-left: 0; padding-right: 0;
+  }
+
+  /* Kolom 3 (Omschrijving) pakt de rest en wrapt */
+  #changelogTable thead th:nth-child(3),
+  #changelogTable tbody td:nth-child(3){
+    width: auto; max-width: none;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: auto;
+    padding-left: 10px; padding-right: 10px;
+  }
+
+  /* iets kleinere iconen */
+  #changelogTable td.type-cell::before{
+    width: 14px; height: 14px; background-size: 14px 14px;
+  }
+}
+
+
+
