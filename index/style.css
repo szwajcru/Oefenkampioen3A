@@ -2096,16 +2096,6 @@ html {
   /* moderne vervanger van transform */
 }
 
-#feedbackForm,
-#feedbackForm .popup-content {
-  position: fixed !important;
-  transform: none !important;
-  left: 50% !important;
-  top: 42% !important;
-  translate: -50% -50% !important;
-  /* moderne vervanger van transform */
-}
-
 .feedback-layout {
   display: flex;
   flex-direction: column;
@@ -2147,84 +2137,6 @@ html {
   justify-content: center;
   gap: 15px;
   margin-top: 10px;
-}
-
-/* Popup voor feedback (uitgelijnd met resultaten-popup) */
-/* Zelfde positie en breedte als resultaten-popup */
-#feedbackForm {
-  display: none;
-  position: fixed;
-  top: 80px;
-  /* zelfde hoogte als resultatenTip */
-  left: 30%;
-  /* zelfde horizontale positie */
-  right: 20px;
-  width: 60%;
-  max-width: 600px;
-  background: none;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  margin: 0;
-  z-index: 200;
-  /* iets hoger zodat hij erboven ligt indien nodig */
-}
-
-
-/* Popup zelf, nu met zachtere rand en schaduw */
-.popup-content.popup-feedback {
-  position: fixed;
-  top: 80px;
-  left: 30%;
-  right: 20px;
-  background: #fff;
-  border: 2px solid var(--ebx);
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  z-index: 100;
-  display: inline-block;
-  width: 460px;
-  max-width: 95vw;
-  height:500px;
-}
-
-/* Header met favicon en titel */
-.feedback-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.feedback-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
-}
-
-/* Formulier layout */
-.feedback-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Fade-in animatie */
-@keyframes fadeInPopup {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -48%);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-
-.popup-feedback {
-  animation: fadeInPopup 0.25s ease-out;
 }
 
 /* === Popup venster voor woordenlijst === */

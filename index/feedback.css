@@ -1,9 +1,37 @@
 /* === FEEDBACK POPUP — compacte desktop, nette mobiele layout === */
+/* Alleen overlay van het feedback-popup transparant maken */
+#feedbackForm.popup {
+  background: transparent !important;  /* geen zwarte sluier */
+  border: 0 !important;                /* geen overlay-rand */
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Mocht je thema pseudo-elementen gebruiken voor de sluier: uitzetten */
+#feedbackForm.popup::before,
+#feedbackForm.popup::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Overlay klik-doorlaatbaar, kaart vangt de interactie op */
+#feedbackForm { pointer-events: none; }
+#feedbackForm .popup-content { pointer-events: auto; }
+
+/* Laat de kaart juist wél de originele rand houden */
+#feedbackForm .popup-content,
+#feedbackForm .popup-content.popup-feedback {
+  border: 2px solid var(--ebx, #01689B) !important; /* EBX-blauw */
+  border-radius: 14px;                               /* zoals voorheen */
+  box-shadow: 0 18px 60px rgba(1,104,155,.18);       /* zachte schaduw */
+  background: #fff;
+}
 
 /* Container zelf */
 #feedbackForm .popup-content.popup-feedback {
   width: clamp(340px, 70vw, 620px);
   max-height: 55vh;
+  left:50%;
   overflow: auto;
   padding: 18px 22px 6px;   /* kleine bottom padding, geen groot wit vlak meer */
   margin: 0 auto;
@@ -70,7 +98,7 @@
 .feedback-layout input:focus,
 .feedback-layout textarea:focus {
   border-color: #01689B;
-  box-shadow: 0 0 0 3px rgba(1,104,155,.12);
+  box-shadow: 0 0 0 3px rgba(39, 17, 82, 0.12);
 }
 
 /* Knoppenbalk onderaan */
@@ -163,9 +191,8 @@
 /* Popup positie */
 #feedbackForm {
   position: absolute;
-  top: 10px; /* 10px onder de knop */
-  right: 0;
-  transform: none !important;
+  top: 20px; /* 10px onder de knop */
+  left:50%;
   z-index: 1000;
 }
 
