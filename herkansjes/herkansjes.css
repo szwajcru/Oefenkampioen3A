@@ -18,24 +18,24 @@
   border-radius: 14px;
   box-shadow: 0 18px 60px rgba(1, 104, 155, .18);
   color: var(--ink);
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-bottom: 48px;
-  /* ruimte onderin voor melding */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   transition: opacity .14s ease;
   opacity: 0;
   pointer-events: none;
   z-index: 1000;
 }
 
-
 #herkansjesTip.show {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* === Titelbalk === */
+/* === Titelbalk (blijft altijd bovenaan zichtbaar) === */
 #herkansjesHeader {
+  position: sticky;
+  top: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -46,6 +46,8 @@
   font-weight: 600;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* subtiele schaduw onder titelbalk */
 }
 
 #herkansjesClose {
@@ -55,6 +57,19 @@
   font-size: 22px;
   cursor: pointer;
   line-height: 1;
+}
+
+#herkansjesClose:hover {
+  color: #e0e0e0;
+}
+
+/* === Scrollbare inhoud === */
+#herkansjesContainer {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  background: #fff;
 }
 
 /* === Ankerblokken === */
@@ -98,23 +113,19 @@
   color: var(--ink);
 }
 
-/* === Kleuren zoals changelog.css === */
+/* === Afwisselende rijen + hover === */
 #herkansjesContainer .anker-tabel tbody tr:nth-child(odd) {
   background-color: #f3f9fe;
-  /* eerst lichtblauw */
 }
 
 #herkansjesContainer .anker-tabel tbody tr:nth-child(even) {
   background-color: #ffffff;
-  /* dan wit */
 }
 
 #herkansjesContainer .anker-tabel tbody tr:hover td {
   background-color: #d9eefb;
-  /* diepere EBX-hoverkleur */
 }
 
-/* Geen linkerkleurige lijn meer */
 #herkansjesContainer .anker-tabel tbody tr {
   transition: background-color 0.15s ease-in-out;
   border-left: none;
@@ -231,6 +242,27 @@
   background: #ccc;
 }
 
+/* === Melding binnen de herkansjes-popup === */
+#herkansjesTip .ok-popup {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ebx);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10500;
+}
+
+#herkansjesTip .ok-popup.show {
+  opacity: 1;
+}
+
 /* === Responsief === */
 @media (max-width: 600px) {
   #herkansjesTip {
@@ -242,46 +274,4 @@
     font-size: 13px;
     padding: 8px;
   }
-}
-
-/* === Melding onderaan popup (EBX-stijl) === */
-/* === Altijd-zichtbare melding onderaan popup (vaste positie) === */
-#herkansjesMelding {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  background: #e8f7ee;
-  color: #137333;
-  border-top: 1px solid #c6e9d3;
-  font-weight: 500;
-  padding: 10px 14px;
-  font-size: 14px;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 20;
-}
-
-#herkansjesMelding.show {
-  opacity: 1;
-}
-
-#ebxTooltip {
-  position: absolute;
-  background: #01689B;
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  font-size: 13px;
-  line-height: 1.4;
-  max-width: 240px;
-  z-index: 9999;
-  pointer-events: none;
-  display: none;
-  opacity: 0;
-  transition: opacity 0.15s ease-in-out;
 }

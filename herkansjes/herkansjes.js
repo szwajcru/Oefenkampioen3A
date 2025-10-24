@@ -249,30 +249,24 @@ function toonHerkansjes() {
 }
 
 /* ===================== Meldingen & verwijderen ===================== */
-function toonHerkansjesMelding(tekst) {
-  let melding = document.getElementById('herkansjesMelding');
-  if (!melding) {
-    melding = document.createElement('div');
-    melding.id = 'herkansjesMelding';
-    document.getElementById('herkansjesTip').appendChild(melding);
-  }
-  melding.innerHTML = `✅ ${tekst}`;
-  melding.classList.add('show');
-  setTimeout(() => melding.classList.remove('show'), 3000);
-}
-
 function bevestigVerwijderen(item) {
   if (typeof toonBevestiging === 'function') {
-    toonBevestiging(
-      `Weet je zeker dat je "${item.woord}" uit Anker ${item.anker} wilt verwijderen?`,
-      () => verwijderItem(item)
-    );
+toonBevestiging(
+  `Weet je zeker dat je "${item.woord}" uit Anker ${item.anker} wilt verwijderen?`,
+  (ok) => {
+    if (!ok) return;
+    verwijderItem(item);
+    setTimeout(() => toonOKHerkansjes(`"${item.woord}" uit Anker ${item.anker} is verwijderd.`), 100);
+  }
+);
   } else {
     if (confirm(`Verwijder "${item.woord}" uit Anker ${item.anker}?`)) {
       verwijderItem(item);
+      toonOKHerkansjes(`"${item.woord}" uit Anker ${item.anker} is verwijderd.`);
     }
   }
 }
+
 
 function verwijderItem(item) {
   foutWoordjes = foutWoordjes.filter(
@@ -291,11 +285,82 @@ function verwijderItem(item) {
     }
   }
 
-  const popup = document.getElementById('herkansjesTip');
-  if (popup && !popup.classList.contains('show')) popup.classList.add('show');
-
-  toonHerkansjesMelding(`"${item.woord}" is verwijderd`);
 }
+
+/* ===================== Herkansjes-specifieke OK-popup ===================== */
+function toonOKHerkansjes(boodschap, onOk) {
+  // Sluit bestaande OK-modals als die er zijn
+  const bestaand = document.getElementById('herkansjesOkModal');
+  if (bestaand) bestaand.remove();
+
+  // Donkere overlay (boven de herkansjes-popup)
+  const overlay = document.createElement('div');
+  overlay.id = 'herkansjesOkModal';
+  overlay.style.cssText = `
+    position: fixed;
+    inset: 0;
+    z-index: 10550; /* iets boven #herkansjesTip (9999) */
+    background: rgba(0,0,0,.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  `;
+
+  // Witte dialoogbox
+  const box = document.createElement('div');
+  box.style.cssText = `
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px 28px;
+    max-width: 360px;
+    width: min(90vw, 360px);
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  `;
+  box.innerHTML = `
+    <p style="margin-bottom:20px;font-size:16px;">${boodschap}</p>
+    <div style="display:flex; justify-content:center;">
+      <button id="herkansjesOkBtn" class="btn" style="
+        background:#01689B;
+        color:white;
+        border:none;
+        border-radius:8px;
+        padding:8px 20px;
+        font-size:14px;
+        cursor:pointer;
+        box-shadow:0 3px 6px rgba(0,0,0,0.2);
+      ">OK</button>
+    </div>
+  `;
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  const okBtn = box.querySelector('#herkansjesOkBtn');
+
+  // Sluit en voer callback uit
+  function close(ok = true) {
+    overlay.remove();
+    if (typeof onOk === 'function' && ok) onOk();
+    window.removeEventListener('keydown', keyHandler);
+  }
+
+  // Toetsenbordondersteuning
+  function keyHandler(e) {
+    if (e.key === 'Enter' || e.key === 'Escape') close(true);
+  }
+
+  okBtn.addEventListener('click', () => close(true));
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) close(true);
+  });
+  window.addEventListener('keydown', keyHandler);
+
+  // Focus op knop
+  setTimeout(() => okBtn.focus(), 0);
+}
+
+
 
 /* ===================== Init ===================== */
 document.addEventListener('DOMContentLoaded', () => {
