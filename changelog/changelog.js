@@ -2,16 +2,22 @@
 
 const changelog = [
   {
+    version: '2.00',
+    changes: [
+      { type: 'Toegevoegd', description: 'Centraal menu venster' },
+      { type: 'Toegevoegd', description: 'Je kunt nu per anker zien welke woordjes hoe vaak zijn aangeboden.' },
+    ]
+  },
+  {
     version: '1.17',
     changes: [
       { type: 'Toegevoegd', description: 'Oefensite maakt gebruik van serviceworker, voor betere UI ervaring' },
-      { type: 'Gewijzigd', description: 'Mijn herkansjes compactere weergave' },
     ]
   },
   {
     version: '1.16',
     changes: [
-      { type: 'Bugfix', description: 'Feedback formulier uitlijning' },
+      { type: 'Bugfix', description: 'Contact formulier uitlijning' },
     ]
   },
   {

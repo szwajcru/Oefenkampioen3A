@@ -356,90 +356,111 @@
   }
 
   function toonItem() {
-    if (idx >= items.length) { items = shuffle(items); idx = 0; }
-    const el = document.getElementById('woord'); const item = items[idx] ?? '';
-
+    const el = document.getElementById('woord');
     const woordEl = document.getElementById('woord');
-    woordEl.textContent = items[idx];
-
-    // standaard weer resetten
     const card = document.querySelector('#page2 .card');
+    let item = '';
+
+    // 🔹 Reset basisstijl altijd bij een nieuw woord
     card.classList.remove('zin-card');
     woordEl.classList.remove('zin-woord');
 
-    // check oefentype lezen + categorie zinnetjes
-    if (oefentype === 'lezen') {
-      const cat = document.querySelector('input[name="lezenCat"]:checked')?.value;
-      if (cat === 'zinnetjes') {
-        card.classList.add('zin-card');
-        woordEl.classList.add('zin-woord');
+    // 🔹 Volledige reset van inline stijlen (nodig na zinnetjes)
+    woordEl.style.removeProperty('font-size');
+    woordEl.style.removeProperty('line-height');
+    woordEl.style.removeProperty('white-space');
+    woordEl.style.removeProperty('word-break');
+    woordEl.style.removeProperty('text-align');
+    woordEl.style.removeProperty('display');
+    woordEl.style.removeProperty('color');
+
+    // 🔹 Herstel standaard EBX-stijl voor woorden
+    woordEl.style.fontSize = 'clamp(64px, 14vw, 132px)';
+    woordEl.style.lineHeight = '1.05';
+    woordEl.style.letterSpacing = '1px';
+    woordEl.style.textAlign = 'center';
+    woordEl.style.color = '#0f172a';
+
+    // --- Ophalen van het juiste item ---
+    if (oefentype === 'ankers') {
+      const gekozen = document.querySelector('#fieldset-anker input[name="anker"]:checked')?.value;
+      const ankerNummer = gekozen;
+      const gekozenMode = document.querySelector(`input[name="mode"][value="${ankerNummer}-normaal"]:checked, input[name="mode"][value="${ankerNummer}-snuffel"]:checked`);
+      const isSnuffel = gekozenMode && gekozenMode.value.endsWith('-snuffel');
+      const key = isSnuffel ? `${ankerNummer}-snuffel` : `${ankerNummer}-normaal`;
+
+      const log = getWoordLog(key);
+      const minTeller = Math.min(...items.map(w => log[w] || 0));
+      const minstGetoonde = items.filter(w => (log[w] || 0) === minTeller);
+      item = minstGetoonde[Math.floor(Math.random() * minstGetoonde.length)];
+      updateWoordLog(key, item);
+    } else {
+      if (idx >= items.length) {
+        items = shuffle(items);
+        idx = 0;
       }
+      item = items[idx] ?? '';
     }
 
-    // standaard groot voor losse woorden
-    woordEl.style.fontSize = 'clamp(48px, 14vw, 132px)';
+    // --- Toon het woord ---
+    woordEl.textContent = item;
+    el.innerHTML = item;
 
+    // --- Kleur en stijl per oefentype ---
     if (oefentype === 'ankers') {
-      let gekozenAnker = parseInt(document.querySelector('input[name="anker"]:checked').value);
-      // Controleer welk anker gekozen is
+      const gekozenAnker = parseInt(document.querySelector('input[name="anker"]:checked').value);
       if (gekozenAnker < 5 || gekozenAnker === 9) {
-        // Anker 1–4 → klanken gekleurd
         el.innerHTML = kleurMetAlleKlinkers(item);
       } else {
-        // Anker 5–8 → geen klankkleuring
         el.innerHTML = item;
       }
-      // Klinkers dus   
     } else {
       if (klinkerSub === 'woorden') {
-        const selectie = Array.from(document.querySelectorAll('#fieldset-klinkers input[type=checkbox]:checked')).map(cb => cb.value);
+        const selectie = Array.from(document.querySelectorAll('#fieldset-klinkers input[type=checkbox]:checked'))
+          .map(cb => cb.value);
         el.innerHTML = kleurMetSelectie(item, selectie);
       } else {
         el.innerHTML = `<span style="color:var(--ebx);">${item}</span>`;
       }
     }
 
-
+    // --- Logica voor lezen (functiewoorden / zinnetjes) ---
     if (oefentype === 'lezen') {
       const cat = document.querySelector('input[name="lezenCat"]:checked')?.value;
       if (cat === 'zinnetjes') {
-        // Gewoon platte tekst → altijd zwart
+        // 🔹 Speciale layout voor zinnetjes
+        card.classList.add('zin-card');
+        woordEl.classList.add('zin-woord');
+        woordEl.style.color = '#000';
+        woordEl.style.fontSize = 'clamp(28px, 5vw, 80px)';
+        woordEl.style.lineHeight = '1.2';
+        woordEl.style.whiteSpace = 'normal';
+        woordEl.style.wordBreak = 'break-word';
+        woordEl.style.textAlign = 'center';
+        woordEl.style.display = 'block';
         el.textContent = item;
       } else {
-        // mag blauw blijven
         el.innerHTML = `<span style="color:var(--ebx);">${item}</span>`;
       }
     }
 
-    // standaard resetten
-    card.classList.remove('zin-card');
-    woordEl.classList.remove('zin-woord');
-
-    // check oefentype lezen + categorie zinnetjes
-    const cat = document.querySelector('input[name="lezenCat"]:checked')?.value;
-    if (cat === 'zinnetjes') {
-      card.classList.add('zin-card');
-      woordEl.classList.add('zin-woord');
-      woordEl.style.color = '#000';   // <-- directe override
-      woordEl.style.fontSize = 'clamp(48px, 10vw, 132px)';
-      //woordEl.style.lineHeight = '1.3';
-
-    } else {
-      woordEl.style.color = '';       // reset zodat functiewoorden weer blauw worden
-    }
-
-
+    // --- Flitsmodus (woord tijdelijk tonen) ---
     const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
     if (flitslezen) {
       clearTimeout(flitsTimeoutId);
-      flitsTimeoutId = setTimeout(() => { document.getElementById('woord').innerHTML = '...'; }, flitsDurationMs);
+      flitsTimeoutId = setTimeout(() => {
+        document.getElementById('woord').innerHTML = '...';
+      }, flitsDurationMs);
     }
+
+    // --- Toon teller bij woordenmodus ---
     if (byWords) {
       document.getElementById('subInfo').innerHTML = `<span class="timer">${idx}/${items.length}</span>`;
-    } else {
-      //document.getElementById('subInfo').innerHTML = `<span class="timer"></span>`;
     }
   }
+
+
+
 
   function startToets() {
 
@@ -917,34 +938,53 @@
     // --- Vraagtekentje rechts van Anker 1–8, opent woorden-popup ---
     (function initAnkerVraagtekenPopup() {
 
-      function openWoordenPopup(titel, woordenNormaal, woordenSnuffel) {
+      function openWoordenPopup(titel, woordenNormaal, woordenSnuffel, ankerNummer) {
         const overlay = document.getElementById('woordenPopup');
         const titleEl = overlay.querySelector('#popupTitle');
         const closeBtn = overlay.querySelector('#closePopup');
 
+        if (!overlay || !titleEl || !closeBtn) return;
+
         titleEl.textContent = titel;
 
-        function maakTabelHTML(woorden) {
+        // 🔹 Lees de woordlog uit localStorage
+        const woordLog = JSON.parse(localStorage.getItem('woordlog') || '{}');
+        const logNormaal = woordLog[`${ankerNummer}-normaal`] || {};
+        const logSnuffel = woordLog[`${ankerNummer}-snuffel`] || {};
+
+        // 🔹 Hulpfunctie: maakt HTML-tabel met turf
+        function maakTabelHTML(woorden, logData) {
           if (!woorden || !woorden.length) {
             return '<tr><td><em>Geen woorden beschikbaar.</em></td></tr>';
           }
+
           const kolommen = 3;
           const totaal = woorden.length;
           const rijen = Math.ceil(totaal / kolommen);
           let html = '';
+
           for (let r = 0; r < rijen; r++) {
             html += '<tr>';
             for (let c = 0; c < kolommen; c++) {
-              const index = c * rijen + r; // verticale volgorde
+              const index = c * rijen + r;
               const woord = woorden[index];
-              html += `<td>${woord ? '<span>' + woord + '</span>' : ''}</td>`;
+              if (woord) {
+                const count = logData[woord] || 0;
+                html += `
+              <td>
+                <span class="woord">${woord}</span>
+                <span class="turf" title="Aantal keer getoond">${count > 0 ? count : ''}</span>
+              </td>`;
+              } else {
+                html += '<td></td>';
+              }
             }
             html += '</tr>';
           }
           return html;
         }
 
-        // Tabelinhoud vullen
+        // 🔹 Tabellen vullen
         const normaalTable = overlay.querySelector('#popupTableNormaal tbody');
         const snuffelTable = overlay.querySelector('#popupTableSnuffel tbody');
 
@@ -955,16 +995,48 @@
           a.localeCompare(b, 'nl', { sensitivity: 'base' })
         );
 
-        normaalTable.innerHTML = maakTabelHTML(woordenNormaalSorted);
-        snuffelTable.innerHTML = maakTabelHTML(woordenSnuffelSorted);
+        if (normaalTable) normaalTable.innerHTML = maakTabelHTML(woordenNormaalSorted, logNormaal);
+        if (snuffelTable) snuffelTable.innerHTML = maakTabelHTML(woordenSnuffelSorted, logSnuffel);
 
+        // --- Toggle toont/verbergt aantallen ---
+        const toggle = document.getElementById('toonAantallen');
+        if (toggle) {
+          toggle.checked = false; // standaard uit
+          const updateDisplay = (show) => {
+            document.querySelectorAll('.turf').forEach(span => {
+              span.style.visibility = show ? 'visible' : 'hidden';
+            });
+          };
+          updateDisplay(false);
+          toggle.addEventListener('change', (e) => updateDisplay(e.target.checked));
+        }
+
+
+        // 🔹 Popup tonen
         overlay.style.display = 'flex';
         closeBtn.onclick = () => overlay.style.display = 'none';
         overlay.onclick = e => { if (e.target === overlay) overlay.style.display = 'none'; };
+
+        // Tooltip functionaliteit voor de toggle
+        const label = document.getElementById('aantalToggleLabel');
+        const bubble = document.getElementById('aantalTooltip');
+
+        if (label && bubble) {
+          label.addEventListener('mouseenter', () => {
+            bubble.classList.add('show');
+          });
+          label.addEventListener('mouseleave', () => {
+            bubble.classList.remove('show');
+          });
+
+          // Optioneel: plaats de bubble dynamisch rechts van het label
+          const rect = label.getBoundingClientRect();
+          bubble.style.top = (rect.height  + 95) + 'px';
+          bubble.style.left = '72px';
+        }
       }
 
-      // Voeg vraagtekentje toe direct rechts van "Anker X"
-      // Klik op "Anker X" opent de woordenlijst (geen vraagtekentje meer)
+      // 🔹 Maak ankers klikbaar
       document.querySelectorAll('.anker-tabel tbody tr[data-anker]').forEach(tr => {
         const nr = String(tr.getAttribute('data-anker'));
         if (nr === '9') return; // "Mijn herkansjes" overslaan
@@ -972,21 +1044,19 @@
         const td = tr.querySelector('td:first-child');
         if (!td) return;
 
-        // UI/Accessibility: maak de cel klik- en focusbaar
         td.classList.add('anker-naam');
         td.setAttribute('tabindex', '0');
         td.setAttribute('role', 'button');
         td.setAttribute('aria-label', 'Bekijk woordenlijst voor anker ' + nr);
         td.setAttribute('data-title', 'Bekijk woordenlijst (normaal + snuffel)');
 
-        // 1 handler die we voor muis & toetsenbord hergebruiken
         const openWoorden = (evt) => {
-          // Laat clicks op inputs/labels/links/knoppen in deze cel met rust
           if (evt?.target?.closest('input, button, svg')) return;
 
           const woordenNormaal = ankers[nr] || [];
           const woordenSnuffel = ankers[`${nr}-snuffel`] || [];
-          openWoordenPopup(`Woordenlijst – Anker ${nr}`, woordenNormaal, woordenSnuffel);
+
+          openWoordenPopup(`Woordenlijst – Anker ${nr}`, woordenNormaal, woordenSnuffel, nr);
         };
 
         td.addEventListener('click', openWoorden);
@@ -998,10 +1068,7 @@
         });
       });
 
-
-      // 'Mijn herkansjes' (data-anker="9"): linkerkolom klikbaar maken
-      // "Herkansjes" (data-anker="9") dezelfde hover-hint + click-actie
-      // "Mijn herkansjes" (data-anker="9"): klik op de tekst opent ook de popup
+      // 🔹 "Mijn herkansjes" rij klikbaar maken
       (() => {
         const tr = document.querySelector('.anker-tabel tbody tr[data-anker="9"]');
         if (!tr) return;
@@ -1009,15 +1076,13 @@
         const td = tr.querySelector('td:first-child');
         if (!td) return;
 
-        // Zelfde clickable affordance als bij Anker X
         td.classList.add('anker-naam', 'herkansjes-naam');
         td.setAttribute('tabindex', '0');
         td.setAttribute('role', 'button');
         td.setAttribute('aria-label', 'Open Mijn herkansjes');
-        td.setAttribute('data-hint', 'Mijn herkansjes'); // subtiele pill-hint
+        td.setAttribute('data-hint', 'Mijn herkansjes');
 
         const openHerkansjes = (evt) => {
-          // Alleen echte controls negeren; klik op tekst/label mag openen
           if (evt?.target?.closest('input, button, svg')) return;
           document.getElementById('mijnHerkansjesLink')?.click();
         };
@@ -1028,19 +1093,11 @@
         });
       })();
 
-
-
-
-
-      // (optioneel) als je eerder het vergrootglas dynamisch toevoegde, kun je dat codeblok verwijderen
-      // of bestaande icon-knoppen in de DOM verbergen/verwijderen:
+      // 🔹 Verwijder oude iconen
       document.querySelectorAll('.anker-search, .btnReset.anker-search').forEach(b => b.remove());
 
-
+      window.openWoordenPopup = openWoordenPopup;
     })();
-
-
-
 
   });
 
@@ -1204,8 +1261,8 @@ function toonVoortgang() {
     return da - db;
   });
 
-  // ✅ Alleen de laatste 50 metingen tonen
-  const laatste = history.slice(-50);
+  // ✅ Alleen de laatste 80 metingen tonen
+  const laatste = history.slice(-80);
   const labels = laatste.map((_, i) => i + 1);
 
   if (window.resultChartInstance) {
@@ -2038,8 +2095,8 @@ function openResultatenPopupVoorAnker(nr) {
     }
   };
 
-  let normaalAll = read(keyNormaal).sort((a, b) => new Date(a.datum) - new Date(b.datum)).slice(-50);
-  let snuffelAll = read(keySnuffel).sort((a, b) => new Date(a.datum) - new Date(b.datum)).slice(-50);
+  let normaalAll = read(keyNormaal).sort((a, b) => new Date(a.datum) - new Date(b.datum)).slice(-80);
+  let snuffelAll = read(keySnuffel).sort((a, b) => new Date(a.datum) - new Date(b.datum)).slice(-80);
 
   // ✅ Extra veiligheid: filter records op ankerNummer (indien ingevuld)
   const sameAnker = (r) => {
@@ -2317,11 +2374,11 @@ function openResultatenPopupVoorAnker(nr) {
               if (ankerState.mode === 'snuffel') {
                 snuffelAll = read(keySnuffel)
                   .sort((a, b) => new Date(a.datum) - new Date(b.datum))
-                  .slice(-50).filter(sameAnker);
+                  .slice(-80).filter(sameAnker);
               } else {
                 normaalAll = read(keyNormaal)
                   .sort((a, b) => new Date(a.datum) - new Date(b.datum))
-                  .slice(-50).filter(sameAnker);
+                  .slice(-80).filter(sameAnker);
               }
 
               safeResizeChart(c, overlay);
@@ -2588,8 +2645,18 @@ function isConfirmOpen() {
   }
 })();
 
+function updateWoordLog(anker, woord) {
+  const key = 'woordlog';
+  const log = JSON.parse(localStorage.getItem(key)) || {};
 
+  if (!log[anker]) log[anker] = {};
+  if (!log[anker][woord]) log[anker][woord] = 0;
 
+  log[anker][woord] += 1;
+  localStorage.setItem(key, JSON.stringify(log));
+}
 
-
-
+function getWoordLog(anker) {
+  const log = JSON.parse(localStorage.getItem('woordlog')) || {};
+  return log[anker] || {};
+}

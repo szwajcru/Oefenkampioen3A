@@ -1,0 +1,327 @@
+/* === HAMBURGER MENU === */
+#menuContainer {
+  position: fixed !important;
+  top: 5px !important;
+  left: 14px !important;
+  z-index: 9999 !important;
+}
+
+/* === KNOP === */
+#menuBtn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(1, 104, 155, 0.35);
+  border-radius: 8px;
+  width: 40px;
+  height: 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#menuBtn:hover {
+  background: rgba(1, 104, 155, 0.3);
+  transform: scale(1.05);
+}
+
+#menuBtn .bar {
+  width: 22px;
+  height: 3px;
+  background: #01689B;
+  border-radius: 2px;
+}
+
+/* === DROPDOWN CONTAINER === */
+#menuDropdown {
+  position: absolute;
+  top: 46px;
+  left: 0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(1, 104, 155, 0.25);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  min-width: 190px;
+  animation: fadeIn 0.15s ease;
+  z-index: 10000;
+}
+
+#menuDropdown.hidden {
+  display: none;
+}
+
+/* === MENU ITEMS === */
+.menu-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #033;
+  position: relative;
+  background: transparent;
+  transition: background-color 0.15s ease;
+}
+
+.menu-item:hover {
+  background: rgba(1, 104, 155, 0.08);
+}
+
+/* --- Pijltje bij hoofd-submenu’s --- */
+.menu-item.has-sub::after {
+  content: "▸";
+  float: right;
+  transition: transform 0.2s ease;
+  opacity: 0.8;
+}
+
+.menu-item.has-sub.open::after {
+  transform: rotate(90deg);
+  opacity: 1;
+}
+
+/* === SUBMENU (zoals Beheer → rechts) === */
+.submenu {
+  position: absolute;
+  top: 0;
+  left: 185px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(1, 104, 155, 0.25);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  min-width: 200px;
+  z-index: 10001;
+  animation: fadeIn 0.15s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.submenu.hidden {
+  display: none;
+}
+
+.submenu-item {
+  padding: 8px 12px;
+  font-size: 15px;
+  color: #033;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.submenu-item:hover {
+  background: rgba(1, 104, 155, 0.08);
+}
+
+/* === SUB-SUBMENU (Beheer → Import / Export → Exporteren / Importeren) === */
+.submenu .has-sub {
+  position: relative;
+}
+
+/* Submenu onder Import/Export */
+.submenu .has-sub > .submenu {
+  position: absolute !important;
+  top: 100%; /* direct onder de Import/Export-knop */
+  left: 12px; /* mooi uitgelijnd met Import/Export */
+  margin-top: 4px; /* klein beetje ruimte ertussen */
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(1, 104, 155, 0.15);
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  z-index: 999;
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.submenu .has-sub > .submenu.hidden {
+  opacity: 0;
+  transform: translateX(-6px);
+  pointer-events: none;
+}
+
+.submenu .has-sub.open > .submenu {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Submenu items */
+.submenu .has-sub > .submenu .submenu-item {
+  padding: 10px 14px;
+  font-weight: 600;
+  color: #033;
+}
+
+.submenu .has-sub > .submenu .submenu-item + .submenu-item {
+  border-top: 1px solid rgba(1, 104, 155, 0.12);
+}
+
+/* Pijltje bij “Import / Export” */
+.submenu .has-sub::after {
+  content: '▸';
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 12px;
+  opacity: .6;
+  transition: transform .18s ease, opacity .18s ease;
+}
+
+.submenu .has-sub.open::after {
+  transform: rotate(90deg);
+  opacity: .85;
+}
+
+/* === FEEDBACK === */
+#feedbackBtn {
+  border-top: 1px solid rgba(1, 104, 155, 0.15);
+  margin-top: 6px;
+  padding-top: 10px;
+}
+
+#feedbackBtn:hover {
+  background: rgba(1, 104, 155, 0.08);
+}
+
+/* === ANIMATIE === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === EBX-stijl menukaarten === */
+#menuDropdown, 
+.submenu {
+  background: linear-gradient(to bottom, #f9fafc 0%, #f3f6f8 100%);
+  /* subtiel gebroken wit-blauw */
+  border: 1px solid rgba(1, 104, 155, 0.2);
+  border-radius: 10px;
+  box-shadow: 0 6px 14px rgba(1, 104, 155, 0.08);
+  backdrop-filter: blur(6px);
+}
+
+/* Hoofditems iets contrastrijker */
+.menu-item {
+  background: rgba(255, 255, 255, 0.96);
+  font-family: 'Segoe UI', 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 14.3px;
+  font-weight: 600;
+  color: #043b54;
+  border-bottom: 1px solid rgba(1, 104, 155, 0.12);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.menu-item:hover {
+  background: rgba(1, 104, 155, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(1, 104, 155, 0.15);
+}
+
+/* Submenu-items lichter met EBX-tint */
+.submenu-item {
+  background: linear-gradient(to bottom, #fefefe 0%, #f6f8fa 100%);
+  border-bottom: 1px solid rgba(1, 104, 155, 0.1);
+  color: #043b54;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.submenu-item:hover {
+  background: rgba(1, 104, 155, 0.07);
+}
+
+/* Submenu-pijltjes subtieler en iets verder naar rechts */
+.menu-item.has-sub::after,
+.submenu .has-sub::after {
+  content: '▸';
+  font-size: 11px;
+  color: #01689B;
+  opacity: 0.5;
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.menu-item.has-sub.open::after,
+.submenu .has-sub.open::after {
+  transform: rotate(90deg);
+  opacity: 0.8;
+}
+
+/* Submenu dat onder Import/Export hangt */
+.submenu .has-sub > .submenu {
+  position: absolute !important;
+  left: 10px !important;
+  top: 100%;
+  margin-top: 4px;
+  background: linear-gradient(to bottom, #f8fafc 0%, #f0f4f7 100%);
+  border: 1px solid rgba(1, 104, 155, 0.2);
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(1, 104, 155, 0.12);
+}
+
+#menuDropdown .menu-item#hoeWerktHetBtn {
+  color: #014C78;
+  font-weight: 500;
+}
+
+#menuDropdown .menu-item#hoeWerktHetBtn:hover {
+  background-color: #EAF4FB;
+  color: #01689B;
+}
+
+/* --- EBX-stijl tooltips voor anker-menu-items --- */
+.submenu-item.anker-menu {
+  position: relative;
+}
+
+/* Tooltip bubble */
+.submenu-item.anker-menu::after {
+  content: "Bekijk de woordjes van Anker " attr(data-anker);
+  position: absolute;
+  top: 100%; /* ⬅️ Onder de knop */
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: var(--ebx);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 20;
+}
+
+/* Tooltip tonen bij hover */
+.submenu-item.anker-menu:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(10px);
+}
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+.tooltip-container:hover .tooltip-content {
+  display: block;
+}
+
+.tooltip-content {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 120%;
+  z-index: 9999;
+}
+
+

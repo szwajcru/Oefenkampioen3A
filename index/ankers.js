@@ -19,3 +19,4 @@ const ankers = {
 
   9: ['Herhaal de woordjes die je eerder lastig vond.']  // wordt dynamisch gevuld
 };  
+window.ankers = ankers;

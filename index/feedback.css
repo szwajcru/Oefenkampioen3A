@@ -289,3 +289,46 @@
   border: none !important;
   box-shadow: none !important;
 }
+
+.intro-text {
+  font-size: 14px;
+  color: #033;
+  padding: 6px 4px 10px 4px;
+  line-height: 1.4;
+}
+
+/* === Visuele melding (EBX-stijl toast) === */
+.feedback-toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: linear-gradient(145deg, #e6f4fa 0%, #d2edf7 100%);
+  border: 1px solid rgba(1, 104, 155, 0.3);
+  color: #033;
+  padding: 12px 18px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(1, 104, 155, 0.15);
+  font-family: 'Segoe UI', 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  z-index: 99999;
+}
+
+/* Verschillende types */
+.toast-success {
+  border-left: 6px solid #2b8a3e;
+  color: #1d5f2e;
+}
+
+.toast-error {
+  border-left: 6px solid #cc1b1b;
+  color: #6b0b0b;
+}
+
+/* Animatie bij tonen */
+.feedback-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}

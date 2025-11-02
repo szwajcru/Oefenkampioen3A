@@ -1,6 +1,6 @@
-// === Feedback functionaliteit (popup + EmailJS) ===
+// === Feedback functionaliteit (popup + EmailJS + visuele bevestiging) ===
 document.addEventListener('DOMContentLoaded', function () {
-  const feedbackLink = document.getElementById('feedbackLink');
+  const feedbackLink = document.getElementById('feedbackBtn');
   const feedbackForm = document.getElementById('feedbackForm');
   const closeBtn = document.getElementById('btnCloseFeedback');
   const form = document.getElementById('formFeedback');
@@ -10,18 +10,10 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
 
-  // Voeg een meldingselement toe (inline succes/foutmelding)
-  const messageBox = document.createElement('div');
-  messageBox.id = 'feedbackMessageBox';
-  messageBox.style.display = 'none';
-  feedbackForm.querySelector('.popup-content')?.appendChild(messageBox);
-
   // === Popup openen ===
   feedbackLink.addEventListener('click', e => {
     e.preventDefault();
     feedbackForm.style.display = 'block';
-    messageBox.style.display = 'none';
-    messageBox.textContent = '';
   });
 
   // === Popup sluiten ===
@@ -29,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     feedbackForm.style.display = 'none';
   });
 
-  // === Formulier verzenden met EmailJS ===
+  // === Formulier verzenden ===
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -45,48 +37,42 @@ document.addEventListener('DOMContentLoaded', function () {
       time: now
     };
 
-    // Disable knoppen tijdelijk
+    // Knoppen tijdelijk uitschakelen
     form.querySelectorAll('button').forEach(b => (b.disabled = true));
 
     emailjs.send('service_v6m2jaa', 'tmpl_feedback_8060i6f', templateParams)
       .then(() => {
-        // Inline succesmelding tonen
-        messageBox.textContent = '✔ Bedankt voor je feedback!';
-        messageBox.className = 'feedback-success';
-        messageBox.style.display = 'block';
-
+        toonFeedbackMelding('✔ Bedankt voor je feedback!', 'success');
         form.reset();
-
-        // Popup na korte tijd automatisch sluiten
-        setTimeout(() => {
-          feedbackForm.style.display = 'none';
-          messageBox.style.display = 'none';
-        }, 2000);
+        setTimeout(() => { feedbackForm.style.display = 'none'; }, 1800);
       })
       .catch((error) => {
         console.error('Fout bij versturen:', error);
-        messageBox.textContent = '⚠ Er ging iets mis bij het versturen. Probeer later opnieuw.';
-        messageBox.className = 'feedback-error';
-        messageBox.style.display = 'block';
+        toonFeedbackMelding('⚠ Er ging iets mis bij het versturen. Probeer later opnieuw.', 'error');
       })
       .finally(() => {
         form.querySelectorAll('button').forEach(b => (b.disabled = false));
       });
   });
-});
 
-// === Klik buiten popup om te sluiten ===
-document.addEventListener('click', e => {
-  const popup = document.getElementById('feedbackForm');
-  const content = popup?.querySelector('.popup-content');
-  const link = document.getElementById('feedbackLink');
+  // Klik buiten popup om te sluiten
+  document.addEventListener('click', e => {
+    const content = feedbackForm.querySelector('.popup-content');
+    const klikBinnenPopup = content?.contains(e.target);
+    const klikOpLink = feedbackLink?.contains(e.target);
+    if (feedbackForm.style.display === 'block' && !klikBinnenPopup && !klikOpLink) {
+      feedbackForm.style.display = 'none';
+    }
+  });
 
-  if (!popup || popup.style.display !== 'block') return;
-
-  const klikBinnenPopup = content?.contains(e.target);
-  const klikOpLink = link?.contains(e.target);
-
-  if (!klikBinnenPopup && !klikOpLink) {
-    popup.style.display = 'none';
+  // === Visuele melding tonen ===
+  function toonFeedbackMelding(tekst, type) {
+    let melding = document.createElement('div');
+    melding.className = 'feedback-toast ' + (type === 'success' ? 'toast-success' : 'toast-error');
+    melding.textContent = tekst;
+    document.body.appendChild(melding);
+    setTimeout(() => melding.classList.add('show'), 10);
+    setTimeout(() => melding.classList.remove('show'), 2800);
+    setTimeout(() => melding.remove(), 3400);
   }
 });
