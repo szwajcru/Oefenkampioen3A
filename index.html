@@ -24,19 +24,38 @@
 
   <title>Ankers & Klanken oefenen</title>
 
-  <!-- Umami alleen online gebruik meten -->
+  <!-- Session info -->
+  <script>
+    if (location.search.includes('sessionCounterOff')) {
+      localStorage.setItem('session_counter', 'true');
+    }
+
+    if (location.search.includes('sessionCounterOn')) {
+      localStorage.removeItem('session_counter');
+    }
+
+    // 🔸 Controleer lokale status
+    const trackingOff = localStorage.getItem('session_counter') === 'true';
+    if (trackingOff) {
+      window.SESSION_COUNTER = true;
+    }
+  </script>
+
   <script>
     (function () {
-      var ANALYTICS_ENABLED = location.protocol !== 'file:';
+      var ANALYTICS_ENABLED = location.protocol !== 'file:' && !Boolean(window.SESSION_COUNTER);
       if (ANALYTICS_ENABLED) {
         var s = document.createElement('script');
         s.defer = true;
         s.src = "https://cloud.umami.is/script.js";
         s.setAttribute('data-website-id', 'fe4f4910-6d1b-4fbb-88b6-ba64b430d819');
         document.head.appendChild(s);
+      } else {
+        console.log('📊 Session modus is uitgeschakeld');
       }
     })();
   </script>
+
 
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>

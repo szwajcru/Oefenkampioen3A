@@ -491,17 +491,27 @@
       if (anker === '9') {
         // --- Herkansjes: woorden ophalen uit localStorage ---
         isHerkansing = true;
-
-        const foutjes = JSON.parse(localStorage.getItem('fout_woordjes') || '[]');
+        const foutjes = (JSON.parse(localStorage.getItem('fout_woordjes') || '[]') || [])
+          .map(f => f.woord)
+          .filter(Boolean);
 
         if (foutjes.length === 0) {
           alert('Er zijn momenteel geen oefenherkansjes.');
           return;
         }
 
-        // unieker maken en sorteren (optioneel)
-        const uniekeWoorden = Array.from(new Set(foutjes.map(f => f.woord)));
+
+        const uniekeWoorden = [];
+        while (uniekeWoorden.length < foutjes.length) {
+          const willekeurig = foutjes[Math.floor(Math.random() * foutjes.length)];
+          if (willekeurig) {
+            uniekeWoorden.push(willekeurig);
+          }
+        }
+
+        // Resultaat gebruiken
         woorden = uniekeWoorden;
+
       } else {
         // normaal anker
         woorden = ankers[key];
