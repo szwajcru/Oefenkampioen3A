@@ -1,4 +1,3 @@
-// sw.js
 importScripts('version/version.js'); // importeer centrale versie
 
 const CACHE_NAME = 'site-cache-' + SITE_VERSION;
@@ -50,7 +49,7 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const request = event.request;
 
-  // ❌ Sla onveilige of onnodige requests over (POST, chrome-extension, data:, blob:)
+  // ❌ Irrelevante requests overslaan
   if (
     request.method !== 'GET' ||
     request.url.startsWith('chrome-extension://') ||
@@ -58,11 +57,25 @@ self.addEventListener('fetch', event => {
     request.url.startsWith('data:') ||
     request.url.startsWith('blob:')
   ) {
-    return; // negeer deze requests
+    return;
   }
 
+  // 🧠 Detecteer crawlers (zoals Googlebot, Bingbot, etc.)
+  const userAgent = (request.headers.get('user-agent') || '').toLowerCase();
+  const isBot =
+    userAgent.includes('googlebot') ||
+    userAgent.includes('bingbot') ||
+    userAgent.includes('duckduckbot') ||
+    userAgent.includes('yandexbot');
+
   if (request.mode === 'navigate') {
-    // 📄 index.html altijd proberen van netwerk te halen
+    if (isBot) {
+      // 🔹 Crawlers krijgen directe netwerkrespons (geen offline fallback)
+      event.respondWith(fetch(request));
+      return;
+    }
+
+    // Voor normale gebruikers: netwerk eerst, dan fallback op index.html
     event.respondWith(
       fetch(request)
         .then(response => {
@@ -73,7 +86,7 @@ self.addEventListener('fetch', event => {
         .catch(() => caches.match('/'))
     );
   } else {
-    // 📦 overige bestanden — netwerk eerst, dan cache fallback
+    // Overige bestanden: netwerk eerst, cache fallback
     event.respondWith(
       fetch(request)
         .then(response => {
