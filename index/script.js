@@ -973,7 +973,7 @@
                 html += `
               <td>
                 <span class="woord">${woord}</span>
-                <span class="turf" title="Aantal keer getoond">${count > 0 ? count : ''}</span>
+                <span class="turf" title="Aantal keer getoond">${count}</span>
               </td>`;
               } else {
                 html += '<td></td>';
@@ -1031,8 +1031,8 @@
 
           // Optioneel: plaats de bubble dynamisch rechts van het label
           const rect = label.getBoundingClientRect();
-          bubble.style.top = (rect.height  + 95) + 'px';
-          bubble.style.left = '72px';
+          bubble.style.top = (rect.height + 105) + 'px';
+          bubble.style.left = '88px';
         }
       }
 

@@ -134,7 +134,7 @@
     <div class="card">
       <h1>Welkom bij ankers & klanken oefenen</h1>
       <div class="intro">
-        <p></p>
+        <p>Oefen hier met klanken en woorden om steeds vlotter te leren lezen!</p>
         <p>⚓️ <strong>Anker klaar? Oefenen maar!</strong></p>
         <p>Kies het oefentype.</p>
         <p>Bij <em>ankers</em> oefen je de normale of uitdagende (<em>snuffel</em>) woorden.</p>
@@ -144,283 +144,283 @@
         <p>Veel oefenplezier!</p>
       </div>
 
-    <div class="groepen">
-      <!-- Oefentype -->
-      <fieldset class="optiegroep" id="fieldset-type">
-        <legend>Oefentype</legend>
-        <div class="row">
-          <label class="inline"><input type="radio" name="type" value="ankers" checked> <span>Ankers</span></label>
-          <label class="inline"><input type="radio" name="type" value="klinkers"> <span>Klanken</span></label>
-          <label class="inline"><input type="radio" name="type" value="lezen"> <span>Lezen</span></label>
-        </div>
-      </fieldset>
+      <div class="groepen">
+        <!-- Oefentype -->
+        <fieldset class="optiegroep" id="fieldset-type">
+          <legend>Oefentype</legend>
+          <div class="row">
+            <label class="inline"><input type="radio" name="type" value="ankers" checked> <span>Ankers</span></label>
+            <label class="inline"><input type="radio" name="type" value="klinkers"> <span>Klanken</span></label>
+            <label class="inline"><input type="radio" name="type" value="lezen"> <span>Lezen</span></label>
+          </div>
+        </fieldset>
 
-      <!-- Klinkers (alleen voor Klanken) -->
-      <fieldset class="optiegroep" id="fieldset-klinkers" style="display:none;">
-        <legend>Kies klanken om te oefenen</legend>
-        <div class="klinker-groepen" id="klinkerChips"></div>
-        <div class="iconrow">
-          <button class="iconbtn" type="button" id="btnAll">alles</button>
-          <button class="iconbtn" type="button" id="btnNone">niets</button>
-        </div>
-      </fieldset>
+        <!-- Klinkers (alleen voor Klanken) -->
+        <fieldset class="optiegroep" id="fieldset-klinkers" style="display:none;">
+          <legend>Kies klanken om te oefenen</legend>
+          <div class="klinker-groepen" id="klinkerChips"></div>
+          <div class="iconrow">
+            <button class="iconbtn" type="button" id="btnAll">alles</button>
+            <button class="iconbtn" type="button" id="btnNone">niets</button>
+          </div>
+        </fieldset>
 
-      <!-- Klankers submodus (na kiezen klanken) -->
-      <fieldset class="optiegroep" id="fieldset-klinkers-submode" style="display:none;">
-        <legend>Klanken: wat wil je oefenen?</legend>
-        <div class="row">
-          <label class="inline"><input type="radio" name="klinkerSub" value="puur" checked> <span>Puur klanken
-              oefenen</span></label>
-          <label class="inline"><input type="radio" name="klinkerSub" value="woorden"> <span>Woordjes met
-              aangevinkte
-              klanken</span></label>
-        </div>
-        <div style="font-size:13px; color:#475569; margin-top:4px;"></div>
-      </fieldset>
+        <!-- Klankers submodus (na kiezen klanken) -->
+        <fieldset class="optiegroep" id="fieldset-klinkers-submode" style="display:none;">
+          <legend>Klanken: wat wil je oefenen?</legend>
+          <div class="row">
+            <label class="inline"><input type="radio" name="klinkerSub" value="puur" checked> <span>Puur klanken
+                oefenen</span></label>
+            <label class="inline"><input type="radio" name="klinkerSub" value="woorden"> <span>Woordjes met
+                aangevinkte
+                klanken</span></label>
+          </div>
+          <div style="font-size:13px; color:#475569; margin-top:4px;"></div>
+        </fieldset>
 
-      <!-- Lezen categorieën -->
-      <fieldset class="optiegroep" id="fieldset-lezen" style="display:none;">
-        <legend>Kies categorie (Lezen)</legend>
+        <!-- Lezen categorieën -->
+        <fieldset class="optiegroep" id="fieldset-lezen" style="display:none;">
+          <legend>Kies categorie (Lezen)</legend>
 
-        <div class="row lezen-row" data-lezen="functiewoorden" tabindex="0">
-          <label>
-            <input type="radio" name="lezenCat" value="functiewoorden" checked>
-            Functiewoorden
-          </label>
+          <div class="row lezen-row" data-lezen="functiewoorden" tabindex="0">
+            <label>
+              <input type="radio" name="lezenCat" value="functiewoorden" checked>
+              Functiewoorden
+            </label>
 
-          <!-- Vergrootglas-knop -->
-          <button id="btnFunctiewoordjes" class="btnReset" title="Bekijk alle functiewoordjes">
-            <svg xmlns="https://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M10 2a8 8 0 0 1 6.32 12.906l5.387 5.388-1.414 1.414-5.388-5.387A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
-            </svg>
-          </button>
-        </div>
-
-
-        <div class="row lezen-row" data-lezen="zinnetjes" tabindex="0">
-          <label>
-            <input type="radio" name="lezenCat" value="zinnetjes">
-            Zinnetjes
-          </label>
-
-
-          <!-- Vergrootglas-knop -->
-          <button id="btnZinnetjes" class="btnReset" title="Bekijk alle zinnetjes">
-            <svg xmlns="https://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M10 2a8 8 0 0 1 6.32 12.906l5.387 5.388-1.414 1.414-5.388-5.387A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
-            </svg>
-          </button>
-
-        </div>
-
-        <div style="font-size:14px; color:#64748b;">
-          Tip: hover over een categorie om de woordjes of zinnetjes te zien.
-        </div>
-      </fieldset>
-
-      <fieldset class="optiegroep" id="fieldset-anker">
-        <legend>Kies een anker</legend>
-
-        <table class="anker-tabel">
-          <thead>
-            <tr>
-              <th>Anker ⚓️</th>
-              <th>Modus</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- 8 rijen -->
-            <tr data-anker="1">
-              <td><label><input type="radio" name="anker" value="1">Anker 1</label></td>
-              <td>
-                <div class="toggle-segment" data-anker="1">
-                  <input type="radio" id="a1n" name="mode" value="1-normaal">
-                  <label for="a1n">Normaal</label>
-                  <input type="radio" id="a1s" name="mode" value="1-snuffel">
-                  <label for="a1s">Snuffel</label>
-                </div>
-              </td>
-              <td></td>
-            </tr>
-
-            <tr data-anker="2">
-              <td><label><input type="radio" name="anker" value="2">Anker 2</label></td>
-              <td>
-                <div class="toggle-segment" data-anker="2">
-                  <input type="radio" id="a2n" name="mode" value="2-normaal">
-                  <label for="a2n">Normaal</label>
-                  <input type="radio" id="a2s" name="mode" value="2-snuffel">
-                  <label for="a2s">Snuffel</label>
-                </div>
-              </td>
-              <td></td>
-            </tr>
-
-            <tr data-anker="3">
-              <td><label><input type="radio" name="anker" value="3">Anker 3</label></td>
-              <td>
-                <div class="toggle-segment" data-anker="3">
-                  <input type="radio" id="a3n" name="mode" value="3-normaal">
-                  <label for="a3n">Normaal</label>
-                  <input type="radio" id="a3s" name="mode" value="3-snuffel">
-                  <label for="a3s">Snuffel</label>
-                </div>
-              </td>
-              <td></td>
-            </tr>
-
-            <tr data-anker="4">
-              <td><label><input type="radio" name="anker" value="4">Anker 4</label></td>
-              <td>
-                <div class="toggle-segment" data-anker="4">
-                  <input type="radio" id="a4n" name="mode" value="4-normaal">
-                  <label for="a4n">Normaal</label>
-                  <input type="radio" id="a4s" name="mode" value="4-snuffel">
-                  <label for="a4s">Snuffel</label>
-                </div>
-              </td>
-              <td></td>
-            </tr>
-
-            <tr data-anker="5">
-              <td><label><input type="radio" name="anker" value="5">Anker 5</label></td>
-              <td>
-                <div class="toggle-segment" data-anker="5">
-                  <input type="radio" id="a5n" name="mode" value="5-normaal">
-                  <label for="a5n">Normaal</label>
-                  <input type="radio" id="a5s" name="mode" value="5-snuffel">
-                  <label for="a5s">Snuffel</label>
-                </div>
-              </td>
-              <td></td>
-            </tr>
-
-            <tr data-anker="6">
-              <td><label><input type="radio" name="anker" value="6">Anker 6</label></td>
-              <td>
-                <div class="toggle-segment" data-anker="6">
-                  <input type="radio" id="a6n" name="mode" value="6-normaal">
-                  <label for="a6n">Normaal</label>
-                  <input type="radio" id="a6s" name="mode" value="6-snuffel">
-                  <label for="a6s">Snuffel</label>
-                </div>
-              </td>
-              <td></td>
-            </tr>
-
-            <tr data-anker="7">
-              <td><label><input type="radio" name="anker" value="7">Anker 7</label></td>
-              <td>
-                <div class="toggle-segment" data-anker="7">
-                  <input type="radio" id="a7n" name="mode" value="7-normaal">
-                  <label for="a7n">Normaal</label>
-                  <input type="radio" id="a7s" name="mode" value="7-snuffel">
-                  <label for="a7s">Snuffel</label>
-                </div>
-              </td>
-              <td></td>
-            </tr>
-
-            <tr data-anker="8">
-              <td><label><input type="radio" name="anker" value="8">Anker 8</label></td>
-              <td>
-                <div class="toggle-segment" data-anker="8">
-                  <input type="radio" id="a8n" name="mode" value="8-normaal">
-                  <label for="a8n">Normaal</label>
-                  <input type="radio" id="a8s" name="mode" value="8-snuffel">
-                  <label for="a8s">Snuffel</label>
-                </div>
-              </td>
-              <td></td>
-            </tr>
-
-            <tr data-anker="9">
-              <td><label><input type="radio" name="anker" value="9">Herkansjes oefenen</label></td>
-              <td>
-                <div class="toggle-segment" data-anker="9">
-                  <input type="radio" id="a9n" name="mode" value="9-">
-                  <label for="a9n">Mijn herkansjes</label>
-                </div>
-              <td></td>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="tip">Tip: klik op een anker om de woordjes te zien.</div>
-      </fieldset>
-
-
-      <!-- Ankers (aantal woorden of minuten) -->
-      <fieldset class="optiegroep" id="fieldset-modus">
-        <legend>Oefenmodus</legend>
-
-        <div class="form-row" id="row-woorden">
-          <label class="inline" for="aantalInput">
-            <input type="radio" id="modus-woorden" name="modus" value="woorden">
-            <span>Aantal items</span>
-          </label>
-          <input id="aantalInput" type="number" min="1" max="50" value="15" disabled>
-        </div>
-
-        <div class="form-row" id="row-minuten">
-          <label class="inline" for="minutenInput">
-            <input type="radio" id="modus-minuten" name="modus" value="minuten" checked>
-            <span>Aantal minuten</span>
-          </label>
-          <input id="minutenInput" type="number" min="1" max="3" value="1">
-        </div>
-
-        <div id="errorMsg" style="color:red; font-size:14px; margin:4px 0 2px 0;"></div>
-      </fieldset>
-
-      <fieldset class="optiegroep" id="fieldset-extra">
-        <legend>Flits functie (optioneel)</legend>
-        <div class="tip-extra" style="font-size:14px; color:#64748b; margin:4px 0 8px;">
-          <div><strong>Wil je oefenen met flitsen?</strong></div>
-          <div>Door deze functie aan te zetten wordt het woord kort weergegeven.<br>(De snelheid is instelbaar).
-            <span class="dots-icon" aria-hidden="true"
-              style="display:inline-block;vertical-align:middle;transform:translateY(1px);">
-              <svg width="36" height="12" viewBox="0 0 48 16" fill="none">
-                <circle cx="8" cy="8" r="4" fill="#0f172a" />
-                <circle cx="24" cy="8" r="4" fill="#0f172a" />
-                <circle cx="40" cy="8" r="4" fill="#0f172a" />
+            <!-- Vergrootglas-knop -->
+            <button id="btnFunctiewoordjes" class="btnReset" title="Bekijk alle functiewoordjes">
+              <svg xmlns="https://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M10 2a8 8 0 0 1 6.32 12.906l5.387 5.388-1.414 1.414-5.388-5.387A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
               </svg>
-            </span>.
+            </button>
           </div>
-        </div>
-        <div class="row extra-row"
-          style="display:flex;flex-direction:column;gap:10px;align-items:flex-start;text-align:left;">
-          <label class="inline flits-label" for="flitsInput" style="display:inline-flex;align-items:center;gap:10px;">
-            <!-- Camera icon (inline SVG) -->
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
-              <path
-                d="M4 7h3l1.2-2.4A2 2 0 0 1 10 3h4a2 2 0 0 1 1.8 1.1L17 7h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"
-                stroke="#0f172a" stroke-width="1.5" fill="none" />
-              <circle cx="12" cy="14" r="4" stroke="#0f172a" stroke-width="1.5" fill="none" />
-            </svg>
-            <span>Flitslezen</span>
-            <span class="switch">
-              <input type="checkbox" id="flitsInput" name="flits" />
-              <span class="slider"></span>
-            </span>
-          </label>
-          <div class="secs-group" style="display:inline-flex;align-items:center;gap:10px;">
-            <label for="flitsSeconden" style="font-size:16px;">Duur weergave</label>
-            <input id="flitsSeconden" type="number" min="0.2" max="5" step="0.1" value="1.5" style="width:110px;" />
-            <span style="font-size:14px; color:#475569;">seconde(n)</span>
+
+
+          <div class="row lezen-row" data-lezen="zinnetjes" tabindex="0">
+            <label>
+              <input type="radio" name="lezenCat" value="zinnetjes">
+              Zinnetjes
+            </label>
+
+
+            <!-- Vergrootglas-knop -->
+            <button id="btnZinnetjes" class="btnReset" title="Bekijk alle zinnetjes">
+              <svg xmlns="https://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M10 2a8 8 0 0 1 6.32 12.906l5.387 5.388-1.414 1.414-5.388-5.387A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
+              </svg>
+            </button>
+
           </div>
-        </div>
-      </fieldset>
 
-    </div>
+          <div style="font-size:14px; color:#64748b;">
+            Tip: hover over een categorie om de woordjes of zinnetjes te zien.
+          </div>
+        </fieldset>
 
-    <div style="text-align:center; margin-top:8px;">
-      <button class="btn" id="btnStart">Start</button>
+        <fieldset class="optiegroep" id="fieldset-anker">
+          <legend>Kies een anker</legend>
+
+          <table class="anker-tabel">
+            <thead>
+              <tr>
+                <th>Anker ⚓️</th>
+                <th>Modus</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 8 rijen -->
+              <tr data-anker="1">
+                <td><label><input type="radio" name="anker" value="1">Anker 1</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="1">
+                    <input type="radio" id="a1n" name="mode" value="1-normaal">
+                    <label for="a1n">Normaal</label>
+                    <input type="radio" id="a1s" name="mode" value="1-snuffel">
+                    <label for="a1s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="2">
+                <td><label><input type="radio" name="anker" value="2">Anker 2</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="2">
+                    <input type="radio" id="a2n" name="mode" value="2-normaal">
+                    <label for="a2n">Normaal</label>
+                    <input type="radio" id="a2s" name="mode" value="2-snuffel">
+                    <label for="a2s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="3">
+                <td><label><input type="radio" name="anker" value="3">Anker 3</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="3">
+                    <input type="radio" id="a3n" name="mode" value="3-normaal">
+                    <label for="a3n">Normaal</label>
+                    <input type="radio" id="a3s" name="mode" value="3-snuffel">
+                    <label for="a3s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="4">
+                <td><label><input type="radio" name="anker" value="4">Anker 4</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="4">
+                    <input type="radio" id="a4n" name="mode" value="4-normaal">
+                    <label for="a4n">Normaal</label>
+                    <input type="radio" id="a4s" name="mode" value="4-snuffel">
+                    <label for="a4s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="5">
+                <td><label><input type="radio" name="anker" value="5">Anker 5</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="5">
+                    <input type="radio" id="a5n" name="mode" value="5-normaal">
+                    <label for="a5n">Normaal</label>
+                    <input type="radio" id="a5s" name="mode" value="5-snuffel">
+                    <label for="a5s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="6">
+                <td><label><input type="radio" name="anker" value="6">Anker 6</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="6">
+                    <input type="radio" id="a6n" name="mode" value="6-normaal">
+                    <label for="a6n">Normaal</label>
+                    <input type="radio" id="a6s" name="mode" value="6-snuffel">
+                    <label for="a6s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="7">
+                <td><label><input type="radio" name="anker" value="7">Anker 7</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="7">
+                    <input type="radio" id="a7n" name="mode" value="7-normaal">
+                    <label for="a7n">Normaal</label>
+                    <input type="radio" id="a7s" name="mode" value="7-snuffel">
+                    <label for="a7s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="8">
+                <td><label><input type="radio" name="anker" value="8">Anker 8</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="8">
+                    <input type="radio" id="a8n" name="mode" value="8-normaal">
+                    <label for="a8n">Normaal</label>
+                    <input type="radio" id="a8s" name="mode" value="8-snuffel">
+                    <label for="a8s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr data-anker="9">
+                <td><label><input type="radio" name="anker" value="9">Herkansjes oefenen</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="9">
+                    <input type="radio" id="a9n" name="mode" value="9-">
+                    <label for="a9n">Mijn herkansjes</label>
+                  </div>
+                <td></td>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="tip">Tip: klik op een anker om de woordjes te zien.</div>
+        </fieldset>
+
+
+        <!-- Ankers (aantal woorden of minuten) -->
+        <fieldset class="optiegroep" id="fieldset-modus">
+          <legend>Oefenmodus</legend>
+
+          <div class="form-row" id="row-woorden">
+            <label class="inline" for="aantalInput">
+              <input type="radio" id="modus-woorden" name="modus" value="woorden">
+              <span>Aantal items</span>
+            </label>
+            <input id="aantalInput" type="number" min="1" max="50" value="15" disabled>
+          </div>
+
+          <div class="form-row" id="row-minuten">
+            <label class="inline" for="minutenInput">
+              <input type="radio" id="modus-minuten" name="modus" value="minuten" checked>
+              <span>Aantal minuten</span>
+            </label>
+            <input id="minutenInput" type="number" min="1" max="3" value="1">
+          </div>
+
+          <div id="errorMsg" style="color:red; font-size:14px; margin:4px 0 2px 0;"></div>
+        </fieldset>
+
+        <fieldset class="optiegroep" id="fieldset-extra">
+          <legend>Flits functie (optioneel)</legend>
+          <div class="tip-extra" style="font-size:14px; color:#64748b; margin:4px 0 8px;">
+            <div><strong>Wil je oefenen met flitsen?</strong></div>
+            <div>Door deze functie aan te zetten wordt het woord kort weergegeven.<br>(De snelheid is instelbaar).
+              <span class="dots-icon" aria-hidden="true"
+                style="display:inline-block;vertical-align:middle;transform:translateY(1px);">
+                <svg width="36" height="12" viewBox="0 0 48 16" fill="none">
+                  <circle cx="8" cy="8" r="4" fill="#0f172a" />
+                  <circle cx="24" cy="8" r="4" fill="#0f172a" />
+                  <circle cx="40" cy="8" r="4" fill="#0f172a" />
+                </svg>
+              </span>.
+            </div>
+          </div>
+          <div class="row extra-row"
+            style="display:flex;flex-direction:column;gap:10px;align-items:flex-start;text-align:left;">
+            <label class="inline flits-label" for="flitsInput" style="display:inline-flex;align-items:center;gap:10px;">
+              <!-- Camera icon (inline SVG) -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                <path
+                  d="M4 7h3l1.2-2.4A2 2 0 0 1 10 3h4a2 2 0 0 1 1.8 1.1L17 7h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"
+                  stroke="#0f172a" stroke-width="1.5" fill="none" />
+                <circle cx="12" cy="14" r="4" stroke="#0f172a" stroke-width="1.5" fill="none" />
+              </svg>
+              <span>Flitslezen</span>
+              <span class="switch">
+                <input type="checkbox" id="flitsInput" name="flits" />
+                <span class="slider"></span>
+              </span>
+            </label>
+            <div class="secs-group" style="display:inline-flex;align-items:center;gap:10px;">
+              <label for="flitsSeconden" style="font-size:16px;">Duur weergave</label>
+              <input id="flitsSeconden" type="number" min="0.2" max="5" step="0.1" value="1.5" style="width:110px;" />
+              <span style="font-size:14px; color:#475569;">seconde(n)</span>
+            </div>
+          </div>
+        </fieldset>
+
+      </div>
+
+      <div style="text-align:center; margin-top:8px;">
+        <button class="btn" id="btnStart">Start</button>
+      </div>
     </div>
-  </div>
   </div>
 
   <!-- Pagina 2: Oefenen -->
@@ -676,7 +676,7 @@
               ❓ Aantal keren getoond weergeven
             </span>
             <div class="tooltip-bubble" id="aantalTooltip">
-              Toont hoe vaak elk woordje al eerder is weergegeven.
+              Toont hoe vaak de woordjes al zijn weergegeven.
             </div>
           </div>
         </div>

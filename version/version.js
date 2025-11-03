@@ -1,1 +1,1 @@
-const SITE_VERSION = 'v20251102-2';
+const SITE_VERSION = 'v20251102-3';
