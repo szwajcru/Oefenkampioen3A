@@ -3,7 +3,7 @@ importScripts('version/version.js'); // levert (globaal) self.SITE_VERSION
 
 const CACHE_NAME = 'site-cache-' + self.SITE_VERSION;
 
-// Zet hier ALLES wat je per release consistent wilt houden
+// Alle sourcer per release die consistent moeten zijn
 const FILES = [
   'index.html',
   'index/style.css',
@@ -18,7 +18,6 @@ const FILES = [
   'index/ankers.js',
   'index/klanken.js',
   'index/lezen.js',
-  // Optioneel: '404.html' als je die hebt op GitHub Pages
 ];
 
 // Helper: vers ophalen met cache-bust, opslaan onder SCHONE URL
@@ -92,7 +91,7 @@ self.addEventListener('fetch', (event) => {
     if (isPrecached) {
       const hit = await cache.match(req, { ignoreSearch: true });
       if (hit) return hit;
-      // zou zelden nodig zijn; herstel precache indien leeg
+      // herstel precache indien leeg
       await fetchFreshAndPut(cache, path);
       return cache.match(req, { ignoreSearch: true });
     }
