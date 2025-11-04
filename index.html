@@ -725,28 +725,41 @@
   </div>
 
   <!--  Service Worker + versiebeheer -->
-  <script src="/version/version.js"></script>
+  <script src="version/version.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').then(reg => {
-        console.log('Service Worker geregistreerd:', reg.scope);
+      // Belangrijk: SW + importScripts altijd vers ophalen
+      navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
+        .then(reg => {
+          console.log('Service Worker geregistreerd:', reg.scope);
 
-        // 🔍 Controleer of alles up-to-date is
-        if (!reg.waiting && !reg.installing && navigator.serviceWorker.controller) {
-          toonStatusMelding('✅ veel plezier!', '#28a745');
-        }
+          // 🔍 Up-to-date melding wanneer er al controle is en geen update bezig is
+          if (!reg.waiting && !reg.installing && navigator.serviceWorker.controller) {
+            toonStatusMelding('✅ veel plezier!', '#28a745');
+          }
 
-        // 🔁 Detecteer updates
-        reg.addEventListener('updatefound', () => {
-          const nieuweSW = reg.installing;
-          nieuweSW.addEventListener('statechange', () => {
-            if (nieuweSW.state === 'installed' && navigator.serviceWorker.controller) {
-              toonUpdateMelding(nieuweSW);
-            }
+          // 🔁 Detecteer updates
+          reg.addEventListener('updatefound', () => {
+            const nieuweSW = reg.installing;
+            if (!nieuweSW) return;
+            nieuweSW.addEventListener('statechange', () => {
+              if (nieuweSW.state === 'installed' && navigator.serviceWorker.controller) {
+                toonUpdateMelding(nieuweSW);
+              }
+            });
           });
+        })
+        .catch(err => {
+          console.error('❌ Fout bij registreren Service Worker:', err);
         });
-      }).catch(err => {
-        console.error('❌ Fout bij registreren Service Worker:', err);
+
+      // Eénmalige refresh zodra een nieuwe SW de controle overneemt
+      let __swRefreshed = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!__swRefreshed) {
+          __swRefreshed = true;
+          window.location.reload();
+        }
       });
     }
 
@@ -777,10 +790,6 @@
       document.getElementById('refreshBtn').addEventListener('click', () => {
         nieuweSW.postMessage('SKIP_WAITING');
       });
-
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        window.location.reload();
-      });
     }
 
     /**
@@ -808,13 +817,15 @@
     }
 
     /**
-     * 💾 Eénmalige forced refresh bij nieuwe versie
+     * 💾 Eénmalige forced refresh bij nieuwe versie (optioneel)
      */
-    if (localStorage.getItem('siteVersie') !== SITE_VERSION) {
+    if (typeof SITE_VERSION !== 'undefined' &&
+      localStorage.getItem('siteVersie') !== SITE_VERSION) {
       localStorage.setItem('siteVersie', SITE_VERSION);
-      location.reload(true);
+      location.reload();
     }
   </script>
+
 
 </body>
 

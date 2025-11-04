@@ -1,1 +1,2 @@
-const SITE_VERSION = 'v20251104-3';
+// bump bij elke release
+self.SITE_VERSION = 'v2025-11-04-4'; 

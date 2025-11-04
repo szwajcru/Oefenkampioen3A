@@ -1,109 +1,121 @@
-importScripts('version/version.js'); // importeer centrale versie
+// sw.js — versie-consistente precache + bot-vriendelijk (geen fallback/redirect voor crawlers)
+importScripts('version/version.js'); // levert (globaal) self.SITE_VERSION
 
-const CACHE_NAME = 'site-cache-' + SITE_VERSION;
-const FILES_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/index/style.css',
-  '/index/script.js',
-  '/index/resultaatGrafiek.js',
-  '/changelog/changelog.css',
-  '/changelog/changelog.js',
-  '/herkansjes/herkansjes.js',
-  '/herkansjes/herkansjes.css',
-  '/index/feedback.js',
-  '/index/feedback.css',
+const CACHE_NAME = 'site-cache-' + self.SITE_VERSION;
+
+// Zet hier ALLES wat je per release consistent wilt houden
+const FILES = [
+  'index.html',
+  'index/style.css',
+  'index/script.js',
+  'index/resultaatGrafiek.js',
+  'index/feedback.js',
+  'index/feedback.css',
+  'changelog/changelog.css',
+  'changelog/changelog.js',
+  'herkansjes/herkansjes.css',
+  'herkansjes/herkansjes.js',
+  'index/ankers.js',
+  'index/klanken.js',
+  'index/lezen.js',
+  // Optioneel: '404.html' als je die hebt op GitHub Pages
 ];
 
-/**
- * Installatie — cache vooraf gedefinieerde bestanden
- */
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(FILES_TO_CACHE))
-  );
-  self.skipWaiting(); // activeer direct na installatie
+// Helper: vers ophalen met cache-bust, opslaan onder SCHONE URL
+async function fetchFreshAndPut(cache, path) {
+  const bust = path + (path.includes('?') ? '&' : '?') + 'v=' + encodeURIComponent(self.SITE_VERSION);
+  const res = await fetch(new Request(bust, { cache: 'reload' }));
+  if (!res.ok) throw new Error(`Precache faalde: ${path} (${res.status})`);
+  await cache.put(path, res.clone());
+}
+
+// Eenvoudige botdetectie (genoeg voor SEO-doeleinden)
+function isBotUA(ua) {
+  ua = (ua || '').toLowerCase();
+  return ua.includes('googlebot') || ua.includes('bingbot') ||
+    ua.includes('duckduckbot') || ua.includes('yandexbot') ||
+    ua.includes('baiduspider');
+}
+
+// Install: volledige bundel vers binnenhalen
+self.addEventListener('install', (event) => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    await Promise.all(FILES.map(p => fetchFreshAndPut(cache, p)));
+  })());
+  self.skipWaiting();
 });
 
-/**
- * Activatie — oude caches verwijderen
- */
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.map(key => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      )
-    )
-  );
-  self.clients.claim(); // neem direct controle over alle clients
+// Activate: oude caches weg; geen client-redirect voor bots
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k => (k !== CACHE_NAME) ? caches.delete(k) : Promise.resolve()));
+    await self.clients.claim();
+
+    // Informeer alleen normale clients (niet de bots) dat er een nieuwe versie is
+    const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const c of clients) c.postMessage({ type: 'NEW_VERSION', version: self.SITE_VERSION });
+  })());
 });
 
-/**
- * Fetch — netwerkverkeer afhandelen en cachen
- */
-self.addEventListener('fetch', event => {
-  const request = event.request;
+// Fetch: 
+// - BOTS: ALTIJD direct netwerk, geen cache, geen fallback => geen soft-404/redirect
+// - Precached: cache-first (consistente bundel per versie)
+// - Overig: network-first met cache: 'reload', fallback op cache, en voor navigations op index.html (alleen voor mensen)
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
 
-  // ❌ Irrelevante requests overslaan
+  // Requests die we sowieso negeren
   if (
-    request.method !== 'GET' ||
-    request.url.startsWith('chrome-extension://') ||
-    request.url.startsWith('chrome://') ||
-    request.url.startsWith('data:') ||
-    request.url.startsWith('blob:')
-  ) {
+    req.method !== 'GET' ||
+    req.url.startsWith('chrome-extension://') ||
+    req.url.startsWith('chrome://') ||
+    req.url.startsWith('data:') ||
+    req.url.startsWith('blob:')
+  ) return;
+
+  // BOTS: volledig bypassen (belangrijk voor SEO)
+  const ua = req.headers.get('user-agent') || '';
+  if (isBotUA(ua)) {
+    event.respondWith(fetch(req)); // geen caching/rewrites/fallbacks
     return;
   }
 
-  // 🧠 Detecteer crawlers (zoals Googlebot, Bingbot, etc.)
-  const userAgent = (request.headers.get('user-agent') || '').toLowerCase();
-  const isBot =
-    userAgent.includes('googlebot') ||
-    userAgent.includes('bingbot') ||
-    userAgent.includes('duckduckbot') ||
-    userAgent.includes('yandexbot');
+  const url = new URL(req.url);
+  const path = url.pathname.replace(/^\/+/, '');
+  const isPrecached = FILES.includes(path);
 
-  if (request.mode === 'navigate') {
-    if (isBot) {
-      // 🔹 Crawlers krijgen directe netwerkrespons (geen offline fallback)
-      event.respondWith(fetch(request));
-      return;
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE_NAME);
+
+    if (isPrecached) {
+      const hit = await cache.match(req, { ignoreSearch: true });
+      if (hit) return hit;
+      // zou zelden nodig zijn; herstel precache indien leeg
+      await fetchFreshAndPut(cache, path);
+      return cache.match(req, { ignoreSearch: true });
     }
 
-    // Voor normale gebruikers: netwerk eerst, dan fallback op index.html
-    event.respondWith(
-      fetch(request)
-        .then(response => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put('/', copy));
-          return response;
-        })
-        .catch(() => caches.match('/'))
-    );
-  } else {
-    // Overige bestanden: netwerk eerst, cache fallback
-    event.respondWith(
-      fetch(request)
-        .then(response => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
-          return response;
-        })
-        .catch(() => caches.match(request))
-    );
-  }
+    try {
+      const fresh = new Request(req.url, { cache: 'reload', mode: req.mode, credentials: req.credentials });
+      const net = await fetch(fresh);
+      if (net && net.ok) cache.put(req, net.clone());
+      return net;
+    } catch {
+      const fallback = await cache.match(req);
+      if (fallback) return fallback;
+
+      // Navigatie fallback ALLEEN voor mensen (bots vallen hierboven al buiten)
+      if (req.mode === 'navigate') {
+        const index = await cache.match('index.html');
+        if (index) return index;
+      }
+      return Response.error();
+    }
+  })());
 });
 
-/**
- * Bericht vanuit de client (bijv. voor skipWaiting)
- */
-self.addEventListener('message', event => {
-  if (event.data === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
+self.addEventListener('message', (e) => {
+  if (e.data === 'SKIP_WAITING') self.skipWaiting();
 });
