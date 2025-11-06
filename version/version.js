@@ -1,2 +1,2 @@
 // bump bij elke release
-self.SITE_VERSION = 'v2025-11-05-1'; 
+self.SITE_VERSION = 'v2025-11-06-1'; 
