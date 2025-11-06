@@ -18,7 +18,8 @@ const FILES = [
   'index/ankers.js',
   'index/klanken.js',
   'index/lezen.js',
-  'index/achtergrond.png'
+  'index/achtergrond.png',
+  'index/instructies.html',
 ];
 
 // Helper: vers ophalen met cache-bust, opslaan onder SCHONE URL

@@ -267,7 +267,7 @@ if (hoeWerktHetBtn) {
         cursor:pointer;
         z-index: 10000;
       ">Sluiten</button>
-      <iframe src="index/instructies.html" style="
+      <iframe src="/index/instructies.html" style="
         width:100%;
         height:80vh;
         border:none;
