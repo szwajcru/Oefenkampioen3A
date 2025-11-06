@@ -24,6 +24,7 @@
   let timerId = null, endTime = 0;
   let isHerkansing = false;
   let lockClose = false; // true terwijl bevestiging open is
+  let item = null;
 
   // ===== Highlight helpers =====
   const VOWEL_COMBOS = ['aa', 'ee', 'oo', 'uu', 'ei', 'ij', 'ui', 'oe', 'ie', 'eu', 'ou', 'au'];
@@ -359,7 +360,7 @@
     const el = document.getElementById('woord');
     const woordEl = document.getElementById('woord');
     const card = document.querySelector('#page2 .card');
-    let item = '';
+    item = '';
 
     // 🔹 Reset basisstijl altijd bij een nieuw woord
     card.classList.remove('zin-card');
@@ -680,7 +681,7 @@
         ? 'snuffel'
         : 'normaal';
 
-      voegFoutWoordToe(ankerNummer, modus, items[idx]);
+      voegFoutWoordToe(ankerNummer, modus, item);
     }
 
     if (ok) score++; getoond++; idx++;
@@ -1654,6 +1655,11 @@ let foutGelezen = [];
 */
 function voegFoutWoordToe(anker, modus, woord) {
 
+  if (!woord || typeof woord !== 'string' || woord.trim() === '') {
+    fconsole.warn('Leeg of ongeldig woord genegeerd bij toevoegen fout woord:', woord);
+    return;
+  }
+
   const opslagNaam = 'fout_woordjes';
   let foutjes = [];
 
@@ -1690,8 +1696,6 @@ function voegFoutWoordToe(anker, modus, woord) {
 
   localStorage.setItem(opslagNaam, JSON.stringify(foutjes));
 }
-
-
 
 function laadFoutWoordjes() {
   const data = localStorage.getItem('fout_woordjes');
