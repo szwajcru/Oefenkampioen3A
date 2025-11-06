@@ -110,6 +110,7 @@
 
       <div class="menu-item has-sub">⚓️ Anker woordjes
         <div class="submenu hidden">
+          <div class="submenu-item anker-menu" data-anker="0">📚 Anker Start</div>
           <div class="submenu-item anker-menu" data-anker="1">📚 Anker 1</div>
           <div class="submenu-item anker-menu" data-anker="2">📚 Anker 2</div>
           <div class="submenu-item anker-menu" data-anker="3">📚 Anker 3</div>
@@ -250,6 +251,19 @@
             </thead>
             <tbody>
               <!-- 8 rijen -->
+              <tr data-anker="0">
+                <td><label><input type="radio" name="anker" value="0">Anker Start</label></td>
+                <td>
+                  <div class="toggle-segment" data-anker="0">
+                    <input type="radio" id="a0n" name="mode" value="0-normaal">
+                    <label for="a0n">Normaal</label>
+                    <input type="radio" id="a0s" name="mode" value="0-snuffel">
+                    <label for="a0s">Snuffel</label>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+              
               <tr data-anker="1">
                 <td><label><input type="radio" name="anker" value="1">Anker 1</label></td>
                 <td>

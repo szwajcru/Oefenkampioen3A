@@ -1,5 +1,6 @@
 // ===== Data =====
 const ankers = {
+  0: ['i', 'k', 's', 'm', 'aa', 'ik', 'kaas', 'maak', 'sik', 'sis', 'mis', 'maas', 'mik', 'is', 'kim'],
   1: ['rek', 'maak', 'sik', 'aas', 'baas', 'meer', 'sip', 'been', 'vis', 'vaar', 'boon', 'paar', 'roos', 'kook', 'bek', 'rook', 'voor', 'boor', 'naar', 'peer', 'kaak', 'oom', 'mis', 'ree', 'naam', 'veer', 'mes', 'raam', 'kaas', 'kraak', 'snik', 'prik', 'smaak', 'spook'],
   2: ['roer', 'moes', 'sap', 'pak', 'dip', 'teen', 'dijk', 'oen', 'zin', 'das', 'baan', 'mus', 'hoop', 'bus', 'hap', 'toen', 'vik', 'zus', 'pit', 'zoen', 'man', 'hoop', 'vis', 'zeer', 'voer', 'zoet', 'rijp', 'buk', 'doet', 'troep', 'hark', 'moest', 'bukt', 'prijs'],
   3: ['woon', 'heus', 'veer', 'mok', 'waak', 'baas', 'huur', 'soep', 'biet', 'waas', 'hun', 'buur', 'was', 'sok', 'haar', 'pier', 'lus', 'wiel', 'neus', 'hiel', 'vuur', 'keus', 'heer', 'jet', 'poes', 'loon', 'wiek', 'rook', 'leuk', 'pomp', 'buurt', 'stuur', 'blaas', 'stoer'],
@@ -8,13 +9,13 @@ const ankers = {
   6: ['schroef', 'koprol', 'tuinbank', 'vloed', 'schoenzool', 'spons', 'schelp', 'boompje', 'stoeltje', 'klomp', 'schuur', 'feestje', 'dagboek', 'kroontje', 'sla', 'glad', 'jurk', 'slang', 'mond', 'jaszak', 'worst', 'spruit', 'schrift', 'drink', 'ronde', 'oogje', 'halve', 'minder', 'broeken', 'trouwring', 'pillen', 'poppen', 'bakker', 'kopen', 'mogen', 'neushoorn', 'eettafel', 'olifant'],
   7: ['maai', 'hooi', 'duimpje', 'ruggen', 'krijtje', 'goud', 'kippen', 'duikbril', 'loopfiets', 'hondje', 'huren', 'gebak', 'beloof', 'verhaal', 'rollen', 'geluid', 'ruw', 'nieuw', 'geeuw', 'kleurtje', 'beeld', 'verlies', 'bezoek', 'aanrecht', 'klussen', 'vlinder', 'feestmuts', 'dromen', 'sparen', 'voeten', 'leuning', 'haring', 'oordop', 'koeken', 'stukken', 'speeltuin', 'schommel', 'kieuw'],
   8: ['voeding', 'botsing', 'leunen', 'sierlijk', 'zonnig', 'nodig', 'getallen', 'verdriet', 'versieren', 'betalen', 'onkruid', 'bloempje', 'kraantje', 'dorst', 'standbeeld', 'telling', 'drukker', 'pinken', 'vlucht', 'brengen', 'steiger', 'zomer', 'tikkertje', 'propjes', 'groei', 'draai', 'klimmen', 'schuif', 'beestje', 'bessen', 'struiken', 'knappe', 'zitten', 'sporttas', 'bedankt', 'egels', 'vrienden', 'jaren'],
-  "1-snuffel": ["sleep", "slijpt", "greep", "boer", "niets", "muts", "speel", "trein", "doof", "dans", "blaast", "kreun", "kast", "stier", "gans", "kort", "geur", "gil", "durf", "tuurt", "kier", "duif"],
-  "2-snuffel": ["schuin", "stamp", "tuinman", "nicht", "web", "sleep", "meng", "bult", "buurman", "meng", "krans", "meid", "zink", "nacht", "stomp", "slank", "school", "pracht", "wang", "schep", "voordoen", "iets"],
-  "2-snuffel": ["schuin", "stamp", "tuinman", "nicht", "web", "sleep", "meng", "bult", "buurman", "meng", "krans", "meid", "zink", "nacht", "stomp", "slank", "school", "pracht", "wang", "schep", "voordoen", "iets"],
-  "3-snuffel": ["muurverf", "meeuw", "kieuw", "plooi", "schenk", "zwembad", "graai", "grasveld", "kooi", "schrijfles", "mint", "dooi", "dienst", "spring", "schrik", "barst", "vlot", "nieuw", "vonk", "bank", "schrift", "eeuw"],
-  "4-snuffel": ["duimpje", "mollen", "huisje", "sneeuw", "vieze", "vla", "dikke", "bakker", "tuintje", "schuw", "blauwe", "mooi", "duw", "slakje", "rekken", "spruitje", "kastje", "nu", "schroef", "hebben", "schrik", "klusje"],
-  "5-snuffel": ["doelpunt", "zwemles", "kippen", "haken", "kastdeur", "bakfiets", "zwemmen", "glaasje", "huren", "denken", "schone", "tuinhek", "bakje", "schatkaart", "kaarsje", "schreeuw", "sla", "bubbel", "schaartje", "inktvis", "slager", "struikje"],
-  "6-snuffel": ["vogelnest", "huisdier", "redding", "gemaakt", "hamer", "kapstokje", "petten", "plantenbak", "looprekje", "gewonnen", "regenjas", "droge", "auto", "boekenkast", "geluidje", "duwen", "krabben", "regen", "knippen", "schrikdraad", "bankje", "grasspriet"],
+  "0-snuffel": [],
+  "1-snuffel": ['sleep', 'slijpt', 'greep', 'boer', 'niets', 'muts', 'speel', 'trein', 'doof', 'dans', 'blaast', 'kreun', 'kast', 'stier', 'gans', 'kort', 'geur', 'gil', 'durf', 'tuurt', 'kier', 'duif'],
+  "2-snuffel": ['klink', 'ruit', 'poets', 'geel', 'stomp', 'voordoen', 'tuinman', 'pink', 'web', 'sterk', 'buurman', 'voortuin', 'zink', 'nicht', 'gang', 'bult', 'schijn', 'klauw', 'prik', 'schuim', 'wacht', 'meid', 'krans', 'steunt', 'Teun', 'Hans', 'wasbak', 'sleep', 'stamp', 'sport', 'schuin', 'meng', 'nacht', 'slank', 'school', 'pracht', 'wang', 'schep', 'iets'],
+  "3-snuffel": ['muurverf', 'meeuw', 'kieuw', 'plooi', 'schenk', 'zwembad', 'graai', 'grasveld', 'kooi', 'schrijfles', 'mint', 'dooi', 'dienst', 'spring', 'schrik', 'barst', 'vlot', 'nieuw', 'vonk', 'bank', 'schrift', 'eeuw'],
+  "4-snuffel": ['duimpje', 'mollen', 'huisje', 'sneeuw', 'vieze', 'vla', 'dikke', 'bakker', 'tuintje', 'schuw', 'blauwe', 'mooi', 'duw', 'slakje', 'rekken', 'spruitje', 'kastje', 'nu', 'schroef', 'hebben', 'schrik', 'klusje'],
+  "5-snuffel": ['doelpunt', 'zwemles', 'kippen', 'haken', 'kastdeur', 'bakfiets', 'zwemmen', 'glaasje', 'huren', 'denken', 'schone', 'tuinhek', 'bakje', 'schatkaart', 'kaarsje', 'schreeuw', 'sla', 'bubbel', 'schaartje', 'inktvis', 'slager', 'struikje'],
+  "6-snuffel": ['vogelnest', 'huisdier', 'redding', 'gemaakt', 'hamer', 'kapstokje', 'petten', 'plantenbak', 'looprekje', 'gewonnen', 'regenjas', 'droge', 'auto', 'boekenkast', 'geluidje', 'duwen', 'krabben', 'regen', 'knippen', 'schrikdraad', 'bankje', 'grasspriet'],
   "7-snuffel": [],
   "8-snuffel": [],
   9: ['Herhaal de woordjes die je eerder lastig vond.']  // wordt dynamisch gevuld
