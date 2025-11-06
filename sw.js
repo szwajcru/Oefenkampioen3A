@@ -20,6 +20,7 @@ const FILES = [
   'index/lezen.js',
   'index/achtergrond.png',
   'index/instructies.html',
+  'version/version.js'
 ];
 
 // Helper: vers ophalen met cache-bust, opslaan onder SCHONE URL
