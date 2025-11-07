@@ -48,30 +48,14 @@ jobs:
           git commit -m "Auto-update version.js [skip ci]" || echo "Geen wijzigingen om te committen"
           git push
 
-      # ✅ Upload artifact met unieke naam
+      # ✅ Upload artifact (overschrijft automatisch)
       - name: Upload website artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          name: klankenfontein-site
+          name: github-pages
           path: '.'
 
       # ✅ Deploy naar GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          artifact_name: klankenfontein-site
-
-  # 🧹 Optioneel: opruimen oude artifacts
-  cleanup:
-    name: Cleanup oude artifacts
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-      - name: Delete oude workflow artifacts
-        uses: geekyeggo/delete-artifact@v4
-        with:
-          name: |
-            github-pages
-            klankenfontein-site
-          failOnError: false
