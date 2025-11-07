@@ -1,7 +1,7 @@
 // sw.js — versie-consistente precache + bot-vriendelijk (geen fallback/redirect voor crawlers)
-importScripts('version/version.js'); // levert (globaal) self.SITE_VERSION
+importScripts('version/version.js?v=' + Date.now()); // altijd actuele versie laden
 
-const CACHE_NAME = 'site-cache-' + 'v2025-11-07-05';
+const CACHE_NAME = 'site-cache-' + self.SITE_VERSION;
 
 // Alle sourcer per release die consistent moeten zijn
 const FILES = [
@@ -60,10 +60,7 @@ self.addEventListener('activate', (event) => {
   })());
 });
 
-// Fetch: 
-// - BOTS: ALTIJD direct netwerk, geen cache, geen fallback => geen soft-404/redirect
-// - Precached: cache-first (consistente bundel per versie)
-// - Overig: network-first met cache: 'reload', fallback op cache, en voor navigations op index.html (alleen voor mensen)
+// Fetch-logica
 self.addEventListener('fetch', (event) => {
   const req = event.request;
 
@@ -117,6 +114,7 @@ self.addEventListener('fetch', (event) => {
   })());
 });
 
+// Messages van clients
 self.addEventListener('message', (e) => {
   if (e.data === 'SKIP_WAITING') self.skipWaiting();
 });
