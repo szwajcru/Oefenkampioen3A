@@ -1,7 +1,7 @@
 // sw.js — versie-consistente precache + bot-vriendelijk (geen fallback/redirect voor crawlers)
 importScripts('version/version.js'); // levert (globaal) self.SITE_VERSION
 
-const CACHE_NAME = 'site-cache-' + self.SITE_VERSION;
+const CACHE_NAME = 'site-cache-' + 'v2025-11-07-02'
 
 // Alle sourcer per release die consistent moeten zijn
 const FILES = [
@@ -19,8 +19,7 @@ const FILES = [
   'index/klanken.js',
   'index/lezen.js',
   'index/achtergrond.png',
-  'index/instructies.html',
-  'version/version.js'
+  'index/instructies.html'
 ];
 
 // Helper: vers ophalen met cache-bust, opslaan onder SCHONE URL
