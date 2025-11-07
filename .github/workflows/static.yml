@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write   # nodig voor auto-commit
+  contents: write      # Nodig voor auto-commit
   pages: write
   id-token: write
 
@@ -21,6 +21,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -30,14 +31,15 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # ✅ Automatisch versienummer genereren
+      # ✅ Genereer automatisch nieuw versienummer
       - name: Genereer versie
         run: |
           mkdir -p version
           echo "self.SITE_VERSION = 'v$(date +%Y-%m-%d-%H%M%S)';" > version/version.js
+          echo "Gegenereerde versie:"
           cat version/version.js
 
-      # ✅ Commit & push nieuwe versie.js naar repo
+      # ✅ Commit & push de nieuwe versie.js
       - name: Commit nieuwe versie
         run: |
           git config user.name "github-actions[bot]"
@@ -60,7 +62,7 @@ jobs:
         with:
           artifact_name: klankenfontein-site
 
-  # 🧹 Cleanup job om oude artifacts te verwijderen
+  # 🧹 Optioneel: opruimen oude artifacts
   cleanup:
     name: Cleanup oude artifacts
     runs-on: ubuntu-latest
