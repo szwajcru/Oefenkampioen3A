@@ -1,5 +1,10 @@
-# Deploy static content to GitHub Pages
-name: Deploy static content to Pages
+# static.yml — Automatische Pages-deploy + versie-update
+# Elke push naar main (of handmatig via Actions-tab) triggert:
+# 1. Nieuwe versie in version/version.js
+# 2. Commit & push van die versie
+# 3. Deploy naar GitHub Pages
+
+name: Deploy static site to GitHub Pages
 
 on:
   push:
@@ -39,14 +44,15 @@ jobs:
           echo "Gegenereerde versie:"
           cat version/version.js
 
-      # ✅ Commit & push de nieuwe versie.js
+      # ✅ Commit & push de nieuwe versie (met veilige rebase + force)
       - name: Commit nieuwe versie
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add version/version.js
           git commit -m "Auto-update version.js [skip ci]" || echo "Geen wijzigingen om te committen"
-          git push
+          git pull --rebase origin main || true
+          git push --force-with-lease
 
       # ✅ Upload artifact (overschrijft automatisch)
       - name: Upload website artifact
