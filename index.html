@@ -263,7 +263,7 @@
                 </td>
                 <td></td>
               </tr>
-              
+
               <tr data-anker="1">
                 <td><label><input type="radio" name="anker" value="1">Anker 1</label></td>
                 <td>
@@ -739,105 +739,114 @@
 
   <!--  Service Worker + versiebeheer -->
   <script src="version/version.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      // Belangrijk: SW + importScripts altijd vers ophalen
-      navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
-        .then(reg => {
-          console.log('Service Worker geregistreerd:', reg.scope);
+<script>
+  if ('serviceWorker' in navigator) {
+    // Belangrijk: SW + importScripts altijd vers ophalen
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
+      .then(reg => {
+        console.log('Service Worker geregistreerd:', reg.scope);
 
-          // 🔍 Up-to-date melding wanneer er al controle is en geen update bezig is
-          if (!reg.waiting && !reg.installing && navigator.serviceWorker.controller) {
-            toonStatusMelding('✅ veel plezier!', '#28a745');
-          }
-
-          // 🔁 Detecteer updates
-          reg.addEventListener('updatefound', () => {
-            const nieuweSW = reg.installing;
-            if (!nieuweSW) return;
-            nieuweSW.addEventListener('statechange', () => {
-              if (nieuweSW.state === 'installed' && navigator.serviceWorker.controller) {
-                toonUpdateMelding(nieuweSW);
-              }
-            });
-          });
-        })
-        .catch(err => {
-          console.error('❌ Fout bij registreren Service Worker:', err);
-        });
-
-      // Eénmalige refresh zodra een nieuwe SW de controle overneemt
-      let __swRefreshed = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!__swRefreshed) {
-          __swRefreshed = true;
-          window.location.reload();
+        // 🔍 Up-to-date melding wanneer er al controle is en geen update bezig is
+        if (!reg.waiting && !reg.installing && navigator.serviceWorker.controller) {
+          toonStatusMelding('✅ veel plezier!', '#28a745');
         }
+
+        // 🔁 Detecteer updates
+        reg.addEventListener('updatefound', () => {
+          const nieuweSW = reg.installing;
+          if (!nieuweSW) return;
+          nieuweSW.addEventListener('statechange', () => {
+            if (nieuweSW.state === 'installed' && navigator.serviceWorker.controller) {
+              toonUpdateMelding(nieuweSW);
+            }
+          });
+        });
+      })
+      .catch(err => {
+        console.error('❌ Fout bij registreren Service Worker:', err);
       });
-    }
 
-    /**
-     * 🔵 Toont melding bij nieuwe versie
-     */
-    function toonUpdateMelding(nieuweSW) {
-      const div = document.createElement('div');
-      div.style.position = 'fixed';
-      div.style.bottom = '0';
-      div.style.left = '0';
-      div.style.width = '100%';
-      div.style.background = '#01689B';
-      div.style.color = 'white';
-      div.style.textAlign = 'center';
-      div.style.padding = '10px';
-      div.style.fontFamily = 'sans-serif';
-      div.style.fontSize = '15px';
-      div.style.zIndex = '9999';
-      div.style.opacity = '0';
-      div.style.transition = 'opacity 0.5s ease-in';
-      div.innerHTML =
-        'Nieuwe versie beschikbaar — ' +
-        '<button id="refreshBtn" style="background:white;color:#01689B;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;">Klik om te verversen</button>';
-      document.body.appendChild(div);
-      requestAnimationFrame(() => (div.style.opacity = '1'));
+    // Eénmalige refresh zodra een nieuwe SW de controle overneemt
+    let __swRefreshed = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!__swRefreshed) {
+        __swRefreshed = true;
+        window.location.reload();
+      }
+    });
 
-      document.getElementById('refreshBtn').addEventListener('click', () => {
-        nieuweSW.postMessage('SKIP_WAITING');
-      });
-    }
+    // 🆕 Nieuw: luister naar 'NEW_VERSION'-bericht vanuit sw.js
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'NEW_VERSION') {
+        console.log('Nieuwe versie actief:', event.data.version);
+        window.location.reload();
+      }
+    });
+  }
 
-    /**
-     * 🟢 Toont melding voor status (alles up-to-date)
-     */
-    function toonStatusMelding(tekst, kleur) {
-      const div = document.createElement('div');
-      div.style.position = 'fixed';
-      div.style.bottom = '0';
-      div.style.left = '0';
-      div.style.width = '100%';
-      div.style.background = kleur;
-      div.style.color = 'white';
-      div.style.textAlign = 'center';
-      div.style.padding = '8px';
-      div.style.fontFamily = 'sans-serif';
-      div.style.fontSize = '14px';
-      div.style.zIndex = '9999';
-      div.style.opacity = '0';
-      div.style.transition = 'opacity 0.5s ease-in';
-      div.innerText = tekst;
-      document.body.appendChild(div);
-      requestAnimationFrame(() => (div.style.opacity = '1'));
-      setTimeout(() => div.remove(), 4000);
-    }
+  /**
+   * 🔵 Toont melding bij nieuwe versie
+   */
+  function toonUpdateMelding(nieuweSW) {
+    const div = document.createElement('div');
+    div.style.position = 'fixed';
+    div.style.bottom = '0';
+    div.style.left = '0';
+    div.style.width = '100%';
+    div.style.background = '#01689B';
+    div.style.color = 'white';
+    div.style.textAlign = 'center';
+    div.style.padding = '10px';
+    div.style.fontFamily = 'sans-serif';
+    div.style.fontSize = '15px';
+    div.style.zIndex = '9999';
+    div.style.opacity = '0';
+    div.style.transition = 'opacity 0.5s ease-in';
+    div.innerHTML =
+      'Nieuwe versie beschikbaar — ' +
+      '<button id="refreshBtn" style="background:white;color:#01689B;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;">Klik om te verversen</button>';
+    document.body.appendChild(div);
+    requestAnimationFrame(() => (div.style.opacity = '1'));
 
-    /**
-     * 💾 Eénmalige forced refresh bij nieuwe versie (optioneel)
-     */
-    if (typeof SITE_VERSION !== 'undefined' &&
-      localStorage.getItem('siteVersie') !== SITE_VERSION) {
-      localStorage.setItem('siteVersie', SITE_VERSION);
-      location.reload();
-    }
-  </script>
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      nieuweSW.postMessage('SKIP_WAITING');
+    });
+  }
+
+  /**
+   * 🟢 Toont melding voor status (alles up-to-date)
+   */
+  function toonStatusMelding(tekst, kleur) {
+    const div = document.createElement('div');
+    div.style.position = 'fixed';
+    div.style.bottom = '0';
+    div.style.left = '0';
+    div.style.width = '100%';
+    div.style.background = kleur;
+    div.style.color = 'white';
+    div.style.textAlign = 'center';
+    div.style.padding = '8px';
+    div.style.fontFamily = 'sans-serif';
+    div.style.fontSize = '14px';
+    div.style.zIndex = '9999';
+    div.style.opacity = '0';
+    div.style.transition = 'opacity 0.5s ease-in';
+    div.innerText = tekst;
+    document.body.appendChild(div);
+    requestAnimationFrame(() => (div.style.opacity = '1'));
+    setTimeout(() => div.remove(), 4000);
+  }
+
+  /**
+   * 💾 Eénmalige forced refresh bij nieuwe versie (optioneel)
+   */
+  if (typeof SITE_VERSION !== 'undefined' &&
+    localStorage.getItem('siteVersie') !== SITE_VERSION) {
+    localStorage.setItem('siteVersie', SITE_VERSION);
+    location.reload();
+  }
+</script>
+
 
 
 </body>
