@@ -2006,10 +2006,18 @@ function initAnkerResultaatGrafieken() {
     // Klikactie
     btn.addEventListener('click', () => openResultatenPopupVoorAnker(ankerNummer));
 
-    // Tooltip bij hover
+    // Tooltip bij hover (maak onderscheid tussen Start en andere ankers)
     btn.addEventListener('mouseenter', e => {
-      showTooltip(e.target, `Bekijk resultaten van Anker ${String(ankerNummer).padStart(2, '0')}`);
+      let label;
+
+      if (ankerNummer === '0') {
+        label = '(0) Start';
+      } else {
+        label = String(ankerNummer).padStart(2, '0');
+      }
+      showTooltip(e.target, `Bekijk resultaten van Anker ${label}`);
     });
+
     btn.addEventListener('mouseleave', hideTooltip);
   });
 }
