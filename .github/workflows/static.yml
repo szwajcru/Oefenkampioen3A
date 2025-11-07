@@ -31,11 +31,11 @@ jobs:
         uses: actions/configure-pages@v5
 
       # ✅ Automatisch versienummer genereren
-      - name: Genereer versie
-        run: |
-          mkdir -p version
-          echo "self.SITE_VERSION = '$(date +%Y%m%d%H%M%S)';" > version/version.js
-          cat version/version.js
+    - name: Genereer versie
+      run: |
+        mkdir -p version
+        echo "self.SITE_VERSION = 'v$(date +%Y-%m-%d-%H%M%S)';" > version/version.js
+        cat version/version.js
 
       # ✅ Commit & push nieuwe versie.js naar repo
       - name: Commit nieuwe versie
