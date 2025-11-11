@@ -20,6 +20,14 @@ const FILES = [
   'index/lezen.js',
   'index/achtergrond.png',
   'index/instructies.html',
+  'index/ankerwoordenlijst.js',
+  'index/ankerwoordjesPopup.css',
+  'index/ankerwoordjesPopup.js',
+  'index/hamburger.js',
+  'index/dropdown.css',
+  'index/oefenSessions.js',
+
+
 ];
 
 // Helper: vers ophalen met cache-bust, opslaan onder SCHONE URL

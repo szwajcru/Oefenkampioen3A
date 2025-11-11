@@ -1,7 +1,7 @@
 /**
  * Hamburger menu script
  * Auteur: RP Szwajcer
- * Doel: menu met Contact, Beheer (Data), Versie en koppeling naar changelog
+ * Doel: menu met Contact, Beheer (Data), Versie en koppeling naar changelog + openen van Ankerwoordjes-popup
  */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -13,17 +13,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // --- Hoofdmenu openen/sluiten ---
   menuBtn.addEventListener('click', function () {
-    // Menu open/dicht toggelen
     menuDropdown.classList.toggle('hidden');
 
-    // --- Sluit alle andere overlay-schermen wanneer hamburger wordt geopend ---
-    const changelogTip = document.getElementById('changelogTip');
-    const feedbackForm = document.getElementById('feedbackForm');
+    // Sluit andere overlays als menu wordt geopend
     const hoeWerktOverlay = document.querySelector('.popup-overlay');
     const woordenPopup = document.getElementById('woordenPopup');
 
     if (!menuDropdown.classList.contains('hidden')) {
-      // Menu is nu open → sluit alles wat zichtbaar kan zijn
       if (changelogTip) changelogTip.classList.remove('show');
       if (feedbackForm) feedbackForm.style.display = 'none';
       if (hoeWerktOverlay) hoeWerktOverlay.remove();
@@ -31,13 +27,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // --- Submenu's openen/sluiten (ondersteunt meerdere niveaus) ---
+  // --- Submenu's openen/sluiten ---
   document.querySelectorAll('.has-sub').forEach(item => {
     item.addEventListener('click', function (e) {
       const submenu = item.querySelector(':scope > .submenu');
       if (!submenu) return;
 
-      // sluit alleen submenu’s van hetzelfde niveau
       const siblings = item.parentElement.querySelectorAll(':scope > .has-sub');
       siblings.forEach(sib => {
         if (sib !== item) {
@@ -50,14 +45,11 @@ document.addEventListener('DOMContentLoaded', function () {
       submenu.classList.toggle('hidden');
       item.classList.toggle('open');
       e.stopPropagation();
-
-      //sluitAlleOverlays(); // ✅ sluit alles voordat submenu opent
-
-
     });
   });
 
   // --- Klik buiten menu sluit alles ---
+  const menuContainer = document.getElementById('menuContainer');
   document.addEventListener('click', function (e) {
     if (!menuContainer.contains(e.target)) {
       menuDropdown.classList.add('hidden');
@@ -71,7 +63,6 @@ document.addEventListener('DOMContentLoaded', function () {
    * EXPORT / IMPORT
    * -----------------------
    */
-
   const exportBtn = document.getElementById('exportBtn');
   if (exportBtn) {
     exportBtn.addEventListener('click', function () {
@@ -81,7 +72,6 @@ document.addEventListener('DOMContentLoaded', function () {
           const key = localStorage.key(i);
           allData[key] = localStorage.getItem(key);
         }
-
         const dataStr = JSON.stringify(allData, null, 2);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -103,7 +93,6 @@ document.addEventListener('DOMContentLoaded', function () {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'application/json';
-
       input.addEventListener('change', function (event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -123,7 +112,6 @@ document.addEventListener('DOMContentLoaded', function () {
         };
         reader.readAsText(file);
       });
-
       input.click();
     });
   }
@@ -133,7 +121,6 @@ document.addEventListener('DOMContentLoaded', function () {
    * RELEASENOTES (CHANGELOG)
    * -----------------------
    */
-
   const releaseNotesBtn = document.getElementById('releaseNotesBtn');
   if (releaseNotesBtn && changelogTip) {
     releaseNotesBtn.addEventListener('click', function () {
@@ -152,11 +139,8 @@ document.addEventListener('DOMContentLoaded', function () {
         changelogTip.classList.remove('show');
       }
     });
-
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        changelogTip.classList.remove('show');
-      }
+      if (e.key === 'Escape') changelogTip.classList.remove('show');
     });
   }
 
@@ -165,7 +149,6 @@ document.addEventListener('DOMContentLoaded', function () {
    * CONTACTFORMULIER
    * -----------------------
    */
-
   const feedbackBtn = document.getElementById('feedbackBtn');
   if (feedbackBtn && feedbackForm) {
     feedbackBtn.addEventListener('click', function () {
@@ -180,7 +163,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Sluiten bij klik buiten het contactformulier
   if (feedbackForm) {
     document.addEventListener('click', function (e) {
       if (
@@ -191,45 +173,51 @@ document.addEventListener('DOMContentLoaded', function () {
         feedbackForm.style.display = 'none';
       }
     });
-
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        feedbackForm.style.display = 'none';
-      }
+      if (e.key === 'Escape') feedbackForm.style.display = 'none';
     });
   }
 
-  // --- Hulpfunctie: sluit alle overlays/popups ---
-  function sluitAlleOverlays() {
-    const changelogTip = document.getElementById('changelogTip');
-    const feedbackForm = document.getElementById('feedbackForm');
-    const hoeWerktOverlay = document.querySelector('.popup-overlay');
-    const woordenPopup = document.getElementById('woordenPopup');
+  /**
+   * -----------------------
+   * ANKERWOORDJES MENU → POPUP
+   * -----------------------
+   */
+  document.querySelectorAll('.submenu-item.anker-menu').forEach(item => {
+    item.addEventListener('click', function (e) {
+      e.stopPropagation();
 
-    if (changelogTip) changelogTip.classList.remove('show');
-    if (feedbackForm) feedbackForm.style.display = 'none';
-    if (hoeWerktOverlay) hoeWerktOverlay.remove();   // ✅ sluit “Hoe werkt het”
-    if (woordenPopup) woordenPopup.style.display = 'none';
-  }
+      const nummer = item.getAttribute('data-anker');
+      const titel = item.textContent.trim(); // bijv. "📚 Anker 3"
 
+      const woordenNormaal = window.ankers?.[String(nummer)] || [];
+      const woordenSnuffel = window.ankers?.[`${nummer}-snuffel`] || [];
 
+      if (typeof window.openAnkerWoordjes === 'function') {
+        window.openAnkerWoordjes(titel, woordenNormaal, woordenSnuffel, nummer);
+      } else {
+        console.warn('⚠️ openAnkerWoordjes() niet beschikbaar — ankerwoordjesPopup.js ontbreekt.');
+      }
 
+      if (menuDropdown) menuDropdown.classList.add('hidden');
+    });
+  });
 });
 
-// === Hoe werkt het (iframe-versie, werkt ook bij file://) ===
+/**
+ * -----------------------
+ * HOE WERKT HET (iframe-popup)
+ * -----------------------
+ */
 const hoeWerktHetBtn = document.getElementById('hoeWerktHetBtn');
-
 if (hoeWerktHetBtn) {
   hoeWerktHetBtn.addEventListener('click', () => {
-    // Overlay maken
     const overlay = document.createElement('div');
     overlay.classList.add('popup-overlay');
     overlay.style.cssText = `
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.5);
       z-index: 9998;
       display: flex;
@@ -237,48 +225,37 @@ if (hoeWerktHetBtn) {
       align-items: center;
     `;
 
-    // Popup maken
     const popup = document.createElement('div');
     popup.classList.add('popup-content');
     popup.style.cssText = `
       background: white;
-      max-width: 900px;
-      width: 90%;
+      max-width: 900px; width: 90%;
       max-height: 85vh;
       border-radius: 12px;
       padding: 0;
       box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      overflow: hidden;
       position: relative;
       z-index: 9999;
-      overflow: hidden;
     `;
 
-    // Iframe toevoegen
+    // 🧠 Dynamisch pad bepalen afhankelijk van protocol
+    const base = window.location.protocol === 'file:' ? 'index/' : '/index/';
+
     popup.innerHTML = `
       <button id="btnCloseHoeWerktHet" style="
-        position:absolute;
-        top:10px;
-        right:10px;
-        background:#01689B;
-        color:white;
-        border:none;
-        border-radius:6px;
-        padding:6px 12px;
-        cursor:pointer;
-        z-index: 10000;
-      ">Sluiten</button>
-      <iframe src="/index/instructies.html" style="
-        width:100%;
-        height:80vh;
-        border:none;
-        border-radius:0 0 12px 12px;
-      "></iframe>
+        position:absolute; top:10px; right:10px;
+        background:#01689B; color:white;
+        border:none; border-radius:6px;
+        padding:6px 12px; cursor:pointer;
+        z-index: 10000;">Sluiten</button>
+      <iframe src="${base}instructies.html" style="
+        width:100%; height:80vh; border:none;"></iframe>
     `;
 
     overlay.appendChild(popup);
     document.body.appendChild(overlay);
 
-    // Sluiten
     const closeBtn = document.getElementById('btnCloseHoeWerktHet');
     closeBtn.addEventListener('click', () => overlay.remove());
     overlay.addEventListener('click', e => {
@@ -286,31 +263,4 @@ if (hoeWerktHetBtn) {
     });
   });
 }
-
-// === Popup bij klikken op Anker 1 ===
-// === Anker woordjes via bestaande popup ===
-document.addEventListener('DOMContentLoaded', function () {
-  // Event delegation: luistert op alle submenu ankerknoppen
-  document.querySelectorAll('.submenu-item.anker-menu').forEach(item => {
-    item.addEventListener('click', function (e) {
-      e.stopPropagation();
-
-      const nummer = item.getAttribute('data-anker');
-
-      // Controleer of de popupfunctie beschikbaar is
-      if (typeof window.openWoordenPopup === 'function' && window.ankers) {
-        const woordenNormaal = window.ankers[String(nummer)] || [];
-        const woordenSnuffel = window.ankers[`${nummer}-snuffel`] || [];
-
-        // Roep de bestaande popup aan
-        window.openWoordenPopup(`Woordenlijst – anker ${nummer}`, woordenNormaal, woordenSnuffel, nummer);
-
-        // Menu sluiten
-        document.getElementById('menuDropdown')?.classList.add('hidden');
-      } else {
-        console.warn('⚠️ openWoordenPopup niet beschikbaar of ankers niet geladen.');
-      }
-    });
-  });
-});
 

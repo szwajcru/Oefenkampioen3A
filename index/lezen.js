@@ -8,7 +8,7 @@ const LEZEN = {
 
 		voorzetsels: ['in', 'op', 'aan', 'bij', 'met', 'van', 'uit', 'om', 'tot'],
 
-		persoonlijke_vnw: ['ik', 'jij', 'hij', 'zij', 'ze', 'het', 'we', 'wij'],
+		persoonlijke_vnw: ['ik', 'jij', 'hij', 'zij', 'ze', 'we', 'wij'],
 
 		hulpwerkwoorden: ['is', 'ben', 'was', 'heeft', 'heb', 'had'],
 

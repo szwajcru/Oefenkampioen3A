@@ -25,6 +25,9 @@
   let isHerkansing = false;
   let lockClose = false; // true terwijl bevestiging open is
   let item = null;
+  // script.js
+  window.ankerIndexClick = false;  // globale vlag
+
 
   // ===== Highlight helpers =====
   const VOWEL_COMBOS = ['aa', 'ee', 'oo', 'uu', 'ei', 'ij', 'ui', 'oe', 'ie', 'eu', 'ou', 'au'];
@@ -390,11 +393,16 @@
       const isSnuffel = gekozenMode && gekozenMode.value.endsWith('-snuffel');
       const key = isSnuffel ? `${ankerNummer}-snuffel` : `${ankerNummer}-normaal`;
 
-      const log = getWoordLog(key);
-      const minTeller = Math.min(...items.map(w => log[w] || 0));
-      const minstGetoonde = items.filter(w => (log[w] || 0) === minTeller);
-      item = minstGetoonde[Math.floor(Math.random() * minstGetoonde.length)];
-      updateWoordLog(key, item);
+      //herkansjes
+      if (ankerNummer === '9') {
+        item = getRandomHerkansingsWoord();
+      } else {
+        //overige ankers
+        item = SessieManager.volgendWoord(ankerNummer, key);
+      }
+
+      //const items = getWoordenVoorAnker(ankerNummer, key);
+
     } else {
       if (idx >= items.length) {
         items = shuffle(items);
@@ -487,35 +495,15 @@
 
       const isSnuffel = gekozenMode && gekozenMode.value.endsWith('-snuffel');
       const key = isSnuffel ? `${ankerNummer}-snuffel` : `${ankerNummer}`;
-      let woorden = ankers[key];
+      let woorden = getWoordenVoorAnker(ankerNummer, key);
 
       if (anker === '9') {
         // --- Herkansjes: woorden ophalen uit localStorage ---
-        isHerkansing = true;
-        const foutjes = (JSON.parse(localStorage.getItem('fout_woordjes') || '[]') || [])
-          .map(f => f.woord)
-          .filter(Boolean);
-
-        if (foutjes.length === 0) {
-          alert('Er zijn momenteel geen oefenherkansjes.');
-          return;
-        }
-
-
-        const uniekeWoorden = [];
-        while (uniekeWoorden.length < foutjes.length) {
-          const willekeurig = foutjes[Math.floor(Math.random() * foutjes.length)];
-          if (willekeurig) {
-            uniekeWoorden.push(willekeurig);
-          }
-        }
-
-        // Resultaat gebruiken
-        woorden = uniekeWoorden;
+        woorden = getHerkansjesWoorden();
 
       } else {
         // normaal anker
-        woorden = ankers[key];
+        woorden = getWoordenVoorAnker(ankerNummer, key);
       }
 
 
@@ -523,8 +511,6 @@
         toonOK('Er is geen anker geselecteerd.', () => { });
         return;
       }
-
-
 
       if (!gekozen) { if (err) err.textContent = 'Kies eerst een anker.'; return; }
       if (!woorden || !woorden.length) { if (err) err.textContent = 'Dit anker heeft nog geen woorden.'; return; }
@@ -947,110 +933,29 @@
 
 
     // --- Vraagtekentje rechts van Anker 1–8, opent woorden-popup ---
+    /* === Kies-een-anker → gebruik dezelfde popup als hamburger-menu === */
     (function initAnkerVraagtekenPopup() {
-
-      function openWoordenPopup(titel, woordenNormaal, woordenSnuffel, ankerNummer) {
-        const overlay = document.getElementById('woordenPopup');
-        const titleEl = overlay.querySelector('#popupTitle');
-        const closeBtn = overlay.querySelector('#closePopup');
-
-        if (!overlay || !titleEl || !closeBtn) return;
-
-        titleEl.textContent = titel;
-
-        // 🔹 Lees de woordlog uit localStorage
-        const woordLog = JSON.parse(localStorage.getItem('woordlog') || '{}');
-        const logNormaal = woordLog[`${ankerNummer}-normaal`] || {};
-        const logSnuffel = woordLog[`${ankerNummer}-snuffel`] || {};
-
-        // 🔹 Hulpfunctie: maakt HTML-tabel met turf
-        function maakTabelHTML(woorden, logData) {
-          if (!woorden || !woorden.length) {
-            return '<tr><td><em>Geen woorden beschikbaar.</em></td></tr>';
-          }
-
-          const kolommen = 3;
-          const totaal = woorden.length;
-          const rijen = Math.ceil(totaal / kolommen);
-          let html = '';
-
-          for (let r = 0; r < rijen; r++) {
-            html += '<tr>';
-            for (let c = 0; c < kolommen; c++) {
-              const index = c * rijen + r;
-              const woord = woorden[index];
-              if (woord) {
-                const count = logData[woord] || 0;
-                html += `
-              <td>
-                <span class="woord">${woord}</span>
-                <span class="turf" title="Aantal keer getoond">${count}</span>
-              </td>`;
-              } else {
-                html += '<td></td>';
-              }
-            }
-            html += '</tr>';
-          }
-          return html;
-        }
-
-        // 🔹 Tabellen vullen
-        const normaalTable = overlay.querySelector('#popupTableNormaal tbody');
-        const snuffelTable = overlay.querySelector('#popupTableSnuffel tbody');
-
-        const woordenNormaalSorted = (woordenNormaal || []).slice().sort((a, b) =>
-          a.localeCompare(b, 'nl', { sensitivity: 'base' })
-        );
-        const woordenSnuffelSorted = (woordenSnuffel || []).slice().sort((a, b) =>
-          a.localeCompare(b, 'nl', { sensitivity: 'base' })
-        );
-
-        if (normaalTable) normaalTable.innerHTML = maakTabelHTML(woordenNormaalSorted, logNormaal);
-        if (snuffelTable) snuffelTable.innerHTML = maakTabelHTML(woordenSnuffelSorted, logSnuffel);
-
-        // --- Toggle toont/verbergt aantallen ---
-        const toggle = document.getElementById('toonAantallen');
-        if (toggle) {
-          toggle.checked = false; // standaard uit
-          const updateDisplay = (show) => {
-            document.querySelectorAll('.turf').forEach(span => {
-              span.style.visibility = show ? 'visible' : 'hidden';
-            });
-          };
-          updateDisplay(false);
-          toggle.addEventListener('change', (e) => updateDisplay(e.target.checked));
-        }
-
-
-        // 🔹 Popup tonen
-        overlay.style.display = 'flex';
-        closeBtn.onclick = () => overlay.style.display = 'none';
-        overlay.onclick = e => { if (e.target === overlay) overlay.style.display = 'none'; };
-
-        // Tooltip functionaliteit voor de toggle
-        const label = document.getElementById('aantalToggleLabel');
-        const bubble = document.getElementById('aantalTooltip');
-
-        if (label && bubble) {
-          label.addEventListener('mouseenter', () => {
-            bubble.classList.add('show');
-          });
-          label.addEventListener('mouseleave', () => {
-            bubble.classList.remove('show');
-          });
-
-          // Optioneel: plaats de bubble dynamisch rechts van het label
-          const rect = label.getBoundingClientRect();
-          bubble.style.top = (rect.height + 105) + 'px';
-          bubble.style.left = '88px';
-        }
+      const hasPopup = typeof window.openAnkerWoordjes === 'function';
+      if (!hasPopup) {
+        console.warn('⚠️ openAnkerWoordjes() niet gevonden. Zorg dat ankerwoordjesPopup.js geladen is.');
       }
 
-      // 🔹 Maak ankers klikbaar
+      // Compat-API: oude naam blijft werken; waarom: externe calls breken anders
+      window.openWoordenPopup = function (titel, woordenNormaal, woordenSnuffel, ankerNummer) {
+        if (!hasPopup) return;
+        window.openAnkerWoordjes(titel, woordenNormaal, woordenSnuffel, ankerNummer);
+      };
+
+      function getTitel(tr, nr) {
+        const label = tr.querySelector('td label');
+        const plain = (label?.textContent || '').trim().replace(/^\s*📚\s*/, '');
+        return `📚 ${plain || `Anker ${nr}`}`;
+      }
+
+      // Maak alle anker-rijen klikbaar (behalve 9 = Mijn herkansjes)
       document.querySelectorAll('.anker-tabel tbody tr[data-anker]').forEach(tr => {
-        const nr = String(tr.getAttribute('data-anker'));
-        if (nr === '9') return; // "Mijn herkansjes" overslaan
+        const nr = String(tr.getAttribute('data-anker') || '');
+        const isHerkansjes = nr === '9';
 
         const td = tr.querySelector('td:first-child');
         if (!td) return;
@@ -1058,57 +963,42 @@
         td.classList.add('anker-naam');
         td.setAttribute('tabindex', '0');
         td.setAttribute('role', 'button');
-        td.setAttribute('aria-label', 'Bekijk woordenlijst voor anker ' + nr);
-        td.setAttribute('data-title', 'Bekijk woordenlijst (normaal + snuffel)');
+        td.setAttribute('aria-label', isHerkansjes ? 'Open Mijn herkansjes' : `Bekijk woordenlijst voor anker ${nr}`);
+        td.setAttribute('data-title', isHerkansjes ? 'Mijn herkansjes' : 'Bekijk woordenlijst (normaal + snuffel)');
 
-        const openWoorden = (evt) => {
+        const open = (evt) => {
+          // waarom: klik op bediening (radio/knop/icon) in dezelfde rij mag popup niet openen
           if (evt?.target?.closest('input, button, svg')) return;
 
-          const woordenNormaal = ankers[nr] || [];
-          const woordenSnuffel = ankers[`${nr}-snuffel`] || [];
+          if (isHerkansjes) {
+            document.getElementById('mijnHerkansjesLink')?.click();
+            return;
+          }
+          const woordenNormaal = (window.ankers && window.ankers[nr]) || [];
+          const woordenSnuffel = (window.ankers && window.ankers[`${nr}-snuffel`]) || [];
+          const titel = getTitel(tr, nr);
 
-          openWoordenPopup(`Woordenlijst – Anker ${nr}`, woordenNormaal, woordenSnuffel, nr);
+          if (hasPopup) {
+            window.ankerIndexClick = true;  // globale vlag
+            window.openAnkerWoordjes(titel, woordenNormaal, woordenSnuffel, nr);
+          } else {
+            console.warn('openAnkerWoordjes() ontbreekt; popup kan niet geopend worden.');
+          }
         };
 
-        td.addEventListener('click', openWoorden);
+        td.addEventListener('click', open);
         td.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            openWoorden(e);
-          }
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(e); }
         });
       });
 
-      // 🔹 "Mijn herkansjes" rij klikbaar maken
-      (() => {
-        const tr = document.querySelector('.anker-tabel tbody tr[data-anker="9"]');
-        if (!tr) return;
-
-        const td = tr.querySelector('td:first-child');
-        if (!td) return;
-
-        td.classList.add('anker-naam', 'herkansjes-naam');
-        td.setAttribute('tabindex', '0');
-        td.setAttribute('role', 'button');
-        td.setAttribute('aria-label', 'Open Mijn herkansjes');
-        td.setAttribute('data-hint', 'Mijn herkansjes');
-
-        const openHerkansjes = (evt) => {
-          if (evt?.target?.closest('input, button, svg')) return;
-          document.getElementById('mijnHerkansjesLink')?.click();
-        };
-
-        td.addEventListener('click', openHerkansjes);
-        td.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openHerkansjes(e); }
-        });
-      })();
-
-      // 🔹 Verwijder oude iconen
+      // Ruim oude vraagteken-/zoek-iconen op
       document.querySelectorAll('.anker-search, .btnReset.anker-search').forEach(b => b.remove());
 
-      window.openWoordenPopup = openWoordenPopup;
+      // Optioneel: verwijder legacy DOM voor oude popup als aanwezig (voorkomt schaduw-UI)
+      document.getElementById('woordenPopup')?.remove();
     })();
+
 
   });
 
@@ -2678,7 +2568,85 @@ function updateWoordLog(anker, woord) {
   localStorage.setItem(key, JSON.stringify(log));
 }
 
-function getWoordLog(anker) {
-  const log = JSON.parse(localStorage.getItem('woordlog')) || {};
-  return log[anker] || {};
+/**
+ * Combineert woorden uit ankers.js met eventuele extra woorden
+ * opgeslagen in localStorage onder 'ExtraAnkerWoordjes'.
+ */
+function getWoordenVoorAnker(ankerNummer, ankerKey) {
+  // 1. Basiswoorden uit ankers.js
+  let basis = [];
+  const isSnuffel = ankerKey.toLowerCase().includes('snuffel');
+  if (isSnuffel) {
+    basis = ankers[ankerKey];
+  } else {
+    basis = ankers[ankerNummer];
+  }
+
+  // 2. Extra woorden uit localStorage (indien aanwezig)
+  const extraData = JSON.parse(localStorage.getItem('ExtraAnkerWoordjes') || '{}');
+  const extra = extraData[ankerNummer] || { normaal: [], snuffel: [] };
+
+  // 3. Kies juiste categorie (snuffel of normaal)
+  const extraWoorden = isSnuffel ? (extra.snuffel || []) : (extra.normaal || []);
+
+  // 4. Combineer basis met juiste extra-lijst (zonder duplicaten)
+  const gecombineerd = Array.from(new Set([...(basis || []), ...extraWoorden]));
+
+  return gecombineerd;
 }
+
+function getHerkansjesWoorden() {
+  isHerkansing = true;
+  const foutjes = (JSON.parse(localStorage.getItem('fout_woordjes') || '[]') || [])
+    .map(f => f.woord)
+    .filter(Boolean);
+
+  if (foutjes.length === 0) {
+    alert('Er zijn momenteel geen oefenherkansjes.');
+    return;
+  }
+
+
+  const uniekeWoorden = [];
+  while (uniekeWoorden.length < foutjes.length) {
+    const willekeurig = foutjes[Math.floor(Math.random() * foutjes.length)];
+    if (willekeurig) {
+      uniekeWoorden.push(willekeurig);
+    }
+  }
+
+  // Resultaat gebruiken
+  woorden = uniekeWoorden;
+  return woorden;
+}
+
+/**
+ * Geef één willekeurig woord uit de herkansingslijst.
+ * Bron: localStorage.fout_woordjes
+ */
+let laatsteHerkansWoord = null;
+
+function getRandomHerkansingsWoord() {
+  const data = JSON.parse(localStorage.getItem('fout_woordjes') || '[]');
+  const foutjes = data.map(f => f.woord).filter(Boolean);
+
+  if (foutjes.length === 0) {
+    alert('Er zijn momenteel geen oefenherkansjes.');
+    return null;
+  }
+
+  const unieke = Array.from(new Set(foutjes));
+
+  // Filter laatste woord eruit als er meer opties zijn
+  const beschikbare = (laatsteHerkansWoord && unieke.length > 1)
+    ? unieke.filter(w => w !== laatsteHerkansWoord)
+    : unieke;
+
+  const index = Math.floor(Math.random() * beschikbare.length);
+  const woord = beschikbare[index];
+  laatsteHerkansWoord = woord;
+
+  return woord;
+}
+
+

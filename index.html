@@ -69,6 +69,7 @@
   <link rel="stylesheet" href="index/dropdown.css">
   <link rel="stylesheet" href="index/feedback.css">
   <link rel="stylesheet" href="herkansjes/herkansjes.css">
+  <link rel="stylesheet" href="index/ankerwoordjesPopup.css">
 
   <!-- Nieuwe losse module voor de resultaten-grafiek -->
   <script defer src="index/resultaatGrafiek.js"></script>
@@ -140,7 +141,7 @@
       <!-- Versie -->
       <div class="menu-item has-sub">🧩 Versie
         <div class="submenu hidden">
-          <div class="submenu-item">ℹ️ Versie: <strong>2.00</strong></div>
+          <div class="submenu-item">ℹ️ Versie: <strong>2.01</strong></div>
           <div class="submenu-item" id="releaseNotesBtn">📝 Release notes</div>
         </div>
       </div>
@@ -571,10 +572,13 @@
   <script src="index/ankers.js"></script>
   <script src="index/klanken.js"></script>
   <script src="index/lezen.js"></script>
+  <script defer src="index/ankerwoordjesPopup.js"></script>
   <script src="index/feedback.js"></script>
   <script src="index/script.js"></script>
   <script src="index/hamburger.js"></script>
+  <script src="index/oefenSessions.js"></script>
   <script defer src="herkansjes/herkansjes.js"></script>
+
 
   <!-- EBX-stijl bevestigingspopup -->
   <div id="confirmModal" class="modal" style="display:none;">
@@ -689,6 +693,58 @@
     </div>
   </div>
 
+  <!-- === Popup: Anker woordjes === -->
+  <div id="ankerwoordjesForm" class="popup" style="display:none;" role="dialog" aria-modal="true"
+    aria-labelledby="testTitle">
+    <div class="popup-content popup-feedback">
+      <form id="formTest">
+        <table id="testTable" class="feedback-table">
+          <thead>
+            <tr>
+              <th id="testTitle" colspan="2">🧪 Anker woordjes</th>
+            </tr>
+            <tr class="acties-head">
+              <th colspan="2" scope="colgroup">
+                <div class="acties-container">
+                  <div class="actie-buttons">
+                    <button type="button" id="printNormaalBtn" class="actie-icoon" title="Print lijst">🖨️</button>
+                    <button type="button" id="infoBtn" class="actie-icoon" title="Toon oefenteller"></button>
+                  </div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+
+            <!-- Sectie: Normaal -->
+            <tr class="section-head normaal-head">
+              <td colspan="2">Normaal</td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <div id="normaalWoorden" class="woorden-grid"></div>
+              </td>
+            </tr>
+
+            <!-- Sectie: Snuffel -->
+            <tr class="section-head snuffel-head">
+              <td colspan="2">Snuffel</td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <div id="snuffelWoorden" class="woorden-grid"></div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+
+
 
   <!-- Popup Woordenlijst (zelfde layout als Mijn Herkansjes) -->
   <div id="woordenPopup" class="resultCard" style="display:none;">
@@ -739,113 +795,113 @@
 
   <!--  Service Worker + versiebeheer -->
   <script src="version/version.js"></script>
-<script>
-  if ('serviceWorker' in navigator) {
-    // Belangrijk: SW + importScripts altijd vers ophalen
-    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
-      .then(reg => {
-        console.log('Service Worker geregistreerd:', reg.scope);
+  <script>
+    if ('serviceWorker' in navigator) {
+      // Belangrijk: SW + importScripts altijd vers ophalen
+      navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
+        .then(reg => {
+          console.log('Service Worker geregistreerd:', reg.scope);
 
-        // 🔍 Up-to-date melding wanneer er al controle is en geen update bezig is
-        if (!reg.waiting && !reg.installing && navigator.serviceWorker.controller) {
-          toonStatusMelding('✅ veel plezier!', '#28a745');
-        }
+          // 🔍 Up-to-date melding wanneer er al controle is en geen update bezig is
+          if (!reg.waiting && !reg.installing && navigator.serviceWorker.controller) {
+            toonStatusMelding('✅ veel plezier!', '#28a745');
+          }
 
-        // 🔁 Detecteer updates
-        reg.addEventListener('updatefound', () => {
-          const nieuweSW = reg.installing;
-          if (!nieuweSW) return;
-          nieuweSW.addEventListener('statechange', () => {
-            if (nieuweSW.state === 'installed' && navigator.serviceWorker.controller) {
-              toonUpdateMelding(nieuweSW);
-            }
+          // 🔁 Detecteer updates
+          reg.addEventListener('updatefound', () => {
+            const nieuweSW = reg.installing;
+            if (!nieuweSW) return;
+            nieuweSW.addEventListener('statechange', () => {
+              if (nieuweSW.state === 'installed' && navigator.serviceWorker.controller) {
+                toonUpdateMelding(nieuweSW);
+              }
+            });
           });
+        })
+        .catch(err => {
+          console.error('❌ Fout bij registreren Service Worker:', err);
         });
-      })
-      .catch(err => {
-        console.error('❌ Fout bij registreren Service Worker:', err);
+
+      // Eénmalige refresh zodra een nieuwe SW de controle overneemt
+      let __swRefreshed = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!__swRefreshed) {
+          __swRefreshed = true;
+          window.location.reload();
+        }
       });
 
-    // Eénmalige refresh zodra een nieuwe SW de controle overneemt
-    let __swRefreshed = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!__swRefreshed) {
-        __swRefreshed = true;
-        window.location.reload();
-      }
-    });
+      // 🆕 Nieuw: luister naar 'NEW_VERSION'-bericht vanuit sw.js
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'NEW_VERSION') {
+          console.log('Nieuwe versie actief:', event.data.version);
+          window.location.reload();
+        }
+      });
+    }
 
-    // 🆕 Nieuw: luister naar 'NEW_VERSION'-bericht vanuit sw.js
-    navigator.serviceWorker.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'NEW_VERSION') {
-        console.log('Nieuwe versie actief:', event.data.version);
-        window.location.reload();
-      }
-    });
-  }
+    /**
+     * 🔵 Toont melding bij nieuwe versie
+     */
+    function toonUpdateMelding(nieuweSW) {
+      const div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.bottom = '0';
+      div.style.left = '0';
+      div.style.width = '100%';
+      div.style.background = '#01689B';
+      div.style.color = 'white';
+      div.style.textAlign = 'center';
+      div.style.padding = '10px';
+      div.style.fontFamily = 'sans-serif';
+      div.style.fontSize = '15px';
+      div.style.zIndex = '9999';
+      div.style.opacity = '0';
+      div.style.transition = 'opacity 0.5s ease-in';
+      div.innerHTML =
+        'Nieuwe versie beschikbaar — ' +
+        '<button id="refreshBtn" style="background:white;color:#01689B;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;">Klik om te verversen</button>';
+      document.body.appendChild(div);
+      requestAnimationFrame(() => (div.style.opacity = '1'));
 
-  /**
-   * 🔵 Toont melding bij nieuwe versie
-   */
-  function toonUpdateMelding(nieuweSW) {
-    const div = document.createElement('div');
-    div.style.position = 'fixed';
-    div.style.bottom = '0';
-    div.style.left = '0';
-    div.style.width = '100%';
-    div.style.background = '#01689B';
-    div.style.color = 'white';
-    div.style.textAlign = 'center';
-    div.style.padding = '10px';
-    div.style.fontFamily = 'sans-serif';
-    div.style.fontSize = '15px';
-    div.style.zIndex = '9999';
-    div.style.opacity = '0';
-    div.style.transition = 'opacity 0.5s ease-in';
-    div.innerHTML =
-      'Nieuwe versie beschikbaar — ' +
-      '<button id="refreshBtn" style="background:white;color:#01689B;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;">Klik om te verversen</button>';
-    document.body.appendChild(div);
-    requestAnimationFrame(() => (div.style.opacity = '1'));
+      document.getElementById('refreshBtn').addEventListener('click', () => {
+        nieuweSW.postMessage('SKIP_WAITING');
+      });
+    }
 
-    document.getElementById('refreshBtn').addEventListener('click', () => {
-      nieuweSW.postMessage('SKIP_WAITING');
-    });
-  }
+    /**
+     * 🟢 Toont melding voor status (alles up-to-date)
+     */
+    function toonStatusMelding(tekst, kleur) {
+      const div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.bottom = '0';
+      div.style.left = '0';
+      div.style.width = '100%';
+      div.style.background = kleur;
+      div.style.color = 'white';
+      div.style.textAlign = 'center';
+      div.style.padding = '8px';
+      div.style.fontFamily = 'sans-serif';
+      div.style.fontSize = '14px';
+      div.style.zIndex = '9999';
+      div.style.opacity = '0';
+      div.style.transition = 'opacity 0.5s ease-in';
+      div.innerText = tekst;
+      document.body.appendChild(div);
+      requestAnimationFrame(() => (div.style.opacity = '1'));
+      setTimeout(() => div.remove(), 4000);
+    }
 
-  /**
-   * 🟢 Toont melding voor status (alles up-to-date)
-   */
-  function toonStatusMelding(tekst, kleur) {
-    const div = document.createElement('div');
-    div.style.position = 'fixed';
-    div.style.bottom = '0';
-    div.style.left = '0';
-    div.style.width = '100%';
-    div.style.background = kleur;
-    div.style.color = 'white';
-    div.style.textAlign = 'center';
-    div.style.padding = '8px';
-    div.style.fontFamily = 'sans-serif';
-    div.style.fontSize = '14px';
-    div.style.zIndex = '9999';
-    div.style.opacity = '0';
-    div.style.transition = 'opacity 0.5s ease-in';
-    div.innerText = tekst;
-    document.body.appendChild(div);
-    requestAnimationFrame(() => (div.style.opacity = '1'));
-    setTimeout(() => div.remove(), 4000);
-  }
-
-  /**
-   * 💾 Eénmalige forced refresh bij nieuwe versie (optioneel)
-   */
-  if (typeof SITE_VERSION !== 'undefined' &&
-    localStorage.getItem('siteVersie') !== SITE_VERSION) {
-    localStorage.setItem('siteVersie', SITE_VERSION);
-    location.reload();
-  }
-</script>
+    /**
+     * 💾 Eénmalige forced refresh bij nieuwe versie (optioneel)
+     */
+    if (typeof SITE_VERSION !== 'undefined' &&
+      localStorage.getItem('siteVersie') !== SITE_VERSION) {
+      localStorage.setItem('siteVersie', SITE_VERSION);
+      location.reload();
+    }
+  </script>
 
 
 

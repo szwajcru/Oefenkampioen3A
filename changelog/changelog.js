@@ -2,6 +2,13 @@
 
 const changelog = [
   {
+    version: '2.01',
+    changes: [
+      { type: 'Toegevoegd', description: 'Extra woordjes per anker toevoegen is mogelijk' },
+      { type: 'Toegevoegd', description: 'Woorden worden evenwichtiger geofend' },
+    ]
+  },
+  {
     version: '2.00',
     changes: [
       { type: 'Toegevoegd', description: 'Centraal menu venster' },

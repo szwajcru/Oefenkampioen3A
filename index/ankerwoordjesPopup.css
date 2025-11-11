@@ -1,0 +1,662 @@
+/* ====== Shell (overlay) ====== */
+#ankerwoordjesForm {
+  display: none;
+  /* JS zet dit op 'flex' bij openen */
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  /* bijna doorzichtig wit */
+  backdrop-filter: blur(4px);
+}
+
+/* ====== De ENIGE scroller (heeft beide klassen) ====== */
+#ankerwoordjesForm .popup-content.popup-feedback {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+  width: 90%;
+  max-width: 850px;
+
+  /* popup iets hoger maken */
+  height: 92vh;
+  max-height: 92vh;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  padding: 0;
+  /* titel full-bleed */
+}
+
+/* ====== Tabel basis ====== */
+#ankerwoordjesForm table.feedback-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+  margin: 0;
+}
+
+/* ====== Sticky titelbalk ====== */
+#ankerwoordjesForm thead th#testTitle {
+  background: #01689B;
+  color: #fff;
+  text-align: left;
+  padding: 12px 16px;
+
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: .2px;
+
+  height: 46px;
+  /* vaste hoogte → referentie voor actierij */
+  line-height: 22px;
+
+  position: sticky;
+  top: 0;
+  /* plakt aan bovenrand van .popup-content */
+  z-index: 50;
+  border-radius: 12px 12px 0 0;
+  /* buitenrand rond */
+}
+
+/* ====== Sticky actierij (in thead → <th>, geen <td>) ====== */
+#ankerwoordjesForm .acties-head>th {
+  background: #f5f7fa;
+  border-bottom: 1px solid #d0d7de;
+  padding: 8px 12px;
+  text-align: right;
+
+  position: sticky;
+  top: 46px;
+  /* exact = titel-hoogte */
+  z-index: 45;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ====== Actieknoppen ====== */
+#ankerwoordjesForm .actie-icoon {
+  background: #01689B;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 9px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: transform .15s ease, background .15s ease;
+}
+
+#ankerwoordjesForm .actie-icoon:hover {
+  background: #014b73;
+  transform: translateY(-1px);
+}
+
+/* ====== Sectiekoppen ====== */
+#ankerwoordjesForm .section-head td {
+  background: #e7ebf0;
+  color: #003366;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-bottom: 1px solid #d0d7de;
+  font-size: 14px;
+}
+
+#ankerwoordjesForm .section-head.snuffel-head td {
+  background: #fff3e0;
+  color: #5a3700;
+}
+
+/* ====== Woorden grid + kaarten (jouw oude stijl) ====== */
+#ankerwoordjesForm .woorden-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 14px 20px 14px;
+}
+
+#ankerwoordjesForm .woord-chip {
+  background: #f4f8ff;
+  border: 1px solid #cfd8e3;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #003366;
+  display: inline-block;
+  white-space: nowrap;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+  transition: transform .15s ease, background .15s ease;
+}
+
+#ankerwoordjesForm .woord-chip:hover {
+  background: #e7f0ff;
+  transform: scale(1.03);
+}
+
+#ankerwoordjesForm .woord-chip.extra {
+  background: #e6f0ff;
+  border-color: #f5d97c;
+}
+
+#ankerwoordjesForm .snuffel-head~tr .woord-chip {
+  background: #fff3e0;
+  border-color: #f7c87a;
+  color: #5a3700;
+}
+
+/* + kaart */
+#ankerwoordjesForm .add-card {
+  border: 2px dashed #01689B;
+  color: #01689B;
+  background: #f9fcff;
+  font-size: 18px;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* badge + verwijder */
+#ankerwoordjesForm .count-badge {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  background: #01689B;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+}
+
+#ankerwoordjesForm .count-badge.hidden {
+  display: none;
+}
+
+#ankerwoordjesForm .remove-btn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  line-height: 14px;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+}
+
+#ankerwoordjesForm .remove-btn:hover {
+  background: #b71c1c;
+}
+
+/* inline input */
+#ankerwoordjesForm .input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+}
+
+#ankerwoordjesForm .input-word {
+  flex: 1 1 auto;
+  border: 1px solid #cfd8e3;
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 14px;
+}
+
+#ankerwoordjesForm .input-actions {
+  display: flex;
+  gap: 6px;
+}
+
+#ankerwoordjesForm .btn-ok,
+#ankerwoordjesForm .btn-cancel {
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+#ankerwoordjesForm .btn-ok {
+  background: #01689B;
+}
+
+#ankerwoordjesForm .btn-cancel {
+  background: #999;
+}
+
+
+/* Sticky actierij – uitlijning links, sticky blijft intact */
+#ankerwoordjesForm .acties-head>th {
+  background: #f5f7fa !important;
+  border-bottom: 1px solid #d0d7de !important;
+  padding: 8px 12px !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+  position: sticky !important;
+  top: 46px !important;
+  /* hoogte van de titelbalk */
+  z-index: 45 !important;
+
+  /* 🚫 Overschrijf mogelijke oude flex-stijlen */
+  display: table-cell !important;
+  vertical-align: middle !important;
+}
+
+
+/* Actieknoppen – zelfde grootte en styling */
+#ankerwoordjesForm .actie-icoon {
+  display: inline-flex;
+  /* zorgt voor centrering van icoon */
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  /* vaste breedte/hoogte voor consistentie */
+  height: 32px;
+
+  background: #01689B;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+
+  margin-right: 6px;
+  /* ruimte tussen knoppen */
+  box-shadow: 0 2px 0 rgba(0, 0, 0, .15);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+#ankerwoordjesForm .actie-icoon:hover {
+  background: #014b73;
+  transform: translateY(-1px);
+}
+
+/* Optioneel: actieve staat bij info-toggle */
+#ankerwoordjesForm .actie-icoon.active {
+  background: #014b73;
+  box-shadow: inset 0 0 0 2px #013b60;
+}
+
+
+/* === Popup container === */
+#ankerwoordjesForm {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(2px);
+}
+
+/* === Binnenste popup === */
+#ankerwoordjesForm .popup-content {
+  background: #fff;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 800px;
+  max-height: 85vh;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  /* titel + actie vast, inhoud flexibel */
+  overflow: hidden;
+  /* rand blijft strak */
+}
+
+/* === Formulierinhoud === */
+#ankerwoordjesForm form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* === Scrollbare tabelsectie === */
+#ankerwoordjesForm .feedback-table {
+  width: 100%;
+  border-collapse: collapse;
+  flex: 1;
+  /* vult alle resterende ruimte */
+  overflow: hidden;
+}
+
+#ankerwoordjesForm .feedback-table tbody {
+  display: block;
+  overflow-y: auto;
+  max-height: calc(85vh - 100px);
+  /* ruimte voor titel + acties */
+}
+
+#ankerwoordjesForm .feedback-table thead,
+#ankerwoordjesForm .feedback-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* === Titelbalk === */
+#ankerwoordjesForm thead th#testTitle {
+  background: #01689B;
+  color: #fff;
+  padding: 12px 16px;
+  height: 46px;
+  line-height: 22px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-radius: 0;
+}
+
+/* === Actie rij === */
+#ankerwoordjesForm .acties-head>th {
+  background: #f5f7fa !important;
+  border-bottom: 1px solid #d0d7de !important;
+  padding: 8px 12px !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+  position: sticky !important;
+  top: 46px !important;
+  z-index: 45 !important;
+  display: table-cell !important;
+  vertical-align: middle !important;
+}
+
+/* === Knoppen === */
+#ankerwoordjesForm .actie-icoon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  background: #01689B !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  margin-right: 6px !important;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15) !important;
+  transition: transform 0.15s ease, background 0.15s ease !important;
+}
+
+#ankerwoordjesForm .actie-icoon:hover {
+  background: #014b73 !important;
+  transform: translateY(-1px) !important;
+}
+
+
+/* === Actieknoppen uniform en netjes uitgelijnd === */
+#ankerwoordjesForm .actie-icoon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  width: 34px !important;
+  height: 34px !important;
+
+  background: transparent !important;
+  /* geen vlak standaard */
+  color: #01689B !important;
+  /* EBX blauw */
+  border: 1px solid #d0d7de !important;
+  border-radius: 6px !important;
+
+  font-size: 18px !important;
+  cursor: pointer !important;
+  margin-right: 8px !important;
+  box-shadow: none !important;
+  transition: background 0.15s ease, transform 0.15s ease !important;
+  vertical-align: middle !important;
+}
+
+/* Hover-effect: blauw vlak, witte iconen */
+#ankerwoordjesForm .actie-icoon:hover {
+  background: #01689B !important;
+  color: #fff !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Info-knop actief: blauw vlak aan */
+#ankerwoordjesForm .actie-icoon.active {
+  background: #01689B !important;
+  color: #fff !important;
+}
+
+/* Rij zelf houdt knoppen mooi links uitgelijnd */
+#ankerwoordjesForm .acties-head>th {
+  display: table-cell !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+  padding: 10px 16px !important;
+  background: #f5f7fa !important;
+  border-bottom: 1px solid #d0d7de !important;
+  position: sticky !important;
+  top: 46px !important;
+  z-index: 45 !important;
+}
+
+/* Klein teller-badge rechtsboven op de woordkaart */
+#ankerwoordjesForm .count-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: #01689B;
+  color: white;
+  border-radius: 10px;
+  font-size: 11px;
+  padding: 1px 5px;
+  line-height: 1;
+  font-weight: bold;
+}
+
+#ankerwoordjesForm .count-badge.hidden {
+  display: none !important;
+}
+
+/* === Oefenteller badge (zichtbaar bij info-knop) === */
+#ankerwoordjesForm .count-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #01689B;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+#ankerwoordjesForm .count-badge.hidden {
+  display: none !important;
+}
+
+/* Zorg dat woordjes container de badges toont */
+#ankerwoordjesForm .woord-chip {
+  position: relative;
+  overflow: visible !important;
+  /* ← belangrijk */
+}
+
+/* Subtiele oefenteller rechts in het woordchip */
+#ankerwoordjesForm .woord-chip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+#ankerwoordjesForm .count-badge {
+  position: static;
+  background: none;
+  color: #666;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0;
+  margin-left: 4px;
+  border-radius: 0;
+  box-shadow: none;
+  min-width: 0;
+}
+
+#ankerwoordjesForm .count-badge.hidden {
+  display: none !important;
+}
+
+
+/* Grid-layout voor de woorden */
+#ankerwoordjesForm .woorden-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  max-width: 480px;
+  /* zorgt voor max. 4 kolommen (4 × ±120px) */
+  margin: 0 auto;
+  gap: 8px 10px;
+  padding: 10px;
+  justify-content: center;
+}
+
+/* Woordkaarten zelf (chips) */
+#ankerwoordjesForm .woord-chip {
+  background: #f5f9ff;
+  border: 2px solid #cfe3ff;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+/* Extra woorden – zowel in Normaal als Snuffel */
+#ankerwoordjesForm .woord-chip.extra,
+#ankerwoordjesForm .snuffel-head~tr .woord-chip.extra {
+  background: #e9e6ff !important;
+  border-color: #0050b3 !important;
+  color: #002b73;
+}
+
+#ankerwoordjesForm .woord-chip.extra:hover,
+#ankerwoordjesForm .snuffel-head~tr .woord-chip.extra:hover {
+  background: #fff8d1 !important;
+  border-color: #003f8c !important;
+}
+
+
+/* Hover */
+#ankerwoordjesForm .woord-chip:hover {
+  background: #eaf3ff;
+}
+
+/* + kaart stijl */
+#ankerwoordjesForm .woord-chip.add-card {
+  border: 2px dashed #99b8e0;
+  color: #01689B;
+  background: transparent;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#ankerwoordjesForm .woord-chip.add-card:hover {
+  background: #b7af55;
+}
+
+
+#ankerwoordjesForm .woord-chip {
+  background: #f5f9ff;
+  border: 2px solid #cfe3ff;
+  border-radius: 10px;
+  padding: 5px 8px;
+  /* minder padding */
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  min-height: 28px;
+  /* was 36px → compacter */
+  font-size: 14px;
+  /* iets kleiner voor balans */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+/* === Hover: normale ankerwoordjes (geen snuffel, geen extra, geen add-card) === */
+#ankerwoordjesForm tr:not(.snuffel-head) .woord-chip:not(.extra):not(.add-card):hover {
+  background: #fff8d1 !important; /* zacht geel */
+  border-color: #f0d96b !important; /* iets donkerder geel randje */
+  color: #3a2a00 !important; /* iets donkerdere tekst */
+}
+
+/* === Hover: snuffel ankerwoordjes === */
+#ankerwoordjesForm .snuffel-head~tr .woord-chip:not(.extra):not(.add-card):hover {
+  background: #ecf71a !important; /* licht oranjegeel */
+  border-color: #f3bb6c !important; /* warme oranje rand */
+  color: #5a3700 !important; /* donkere bruintint */
+}
+
+/* === Header met gecentreerde titel en teller rechts === */
+.section-head td {
+  position: relative;
+  display: flex;
+  justify-content: center;  /* titel in het midden */
+  align-items: center;
+  font-weight: 600;
+  padding: 6px 12px;
+}
+
+/* Teller aan de rechterkant van de cel */
+.section-head .wordcount {
+  position: absolute;
+  right: 33px;              /* iets naar links van rand */
+  color: #333;
+  font-size: 0.9em;
+  font-weight: 600;
+  opacity: 0.9;
+  background: transparent;
+  pointer-events: none;
+}
+
