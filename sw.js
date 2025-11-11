@@ -1,5 +1,6 @@
 // sw.js — versie-consistente precache + bot-vriendelijk (geen fallback/redirect voor crawlers)
-importScripts('version/version.js?v=' + Date.now()); // altijd actuele versie laden
+//importScripts('version/version.js?v=' + Date.now()); // altijd actuele versie laden
+importScripts('version/version.js'); // vaste URL, geen ?v=
 
 const CACHE_NAME = 'site-cache-' + self.SITE_VERSION;
 
