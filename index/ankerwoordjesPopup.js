@@ -95,45 +95,45 @@
     });
 
     // === Renderen van woorden ===
-function renderWords(ankerNaam, woordenNormaal, woordenSnuffel) {
-    const ankerId = ankerNaam
-        .replace(/[^\w\s-]/g, '')   // verwijder emoji’s en speciale tekens
-        .replace('Anker', '')       // verwijder het woord 'Anker '
-        .trim();
+    function renderWords(ankerNaam, woordenNormaal, woordenSnuffel) {
+        const ankerId = ankerNaam
+            .replace(/[^\w\s-]/g, '')   // verwijder emoji’s en speciale tekens
+            .replace('Anker', '')       // verwijder het woord 'Anker '
+            .trim();
 
-    const extra = loadExtraWords()[ankerId] || { normaal: [], snuffel: [] };
-    const gecombineerd = {
-        normaal: [...woordenNormaal, ...extra.normaal],
-        snuffel: [...woordenSnuffel, ...extra.snuffel]
-    };
+        const extra = loadExtraWords()[ankerId] || { normaal: [], snuffel: [] };
+        const gecombineerd = {
+            normaal: [...woordenNormaal, ...extra.normaal],
+            snuffel: [...woordenSnuffel, ...extra.snuffel]
+        };
 
-    renderGrid(document.getElementById(IDS.normaal), gecombineerd.normaal, ankerNaam, 'normaal', extra);
-    renderGrid(document.getElementById(IDS.snuffel), gecombineerd.snuffel, ankerNaam, 'snuffel', extra);
+        renderGrid(document.getElementById(IDS.normaal), gecombineerd.normaal, ankerNaam, 'normaal', extra);
+        renderGrid(document.getElementById(IDS.snuffel), gecombineerd.snuffel, ankerNaam, 'snuffel', extra);
 
-    // --- Headers ---
-    const normaalHeader = document.querySelector('.section-head.normaal-head');
-    const snuffelHeader = document.querySelector('.section-head.snuffel-head');
+        // --- Headers ---
+        const normaalHeader = document.querySelector('.section-head.normaal-head');
+        const snuffelHeader = document.querySelector('.section-head.snuffel-head');
 
-    function updateHeaderCount(header, count) {
-        if (!header) return;
+        function updateHeaderCount(header, count) {
+            if (!header) return;
 
-        // Zoek de echte <td> binnen de header
-        const cell = header.querySelector('td');
-        if (!cell) return;
+            // Zoek de echte <td> binnen de header
+            const cell = header.querySelector('td');
+            if (!cell) return;
 
-        let badge = cell.querySelector('.wordcount');
-        if (!badge) {
-            badge = document.createElement('span');
-            badge.className = 'wordcount';
-            cell.appendChild(badge);
+            let badge = cell.querySelector('.wordcount');
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'wordcount';
+                cell.appendChild(badge);
+            }
+
+            badge.textContent = `(${count})`;
         }
 
-        badge.textContent = `(${count})`;
+        updateHeaderCount(normaalHeader, gecombineerd.normaal.length);
+        updateHeaderCount(snuffelHeader, gecombineerd.snuffel.length);
     }
-
-    updateHeaderCount(normaalHeader, gecombineerd.normaal.length);
-    updateHeaderCount(snuffelHeader, gecombineerd.snuffel.length);
-}
 
     function renderGrid(container, woorden, ankerNaam, type, extra) {
         //console.log('🧩 renderGrid aangeroepen voor:', type, 'ankerNaam:', ankerNaam);
@@ -224,51 +224,155 @@ function renderWords(ankerNaam, woordenNormaal, woordenSnuffel) {
         const inputRow = document.createElement('div');
         inputRow.className = 'input-row';
         inputRow.innerHTML = `
-            <input type="text" class="input-word" placeholder="Nieuw woord..." />
-            <div class="input-actions">
-                <button class="btn-ok" title="Opslaan">✔️</button>
-                <button class="btn-cancel" title="Annuleren">✖️</button>
-            </div>
-        `;
+<input type="text" class="input-word" placeholder="Nieuw woord..." />
+<div class="input-actions">
+  <!-- OK-knop -->
+  <button class="btn-ebx" title="Opslaan">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+      <polyline points="5 13 9 17 19 7" fill="none" stroke="#01689B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <!-- Annuleer-knop -->
+  <button class="btn-ebx" title="Annuleren">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+      <line x1="6" y1="6" x2="18" y2="18" stroke="#B91C1C" stroke-width="2.4" stroke-linecap="round"/>
+      <line x1="18" y1="6" x2="6" y2="18" stroke="#B91C1C" stroke-width="2.4" stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>
+`;
+
+
 
         container.parentNode.insertBefore(inputRow, container.nextSibling);
 
         const input = inputRow.querySelector('.input-word');
-        const ok = inputRow.querySelector('.btn-ok');
-        const cancel = inputRow.querySelector('.btn-cancel');
+        const okBtn = inputRow.querySelector('.btn-ebx[title="Opslaan"]');
+        const cancelBtn = inputRow.querySelector('.btn-ebx[title="Annuleren"]');
         input.focus();
 
         const ankerId = ankerNaam
-            .replace(/[^\w\s-]/g, '')   // verwijder emoji’s en speciale tekens
-            .replace('Anker', '')      // verwijder het woord 'Anker '
+            .replace(/[^\w\s-]/g, '')
+            .replace('Anker', '')
             .trim();
 
-        ok.addEventListener('click', () => {
+        // ✅ Klik OK
+        okBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // voorkom sluiten popup
             const word = input.value.trim();
             if (word) addWord(ankerId, type, word);
             inputRow.remove();
         });
 
-        cancel.addEventListener('click', () => inputRow.remove());
+        // ✅ Klik X
+        cancelBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // voorkom sluiten popup
+            inputRow.remove();
+        });
+
+        // ✅ Enter-toevoeging
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                ok.click();
+                okBtn.click();
             }
         });
+
     }
 
     // === Toevoegen/verwijderen ===
     function addWord(ankerNaam, type, woord) {
         const data = loadExtraWords();
         if (!data[ankerNaam]) data[ankerNaam] = { normaal: [], snuffel: [] };
-        if (!data[ankerNaam][type].includes(woord)) {
-            data[ankerNaam][type].push(woord);
-            saveExtraWords(data);
+
+        // alle bestaande woorden in deze sectie van dit anker
+        const bestaande = [
+            ...(window.huidigAnker[type] || []),
+            ...(data[ankerNaam][type] || [])
+        ].map(w => w.toLowerCase());
+
+        if (bestaande.includes(woord.toLowerCase())) {
+            showEbxPopup(
+                'Let op',
+                'Het woord <strong>"' + woord + '"</strong> bestaat al in dit anker bij <em>' + type + '</em>.'
+            );
+            return;
         }
+
+        data[ankerNaam][type].push(woord);
+        saveExtraWords(data);
         renderWords(ankerNaam, window.huidigAnker.normaal, window.huidigAnker.snuffel);
         openPopup();
     }
+
+
+    /**
+ * Toont een eenvoudige EBX-stijl popup met enkel een OK-knop.
+ */
+    function showEbxPopup(titel, boodschap) {
+        // Verwijder bestaande popup indien actief
+        const bestaand = document.getElementById('ebxPopup');
+        if (bestaand) bestaand.remove();
+
+        // Buitenste overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'ebxPopup';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.background = 'rgba(0,0,0,0.3)';
+        overlay.style.backdropFilter = 'blur(2px)';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = '10000';
+
+        // Popup venster
+        const box = document.createElement('div');
+        box.style.background = '#fff';
+        box.style.border = '1px solid #d0d7de';
+        box.style.borderRadius = '10px';
+        box.style.boxShadow = '0 6px 20px rgba(0,0,0,0.25)';
+        box.style.width = '340px';
+        box.style.maxWidth = '90%';
+        box.style.padding = '18px 20px 14px';
+        box.style.textAlign = 'center';
+        box.style.fontFamily = 'Segoe UI, Roboto, sans-serif';
+
+        const title = document.createElement('h3');
+        title.textContent = titel;
+        title.style.marginTop = '0';
+        title.style.marginBottom = '10px';
+        title.style.color = '#01689B';
+        title.style.fontSize = '18px';
+
+        const message = document.createElement('div');
+        message.innerHTML = boodschap;
+        message.style.fontSize = '15px';
+        message.style.color = '#333';
+        message.style.marginBottom = '18px';
+
+        const okBtn = document.createElement('button');
+        okBtn.textContent = 'OK';
+        okBtn.style.background = '#01689B';
+        okBtn.style.color = 'white';
+        okBtn.style.border = 'none';
+        okBtn.style.borderRadius = '6px';
+        okBtn.style.padding = '7px 18px';
+        okBtn.style.cursor = 'pointer';
+        okBtn.style.fontSize = '15px';
+        okBtn.addEventListener('click', () => overlay.remove());
+
+        box.appendChild(title);
+        box.appendChild(message);
+        box.appendChild(okBtn);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+    }
+
 
     function removeWord(ankerNaam, type, woord) {
         const data = loadExtraWords();

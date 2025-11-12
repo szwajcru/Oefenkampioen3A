@@ -524,7 +524,7 @@
       }
       if (byWords) {
         const aantal = parseInt(document.getElementById('aantalInput').value, 10);
-        if (!Number.isFinite(aantal) || aantal < 1 || aantal > 50) { if (err) err.textContent = 'Vul bij "Aantal items" 1..50 in.'; return; }
+        if (!Number.isFinite(aantal) || aantal < 1 || aantal > 100) { if (err) err.textContent = 'Vul bij "Aantal items" 1..100 in.'; return; }
         if (items.length < aantal) { const fill = []; while (fill.length < aantal) { fill.push(...shuffle(items)); } items = fill.slice(0, aantal); } else { items = items.slice(0, aantal); }
         document.getElementById('subInfo').innerHTML = `<span class="timer">${idx}/${items.length}</span>`;
         showPage(2); toonItem();
@@ -556,7 +556,7 @@
         }
         if (byWords) {
           const aantal = parseInt(document.getElementById('aantalInput').value, 10);
-          if (!Number.isFinite(aantal) || aantal < 1 || aantal > 50) { if (err) err.textContent = 'Vul bij "Aantal items" 1..50 in.'; return; }
+          if (!Number.isFinite(aantal) || aantal < 1 || aantal > 100) { if (err) err.textContent = 'Vul bij "Aantal items" 1..100 in.'; return; }
 
           if (items.length < aantal) { const fill = []; while (fill.length < aantal) { fill.push(...shuffle(items)); } items = fill.slice(0, aantal); } else { items = items.slice(0, aantal); }
           document.getElementById('subInfo').innerHTML = `<span class="timer">${idx}/${items.length}</span>`;
@@ -585,7 +585,7 @@
         }
         if (byWords) {
           const aantal = parseInt(document.getElementById('aantalInput').value, 10);
-          if (!Number.isFinite(aantal) || aantal < 1 || aantal > 50) { if (err) err.textContent = 'Vul bij "Aantal items" 1..50 in.'; return; }
+          if (!Number.isFinite(aantal) || aantal < 1 || aantal > 100) { if (err) err.textContent = 'Vul bij "Aantal items" 1..100 in.'; return; }
           if (items.length < aantal) { const fill = []; while (fill.length < aantal) { fill.push(...shuffle(items)); } items = fill.slice(0, aantal); } else { items = items.slice(0, aantal); }
           document.getElementById('subInfo').innerHTML = `<span class="timer">${idx}/${items.length}</span>`;
           showPage(2); toonItem();
@@ -626,8 +626,8 @@
 
       if (byWords) {
         const aantal = parseInt(document.getElementById('aantalInput').value, 10);
-        if (!Number.isFinite(aantal) || aantal < 1 || aantal > 50) {
-          if (err) err.textContent = 'Vul bij "Aantal items" 1..50 in.';
+        if (!Number.isFinite(aantal) || aantal < 1 || aantal > 100) {
+          if (err) err.textContent = 'Vul bij "Aantal items" 1..100 in.';
           return;
         }
         if (items.length < aantal) {
@@ -947,10 +947,9 @@
       };
 
       function getTitel(tr, nr) {
-        const label = tr.querySelector('td label');
-        const plain = (label?.textContent || '').trim().replace(/^\s*📚\s*/, '');
-        return `📚 ${plain || `Anker ${nr}`}`;
+        return '📚 Anker ' + nr;
       }
+
 
       // Maak alle anker-rijen klikbaar (behalve 9 = Mijn herkansjes)
       document.querySelectorAll('.anker-tabel tbody tr[data-anker]').forEach(tr => {

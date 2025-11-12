@@ -66,7 +66,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="index/style.css">
-  <link rel="stylesheet" href="index/dropdown.css">
+  <link rel="stylesheet" href="index/hamburger.css">
   <link rel="stylesheet" href="index/feedback.css">
   <link rel="stylesheet" href="herkansjes/herkansjes.css">
   <link rel="stylesheet" href="index/ankerwoordjesPopup.css">
@@ -107,7 +107,16 @@
       <div class="menu-item" id="feedbackBtn">💬 Contact</div>
 
       <!-- Hoe werkt het -->
-      <div class="menu-item" id="hoeWerktHetBtn">❓ Hoe werkt het</div>
+      <div class="menu-item" id="hoeWerktHetBtn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+          style="vertical-align: middle; margin-right: 6px;">
+          <circle cx="12" cy="12" r="10" stroke="#01689B" stroke-width="1.5" fill="white" />
+          <text x="12" y="17" text-anchor="middle" fill="#01689B" font-size="14" font-family="Arial"
+            font-weight="bold">i</text>
+        </svg>
+        Hoe werkt het
+      </div>
+
 
       <div class="menu-item has-sub">⚓️ Anker woordjes
         <div class="submenu hidden">
@@ -253,7 +262,10 @@
             <tbody>
               <!-- 8 rijen -->
               <tr data-anker="0">
-                <td><label><input type="radio" name="anker" value="0">Anker Start</label></td>
+                <td class="anker-naam">
+                  <input type="radio" name="anker" value="0" id="anker0">
+                  <span>Anker Start</span>
+                </td>
                 <td>
                   <div class="toggle-segment" data-anker="0">
                     <input type="radio" id="a0n" name="mode" value="0-normaal">
@@ -266,7 +278,10 @@
               </tr>
 
               <tr data-anker="1">
-                <td><label><input type="radio" name="anker" value="1">Anker 1</label></td>
+                <td class="anker-naam">
+                  <input type="radio" name="anker" value="1" id="anker1">
+                  <span>Anker 1</span>
+                </td>
                 <td>
                   <div class="toggle-segment" data-anker="1">
                     <input type="radio" id="a1n" name="mode" value="1-normaal">
@@ -279,7 +294,10 @@
               </tr>
 
               <tr data-anker="2">
-                <td><label><input type="radio" name="anker" value="2">Anker 2</label></td>
+                <td class="anker-naam">
+                  <input type="radio" name="anker" value="2" id="anker2">
+                  <span>Anker 2</span>
+                </td>
                 <td>
                   <div class="toggle-segment" data-anker="2">
                     <input type="radio" id="a2n" name="mode" value="2-normaal">
@@ -292,7 +310,10 @@
               </tr>
 
               <tr data-anker="3">
-                <td><label><input type="radio" name="anker" value="3">Anker 3</label></td>
+                <td class="anker-naam">
+                  <input type="radio" name="anker" value="3" id="anker3">
+                  <span>Anker 3</span>
+                </td>
                 <td>
                   <div class="toggle-segment" data-anker="3">
                     <input type="radio" id="a3n" name="mode" value="3-normaal">
@@ -305,7 +326,10 @@
               </tr>
 
               <tr data-anker="4">
-                <td><label><input type="radio" name="anker" value="4">Anker 4</label></td>
+                <td class="anker-naam">
+                  <input type="radio" name="anker" value="4" id="anker4">
+                  <span>Anker 4</span>
+                </td>
                 <td>
                   <div class="toggle-segment" data-anker="4">
                     <input type="radio" id="a4n" name="mode" value="4-normaal">
@@ -318,7 +342,10 @@
               </tr>
 
               <tr data-anker="5">
-                <td><label><input type="radio" name="anker" value="5">Anker 5</label></td>
+                <td class="anker-naam">
+                  <input type="radio" name="anker" value="5" id="anker5">
+                  <span>Anker 5</span>
+                </td>
                 <td>
                   <div class="toggle-segment" data-anker="5">
                     <input type="radio" id="a5n" name="mode" value="5-normaal">
@@ -331,7 +358,10 @@
               </tr>
 
               <tr data-anker="6">
-                <td><label><input type="radio" name="anker" value="6">Anker 6</label></td>
+                <td class="anker-naam">
+                  <input type="radio" name="anker" value="6" id="anker6">
+                  <span>Anker 6</span>
+                </td>
                 <td>
                   <div class="toggle-segment" data-anker="6">
                     <input type="radio" id="a6n" name="mode" value="6-normaal">
@@ -344,7 +374,10 @@
               </tr>
 
               <tr data-anker="7">
-                <td><label><input type="radio" name="anker" value="7">Anker 7</label></td>
+                <td class="anker-naam">
+                  <input type="radio" name="anker" value="7" id="anker7">
+                  <span>Anker 7</span>
+                </td>
                 <td>
                   <div class="toggle-segment" data-anker="7">
                     <input type="radio" id="a7n" name="mode" value="7-normaal">
@@ -357,7 +390,10 @@
               </tr>
 
               <tr data-anker="8">
-                <td><label><input type="radio" name="anker" value="8">Anker 8</label></td>
+                <td class="anker-naam">
+                  <input type="radio" name="anker" value="8" id="anker8">
+                  <span>Anker 8</span>
+                </td>
                 <td>
                   <div class="toggle-segment" data-anker="8">
                     <input type="radio" id="a8n" name="mode" value="8-normaal">
@@ -370,17 +406,21 @@
               </tr>
 
               <tr data-anker="9">
-                <td><label><input type="radio" name="anker" value="9">Herkansjes oefenen</label></td>
+                <td class="anker-naam">
+                  <input type="radio" name="anker" value="9" id="anker9">
+                  <span>Herkansjes oefenen</span>
+                </td>
                 <td>
                   <div class="toggle-segment" data-anker="9">
                     <input type="radio" id="a9n" name="mode" value="9-">
                     <label for="a9n">Mijn herkansjes</label>
                   </div>
-                <td></td>
                 </td>
+                <td></td>
               </tr>
             </tbody>
           </table>
+
 
           <div class="tip">Tip: klik op een anker om de woordjes te zien.</div>
         </fieldset>

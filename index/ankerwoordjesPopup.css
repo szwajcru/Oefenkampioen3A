@@ -581,10 +581,9 @@
 
 #ankerwoordjesForm .woord-chip.extra:hover,
 #ankerwoordjesForm .snuffel-head~tr .woord-chip.extra:hover {
-  background: #fff8d1 !important;
+  background: #e6f0ff !important;
   border-color: #003f8c !important;
 }
-
 
 /* Hover */
 #ankerwoordjesForm .woord-chip:hover {
@@ -601,8 +600,11 @@
 }
 
 #ankerwoordjesForm .woord-chip.add-card:hover {
-  background: #b7af55;
+  background: #e6f1ff;     /* lichte EBX-blauw achtergrond */
+  border-color: #01689B;   /* EBX-blauw rand */
+  color: #003366;          /* donkere EBX-blauw tekst */
 }
+
 
 
 #ankerwoordjesForm .woord-chip {
@@ -660,3 +662,114 @@
   pointer-events: none;
 }
 
+/* ===== Invoerveld (woord toevoegen) ===== */
+.input-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  border: 1px solid #d0d7de;
+  border-left: 3px solid #01689B;
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-top: 8px;
+  animation: fadeIn 0.25s ease;
+}
+
+.input-row .input-word {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  padding: 6px;
+  outline: none;
+  color: #0f172a;
+}
+
+.input-row .input-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.input-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  background: #e2e8f0;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.input-actions button:hover {
+  background: #cbd5e1;
+  transform: scale(1.08);
+}
+
+.input-actions .btn-ok svg {
+  stroke: #0d9488; /* zacht turquoise */
+}
+
+.input-actions .btn-cancel svg {
+  stroke: #dc2626; /* rood, maar subtieler */
+}
+
+/* lichte hoverglow */
+.input-actions button:hover svg {
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.15));
+}
+
+/* Fade animatie bij tonen */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.input-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-ebx {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #B6C3D1; /* subtiele EBX-rand */
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  outline: none;
+}
+
+.btn-ebx:hover {
+  border-color: #01689B;
+  background-color: #F2F8FD; /* lichte EBX-hoverkleur */
+}
+
+.btn-ebx svg {
+  pointer-events: none;
+}
+
+.btn-ebx:active {
+  transform: scale(0.96);
+}
+
+/* --- Add-card binnen Snuffel wit maken, consistent met Normaal --- */
+#ankerwoordjesForm .snuffel-head~tr .woord-chip.add-card {
+  background: #ffffff !important;   /* witte achtergrond */
+  border: 2px dashed #01689B !important; /* EBX-blauwe stippellijn */
+  color: #01689B !important;        /* EBX-blauwe plus */
+}
+
+/* Hover: subtiel EBX-blauw accent */
+#ankerwoordjesForm .snuffel-head~tr .woord-chip.add-card:hover {
+  background: #fff3e0 !important;   
+  border-color: #01689B !important;
+  color: #003366 !important;
+}

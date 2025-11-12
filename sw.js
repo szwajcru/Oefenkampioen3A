@@ -19,11 +19,12 @@ const FILES = [
   'index/klanken.js',
   'index/lezen.js',
   'index/achtergrond.png',
+  'index/ExtraWoordjesAnker.png',
   'index/instructies.html',
   'index/ankerwoordjesPopup.css',
   'index/ankerwoordjesPopup.js',
   'index/hamburger.js',
-  'index/dropdown.css',
+  'index/hamburger.css',
   'index/oefenSessions.js',
 ];
 

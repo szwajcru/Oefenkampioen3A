@@ -7,7 +7,6 @@
   <title>Hoe werkt het?</title>
   <link rel="stylesheet" href="style.css">
 
-
   <style>
     body {
       font-family: 'Segoe UI', Roboto, sans-serif;
@@ -42,6 +41,11 @@
       padding-bottom: 0.4em;
     }
 
+    h3 {
+      color: #01689B;
+      margin-top: 0;
+    }
+
     p {
       margin-bottom: 1.1em;
     }
@@ -61,6 +65,34 @@
       font-size: 0.95em;
     }
 
+    /* --- Extra woordjes blok --- */
+    .extra-ankerblok {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 2em;
+      margin: 2em 0 3em 0;
+      flex-wrap: wrap;
+    }
+
+    .extra-ankerblok .tekstdeel {
+      flex: 1 1 55%;
+      min-width: 300px;
+    }
+
+    .extra-ankerblok .afbeeldingdeel {
+      flex: 1 1 15%;
+      text-align: center;
+    }
+
+    .extra-ankerblok .afbeeldingdeel img {
+      width: 100%;
+      max-width: 360px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
     figure {
       text-align: center;
       margin: 1.5em 0;
@@ -70,13 +102,6 @@
       width: 100%;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    /* Alleen op schermen breder dan 768px (tablets/desktops) */
-    @media (min-width: 768px) {
-      figure img {
-        width: 50%;
-      }
     }
 
     figure figcaption {
@@ -91,6 +116,23 @@
       color: #777;
       margin-top: 2em;
       padding-bottom: 1em;
+    }
+
+    /* Responsief gedrag */
+    @media (max-width: 768px) {
+      .extra-ankerblok {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .extra-ankerblok .afbeeldingdeel img {
+        max-width: 80%;
+        margin-top: 1em;
+      }
+
+      figure img {
+        width: 80%;
+      }
     }
   </style>
 </head>
@@ -112,6 +154,31 @@
       die steeds iets moeilijker worden. Een kind oefent meestal met één anker per keer.
       Zodra het vlot gelezen wordt, kan het volgende anker worden gestart.
     </p>
+
+    <div class="extra-ankerblok">
+      <div class="tekstdeel">
+        <h3>Extra woordjes toevoegen</h3>
+        <p>
+          Standaard zijn alle ankerwoordjes vooraf gedefinieerd.
+          Het is echter mogelijk om zelf <strong>extra woordjes</strong> toe te voegen voor meer variatie.
+          Denk aan woorden waar een kind een positief gevoel bij krijgt, zoals zijn of haar
+          <strong>naam</strong>, een <strong>huisdier</strong>, of iets uit de directe omgeving —
+          zolang het maar past bij de moeilijkheidsgraad van de andere ankerwoordjes.
+        </p>
+        <p>
+          Dit helpt om het oefenen persoonlijker en motiverender te maken.
+        </p>
+
+        <h4>Voorbeeld: Anker&nbsp;1</h4>
+        <p>
+          Hieronder zie je een voorbeeld van hoe extra woordjes kunnen worden toegevoegd aan Anker&nbsp;1.
+        </p>
+      </div>
+
+      <div class="afbeeldingdeel">
+        <img src="ExtraWoordjesAnker.png" alt="Voorbeeld extra woordjes bij Anker 1">
+      </div>
+    </div>
 
     <h2>Woordjes per minuut (ipm)</h2>
     <p>
@@ -155,7 +222,7 @@
     </p>
 
     <figure>
-      <img src="klank_schuifjes.png">
+      <img src="klank_schuifjes.png" alt="Voorbeeld klank schuifjes">
       <figcaption>Voorbeeld: kies zelf welke klanken geoefend worden met behulp van de schuifjes.</figcaption>
     </figure>
 

@@ -324,4 +324,7 @@
   z-index: 9999;
 }
 
-
+/* Hoe werkt het Plaatje anker 1 extra woordjes */
+.extra-woordjes-voorbeeld img {
+  max-width: 15%;
+}

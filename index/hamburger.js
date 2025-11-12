@@ -212,6 +212,11 @@ document.addEventListener('DOMContentLoaded', function () {
 const hoeWerktHetBtn = document.getElementById('hoeWerktHetBtn');
 if (hoeWerktHetBtn) {
   hoeWerktHetBtn.addEventListener('click', () => {
+
+    // ✅ Sluit het hamburger-menu vóór openen popup
+    const menuDropdown = document.getElementById('menuDropdown');
+    if (menuDropdown) menuDropdown.classList.add('hidden');
+
     const overlay = document.createElement('div');
     overlay.classList.add('popup-overlay');
     overlay.style.cssText = `
@@ -239,7 +244,6 @@ if (hoeWerktHetBtn) {
       z-index: 9999;
     `;
 
-    // 🧠 Dynamisch pad bepalen afhankelijk van protocol
     const base = window.location.protocol === 'file:' ? 'index/' : '/index/';
 
     popup.innerHTML = `
@@ -263,4 +267,5 @@ if (hoeWerktHetBtn) {
     });
   });
 }
+
 
