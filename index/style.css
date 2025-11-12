@@ -536,9 +536,7 @@ fieldset.optiegroep legend {
   margin-left: auto;
 }
 
-#Sliders-uitlijning
-
-.switch {
+#Sliders-uitlijning .switch {
   position: relative;
   display: inline-block;
   width: 10px;
@@ -1873,7 +1871,7 @@ tr[data-anker] button.modusBtn.active {
   color: #fff;
   padding: 6px 10px;
   border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
   font-size: 13px;
   white-space: nowrap;
   z-index: 9999;
@@ -1935,11 +1933,11 @@ tr[data-anker] button.modusBtn.active {
   gap: 10px;
 }
 
-.switch input:checked + .slider {
+.switch input:checked+.slider {
   background: var(--ebx);
 }
 
-.switch input:checked + .slider:before {
+.switch input:checked+.slider:before {
   transform: translateX(22px);
 }
 
@@ -1948,227 +1946,227 @@ tr[data-anker] button.modusBtn.active {
 }
 
 @media (min-width:720px) {
-.answers {
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
+  .answers {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
 
 }
 
 @keyframes bob {
-0% {
-  transform: translateY(0);
-}
+  0% {
+    transform: translateY(0);
+  }
 
-100% {
-  transform: translateY(0);
-}
+  100% {
+    transform: translateY(0);
+  }
 
-50% {
-  transform: translateY(-6px);
-}
+  50% {
+    transform: translateY(-6px);
+  }
 
 }
 
 @media (min-width: 720px) {
-.klinker-groepen {
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
+  .klinker-groepen {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
 
-.klinker-groepen .klinker-col:nth-child(odd) {
-  flex: 1.6;
-}
+  .klinker-groepen .klinker-col:nth-child(odd) {
+    flex: 1.6;
+  }
 
-.klinker-groepen .klinker-col:nth-child(even) {
-  flex: 1;
-}
+  .klinker-groepen .klinker-col:nth-child(even) {
+    flex: 1;
+  }
 
-.klinker-groepen .klinker-col {
-  flex: 1;
-  min-width: 200px;
-}
+  .klinker-groepen .klinker-col {
+    flex: 1;
+    min-width: 200px;
+  }
 
 }
 
 @keyframes fadeIn {
-from {
-  opacity: 0;
-}
+  from {
+    opacity: 0;
+  }
 
-to {
-  opacity: 1;
-}
+  to {
+    opacity: 1;
+  }
 
 }
 
 @media (max-width: 768px) {
-#resultatenChartContainer {
-  height: 75vh;
-  min-height: 250px;
-}
+  #resultatenChartContainer {
+    height: 75vh;
+    min-height: 250px;
+  }
 
 }
 
 @keyframes bijtjeVliegtAan {
-0% {
-  transform: translateX(90px) rotate(0deg);
-  opacity: 0;
-}
+  0% {
+    transform: translateX(90px) rotate(0deg);
+    opacity: 0;
+  }
 
-40% {
-  opacity: 1;
-}
+  40% {
+    opacity: 1;
+  }
 
-90% {
-  transform: translateX(-4px) rotate(10deg);
-}
+  90% {
+    transform: translateX(-4px) rotate(10deg);
+  }
 
-100% {
-  transform: translateX(0px) rotate(0deg);
-  opacity: 1;
-}
+  100% {
+    transform: translateX(0px) rotate(0deg);
+    opacity: 1;
+  }
 
 }
 
 @keyframes bijtjeZoemtRechts {
-0% {
-  transform: translate(0px, 0px) rotate(0deg);
-}
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
 
-25% {
-  transform: translate(2px, -2px) rotate(8deg);
-}
+  25% {
+    transform: translate(2px, -2px) rotate(8deg);
+  }
 
-50% {
-  transform: translate(-1px, 1px) rotate(-8deg);
-}
+  50% {
+    transform: translate(-1px, 1px) rotate(-8deg);
+  }
 
-75% {
-  transform: translate(1px, -1px) rotate(5deg);
-}
+  75% {
+    transform: translate(1px, -1px) rotate(5deg);
+  }
 
-100% {
-  transform: translate(0px, 0px) rotate(0deg);
-}
+  100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
 
 }
 
 @keyframes popupIn {
-from {
-  transform: scale(0.9);
-  opacity: 0;
-}
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
 
-to {
-  transform: scale(1);
-  opacity: 1;
-}
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 
 }
 
 @keyframes fadeInPopup {
-from {
-  opacity: 0;
-  transform: translate(-50%, -48%);
-}
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
 
-to {
-  opacity: 1;
-  transform: translate(-50%, -50%);
-}
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 
 }
 
 @keyframes popupFade {
-from {
-  opacity: 0;
-  transform: scale(0.96);
-}
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
 
-to {
-  opacity: 1;
-  transform: scale(1);
-}
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 
 }
 
 @media (max-width: 700px) {
-#woordenPopup .card {
-  width: 90vw;
-}
+  #woordenPopup .card {
+    width: 90vw;
+  }
 
-.woordenTabel td {
-  width: 50%;
-}
+  .woordenTabel td {
+    width: 50%;
+  }
 
 }
 
 @media (max-width: 600px) {
-#functiewoordjesPopup .popup-table th:first-child {
-  width: 36px;
-  min-width: 32px;
-  padding-left: 6px;
-  padding-right: 6px;
-}
+  #functiewoordjesPopup .popup-table th:first-child {
+    width: 36px;
+    min-width: 32px;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
 
-#functiewoordjesPopup .popup-table td:first-child {
-  width: 36px;
-  min-width: 32px;
-  padding-left: 6px;
-  padding-right: 6px;
-}
+  #functiewoordjesPopup .popup-table td:first-child {
+    width: 36px;
+    min-width: 32px;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
 
-#zinnetjesPopup .popup-table th:first-child {
-  width: 36px;
-  min-width: 32px;
-  padding-left: 6px;
-  padding-right: 6px;
-}
+  #zinnetjesPopup .popup-table th:first-child {
+    width: 36px;
+    min-width: 32px;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
 
-#zinnetjesPopup .popup-table td:first-child {
-  width: 36px;
-  min-width: 32px;
-  padding-left: 6px;
-  padding-right: 6px;
-}
+  #zinnetjesPopup .popup-table td:first-child {
+    width: 36px;
+    min-width: 32px;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
 
 }
 
 @media (max-width: 720px) {
-#resultatenPopup .popup-card {
-  width: 94vw;
-  padding: 14px 16px;
-}
+  #resultatenPopup .popup-card {
+    width: 94vw;
+    padding: 14px 16px;
+  }
 
-#resultatenPopup canvas {
-  aspect-ratio: 4 / 3;
-  max-height: 300px;
-}
+  #resultatenPopup canvas {
+    aspect-ratio: 4 / 3;
+    max-height: 300px;
+  }
 
 }
 
 @media (max-width: 560px) {
-html body #resultatenTip {
-  max-height: 98vh !important;
-  overflow-y: auto !important;
-  height: 62vh;
-}
+  html body #resultatenTip {
+    max-height: 98vh !important;
+    overflow-y: auto !important;
+    height: 62vh;
+  }
 
 }
 
 @keyframes fadeInTooltip {
-from {
-  opacity: 0;
-  transform: translateY(2px);
-}
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
 
-to {
-  opacity: 1;
-  transform: translateY(0);
-}
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
 }
 
@@ -2176,7 +2174,8 @@ to {
 #testPopup,
 #confirmOverlay {
   position: fixed !important;
-  z-index: 2147483647 !important; /* hoogste stacking */
+  z-index: 2147483647 !important;
+  /* hoogste stacking */
   isolation: isolate !important;
 }
 
@@ -2209,7 +2208,6 @@ to {
 
 /* › Bekijk hint */
 .anker-tabel td.anker-naam::after {
-  content: '› Bekijk';
   position: absolute;
   right: 12px;
   top: 50%;
@@ -2224,6 +2222,42 @@ to {
     opacity 0.3s ease-out 0.05s,
     transform 0.3s ease-out 0.05s,
     color 0.3s ease-out;
+}
+
+/* 📱 Mobiel: toon dun EBX-blauw vergrootglas bij hover/focus (niet bij 'Anker Start') */
+/* === Vergrootglas bij hover/focus === */
+.anker-tabel td.anker-naam::after {
+  content: '';
+}
+
+/* 📱 Mobiel (tot 640px) */
+@media (max-width: 640px) {
+  .anker-tabel td.anker-naam:not(.no-icon):hover::after,
+  .anker-tabel td.anker-naam:not(.no-icon):focus::after {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="%2301689B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>');
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.9;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+}
+
+/* 💻 Desktop (>640px) */
+@media (min-width: 641px) {
+  .anker-tabel td.anker-naam:not(.no-icon):hover::after,
+  .anker-tabel td.anker-naam:not(.no-icon):focus::after {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="%2301689B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>');
+    position: absolute;
+    right: 6px;   /* iets dichter bij tekst */
+    top: 52%;     /* iets hoger gecentreerd */
+    transform: translateY(-50%);
+    opacity: 0.85;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
 }
 
 .anker-tabel td.anker-naam:hover::after {

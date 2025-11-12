@@ -2648,4 +2648,23 @@ function getRandomHerkansingsWoord() {
   return woord;
 }
 
+// 🔍 Verberg vergrootglas bij 'Anker Start'
+function updateIconVisibility() {
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
+
+  document.querySelectorAll('.anker-tabel td.anker-naam span').forEach(span => {
+    const td = span.closest('td');
+    if (span.textContent.trim() === 'Anker Start') {
+      if (isMobile) {
+        td.classList.add('no-icon');   // mobiel → verberg icoon
+      } else {
+        td.classList.remove('no-icon'); // desktop → toon icoon
+      }
+    }
+  });
+}
+
+// bij laden en bij resize uitvoeren
+updateIconVisibility();
+window.addEventListener('resize', updateIconVisibility);
 

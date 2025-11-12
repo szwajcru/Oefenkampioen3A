@@ -786,43 +786,45 @@
 
 
 
-  <!-- Popup Woordenlijst (zelfde layout als Mijn Herkansjes) -->
-  <div id="woordenPopup" class="resultCard" style="display:none;">
-    <div class="card">
-      <button id="closePopup" class="popup-close">×</button>
-      <h3 id="popupTitle" style="text-align:center;">Woordenlijst</h3>
+<!-- 🧩 Popup: Woordenlijst per anker -->
+<div id="woordenPopup" class="resultCard" style="display:none;">
+  <div class="card" style="position: relative; overflow: hidden;">
 
-      <div id="popupScroll" style="max-height:70vh; overflow-y:auto; margin-top:10px;">
-        <div class="aantal-toggle onderaan">
-          <label class="switch">
-            <input type="checkbox" id="toonAantallen">
-            <span class="slider"></span>
-          </label>
+    <!-- ✅ Duidelijk zichtbare witte sluitknop -->
+    <button id="closePopup" class="popup-close" title="Sluiten">×</button>
 
-          <div class="tooltip-wrapper" style="margin-left:10px;">
-            <span class="toggle-label" id="aantalToggleLabel">
-              ❓ Aantal keren getoond weergeven
-            </span>
-            <div class="tooltip-bubble" id="aantalTooltip">
-              Toont hoe vaak de woordjes al zijn weergegeven.
-            </div>
+    <h3 id="popupTitle" style="text-align:center; margin-top:10px;">Woordenlijst</h3>
+
+    <div id="popupScroll" style="max-height:70vh; overflow-y:auto; margin-top:10px;">
+      
+      <div class="aantal-toggle onderaan">
+        <label class="switch">
+          <input type="checkbox" id="toonAantallen">
+          <span class="slider"></span>
+        </label>
+
+        <div class="tooltip-wrapper" style="margin-left:10px;">
+          <span class="toggle-label" id="aantalToggleLabel">
+            ❓ Aantal keren getoond weergeven
+          </span>
+          <div class="tooltip-bubble" id="aantalTooltip">
+            Toont hoe vaak de woordjes al zijn weergegeven.
           </div>
         </div>
-
-
-        <h4 id="popupNormaalTitel" style="color:var(--ebx); margin-bottom:4px;">Normale woorden</h4>
-        <table id="popupTableNormaal" class="woordenTabel">
-          <tbody></tbody>
-        </table>
-
-        <h4 id="popupSnuffelTitel" style="color:var(--ebx); margin-top:16px; margin-bottom:4px;">Snuffel woorden</h4>
-        <table id="popupTableSnuffel" class="woordenTabel">
-          <tbody></tbody>
-        </table>
       </div>
+
+      <h4 id="popupNormaalTitel" style="color:var(--ebx); margin-bottom:4px;">Normale woorden</h4>
+      <table id="popupTableNormaal" class="woordenTabel">
+        <tbody></tbody>
+      </table>
+
+      <h4 id="popupSnuffelTitel" style="color:var(--ebx); margin-top:16px; margin-bottom:4px;">Snuffel woorden</h4>
+      <table id="popupTableSnuffel" class="woordenTabel">
+        <tbody></tbody>
+      </table>
     </div>
   </div>
-
+</div>
 
   <!-- Popup voor resultaten per anker -->
   <div id="resultatenPopup">
