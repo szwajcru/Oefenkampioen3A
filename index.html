@@ -798,8 +798,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       // Belangrijk: SW + importScripts altijd vers ophalen
-      const versieParam = '?v=' + Date.now(); // ⏱ cache-busting parameter
-      navigator.serviceWorker.register('sw.js' + versieParam, { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
         .then(reg => {
           console.log('Service Worker geregistreerd:', reg.scope);
 
