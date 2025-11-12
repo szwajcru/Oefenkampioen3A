@@ -26,8 +26,6 @@ const FILES = [
   'index/hamburger.js',
   'index/dropdown.css',
   'index/oefenSessions.js',
-
-
 ];
 
 // Helper: vers ophalen met cache-bust, opslaan onder SCHONE URL
