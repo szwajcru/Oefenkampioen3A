@@ -81,14 +81,29 @@
             popup.appendChild(closeBtn);
         }
 
-        const infoBtn = document.getElementById('infoBtn');
-        if (infoBtn && !infoBtn.innerHTML.trim()) {
-            infoBtn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 24 24" fill="#01689B">
-        <circle cx="12" cy="12" r="10" stroke="#01689B" stroke-width="1.5" fill="white"/>
-        <text x="12" y="17" text-anchor="middle" fill="#01689B" font-size="14" font-family="Arial" font-weight="bold">i</text>
-      </svg>`;
+        // Info-knop (ℹ️) opnieuw zetten en click-event koppelen
+        let infoBtn = document.getElementById('infoBtn');
+        if (infoBtn) {
+            if (!infoBtn.innerHTML.trim()) {
+                infoBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 24 24" fill="#01689B">
+            <circle cx="12" cy="12" r="10" stroke="#01689B" stroke-width="1.5" fill="white"/>
+            <text x="12" y="17" text-anchor="middle" fill="#01689B" font-size="14" font-family="Arial" font-weight="bold">i</text>
+          </svg>`;
+            }
+
+            // Koppel event elke keer bij openen opnieuw (voorkomt gemiste listeners)
+            infoBtn.onclick = () => {
+                const badges = document.querySelectorAll('#ankerwoordjesForm .woord-chip .count-badge');
+                const zichtbaar = !infoBtn.classList.contains('active');
+                infoBtn.classList.toggle('active', zichtbaar);
+
+                badges.forEach(badge => {
+                    badge.classList.toggle('hidden', !zichtbaar);
+                });
+            };
         }
+
 
         // ✅ Voorkom dubbele sluit-trigger
         closeBtn.addEventListener('click', (e) => {
