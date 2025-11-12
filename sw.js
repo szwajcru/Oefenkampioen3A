@@ -20,7 +20,6 @@ const FILES = [
   'index/lezen.js',
   'index/achtergrond.png',
   'index/instructies.html',
-  'index/ankerwoordenlijst.js',
   'index/ankerwoordjesPopup.css',
   'index/ankerwoordjesPopup.js',
   'index/hamburger.js',
