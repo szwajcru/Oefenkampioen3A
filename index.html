@@ -4,11 +4,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ✅ SEO & Social meta configuratie -->
   <meta name="description"
-    content="Ankers & Klanken oefenen helpt kinderen spelenderwijs beter lezen. Oefen met ankers, klanken, functiewoorden en zinnetjes in een leuke en overzichtelijke omgeving." />
+    content="Ankers & Klanken – oefenen met woordjes en klanken voor groep 3. Leer spelenderwijs lezen met ankers, functiewoordjes, klanken en zinnen in een frisse en overzichtelijke omgeving." />
+  <meta name="keywords"
+    content="ankers, klanken, groep 3, aanvankelijk lezen, functiewoordjes, lezen oefenen, flitsen, ankerwoordjes, basisschool, educatief spel" />
   <meta name="robots" content="index, follow" />
 
-  <!-- Forceer HTTPS voor alle (per ongeluk) http-resources -->
+  <!-- 🌐 Open Graph (Facebook, LinkedIn, WhatsApp) -->
+  <meta property="og:title" content="Ankers & Klanken – oefenen met woordjes en klanken voor groep 3" />
+  <meta property="og:description"
+    content="Oefen met ankers, klanken, functiewoordjes en zinnen op een leuke, interactieve manier. Perfect voor groep 3!" />
+  <meta property="og:image" content="/KlankenFonteinSocial.png" />
+  <meta property="og:image:alt" content="Ankers & Klanken – oefenen met woordjes en klanken voor groep 3" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.ankers-en-klanken.nl/" />
+
+  <!-- 🐦 Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Ankers & Klanken – oefenen met woordjes en klanken voor groep 3" />
+  <meta name="twitter:description"
+    content="Oefen met ankers, klanken, functiewoordjes en zinnen op een leuke, interactieve manier. Perfect voor groep 3!" />
+  <meta name="twitter:image" content="/KlankenFonteinSocial.png" />
+  <meta name="twitter:image:alt" content="Ankers & Klanken – oefenen met woordjes en klanken voor groep 3" />
+
+  <!-- 📱 Favicon en app icons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- 🔒 Security & caching -->
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
@@ -16,15 +43,9 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="shortcut icon" href="/favicon.ico">
-
   <title>Ankers & Klanken oefenen</title>
 
-  <!-- Session info -->
+  <!-- 🧭 Session info -->
   <script>
     if (location.search.includes('sessionCounterOff')) {
       localStorage.setItem('session_counter', 'true');
@@ -34,13 +55,13 @@
       localStorage.removeItem('session_counter');
     }
 
-    // 🔸 Controleer lokale status
     const trackingOff = localStorage.getItem('session_counter') === 'true';
     if (trackingOff) {
       window.SESSION_COUNTER = true;
     }
   </script>
 
+  <!-- 📊 Analytics -->
   <script>
     (function () {
       var ANALYTICS_ENABLED = location.protocol !== 'file:' && !Boolean(window.SESSION_COUNTER);
@@ -56,7 +77,7 @@
     })();
   </script>
 
-
+  <!-- 📧 EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     (function () {
@@ -64,14 +85,17 @@
     })();
   </script>
 
+  <!-- 📈 Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- 🎨 Styles -->
   <link rel="stylesheet" href="index/style.css">
   <link rel="stylesheet" href="index/hamburger.css">
   <link rel="stylesheet" href="index/feedback.css">
   <link rel="stylesheet" href="herkansjes/herkansjes.css">
   <link rel="stylesheet" href="index/ankerwoordjesPopup.css">
 
-  <!-- Nieuwe losse module voor de resultaten-grafiek -->
+  <!-- 📊 Nieuwe losse module voor resultaten-grafiek -->
   <script defer src="index/resultaatGrafiek.js"></script>
 
   <script>
@@ -85,6 +109,7 @@
     });
   </script>
 </head>
+
 
 <body>
   <div id="versionTopGlobal">
@@ -786,45 +811,45 @@
 
 
 
-<!-- 🧩 Popup: Woordenlijst per anker -->
-<div id="woordenPopup" class="resultCard" style="display:none;">
-  <div class="card" style="position: relative; overflow: hidden;">
+  <!-- 🧩 Popup: Woordenlijst per anker -->
+  <div id="woordenPopup" class="resultCard" style="display:none;">
+    <div class="card" style="position: relative; overflow: hidden;">
 
-    <!-- ✅ Duidelijk zichtbare witte sluitknop -->
-    <button id="closePopup" class="popup-close" title="Sluiten">×</button>
+      <!-- ✅ Duidelijk zichtbare witte sluitknop -->
+      <button id="closePopup" class="popup-close" title="Sluiten">×</button>
 
-    <h3 id="popupTitle" style="text-align:center; margin-top:10px;">Woordenlijst</h3>
+      <h3 id="popupTitle" style="text-align:center; margin-top:10px;">Woordenlijst</h3>
 
-    <div id="popupScroll" style="max-height:70vh; overflow-y:auto; margin-top:10px;">
-      
-      <div class="aantal-toggle onderaan">
-        <label class="switch">
-          <input type="checkbox" id="toonAantallen">
-          <span class="slider"></span>
-        </label>
+      <div id="popupScroll" style="max-height:70vh; overflow-y:auto; margin-top:10px;">
 
-        <div class="tooltip-wrapper" style="margin-left:10px;">
-          <span class="toggle-label" id="aantalToggleLabel">
-            ❓ Aantal keren getoond weergeven
-          </span>
-          <div class="tooltip-bubble" id="aantalTooltip">
-            Toont hoe vaak de woordjes al zijn weergegeven.
+        <div class="aantal-toggle onderaan">
+          <label class="switch">
+            <input type="checkbox" id="toonAantallen">
+            <span class="slider"></span>
+          </label>
+
+          <div class="tooltip-wrapper" style="margin-left:10px;">
+            <span class="toggle-label" id="aantalToggleLabel">
+              ❓ Aantal keren getoond weergeven
+            </span>
+            <div class="tooltip-bubble" id="aantalTooltip">
+              Toont hoe vaak de woordjes al zijn weergegeven.
+            </div>
           </div>
         </div>
+
+        <h4 id="popupNormaalTitel" style="color:var(--ebx); margin-bottom:4px;">Normale woorden</h4>
+        <table id="popupTableNormaal" class="woordenTabel">
+          <tbody></tbody>
+        </table>
+
+        <h4 id="popupSnuffelTitel" style="color:var(--ebx); margin-top:16px; margin-bottom:4px;">Snuffel woorden</h4>
+        <table id="popupTableSnuffel" class="woordenTabel">
+          <tbody></tbody>
+        </table>
       </div>
-
-      <h4 id="popupNormaalTitel" style="color:var(--ebx); margin-bottom:4px;">Normale woorden</h4>
-      <table id="popupTableNormaal" class="woordenTabel">
-        <tbody></tbody>
-      </table>
-
-      <h4 id="popupSnuffelTitel" style="color:var(--ebx); margin-top:16px; margin-bottom:4px;">Snuffel woorden</h4>
-      <table id="popupTableSnuffel" class="woordenTabel">
-        <tbody></tbody>
-      </table>
     </div>
   </div>
-</div>
 
   <!-- Popup voor resultaten per anker -->
   <div id="resultatenPopup">

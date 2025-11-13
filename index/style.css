@@ -58,7 +58,7 @@ body {
   padding: 22px 26px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, .12);
   max-width: 700px;
-  width: clamp(340px, 84vw, 690px);
+  width: clamp(360px, 84vw, 690px);
   position: relative;
 }
 
