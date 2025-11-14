@@ -104,7 +104,6 @@
             };
         }
 
-
         // ✅ Voorkom dubbele sluit-trigger
         closeBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -446,3 +445,58 @@
 
     window.openAnkerWoordjes = openAnkerWoordjes;
 })();
+
+// === Printfunctionaliteit ===
+document.addEventListener('DOMContentLoaded', () => {
+    const printBtn = document.getElementById('printNormaalBtn');
+    if (!printBtn) return;
+
+    printBtn.addEventListener('click', () => {
+        const ankerNaam = window.huidigAnkerNaam || 'Onbekend anker';
+
+        function extractWordText(chip) {
+            const clone = chip.cloneNode(true);
+            clone.querySelectorAll('.count-badge, .remove-btn').forEach(el => el.remove());
+            return clone.textContent.trim();
+        }
+
+        const normaal = Array.from(document.querySelectorAll('#normaalWoorden .woord-chip'))
+            .map(extractWordText)
+            .filter(w => w && w !== '+');
+        const snuffel = Array.from(document.querySelectorAll('#snuffelWoorden .woord-chip'))
+            .map(extractWordText)
+            .filter(w => w && w !== '+');
+
+        const printHTML = `
+            <html><head><title>Anker woordenlijst – ${ankerNaam}</title>
+            <style>
+                @media print { @page { margin: 15mm; } body { -webkit-print-color-adjust: exact; } .snuffel-container { page-break-before: always; } }
+                body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
+                h2 { color: #01689B; border-bottom: 2px solid #01689B; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: baseline; }
+                h3 { color: #555; margin-top: 25px; }
+                .woord-container { display: grid; grid-template-columns: repeat(3, auto); gap: 8px 20px; margin-top: 10px; }
+                .woord-card { background: #e8f0ff; border: 1px solid #d0d7de; border-left: 4px solid #005cbf; border-radius: 6px; padding: 6px 12px; font-weight: bold; }
+                .snuffel-container .woord-card { background: #fff3e0; border-left-color: #ff9800; }
+            </style></head>
+            <body>
+                <h2>Anker woordenlijst <span>${ankerNaam}</span></h2>
+                <h3>Normaal</h3>
+                <div class="woord-container">${normaal.map(w => `<div class="woord-card">${w}</div>`).join('')}</div>
+                <div class="snuffel-container">
+                    <h2>Anker woordenlijst <span>${ankerNaam}</span></h2>
+                    <h3>Snuffel</h3>
+                    <div class="woord-container">${snuffel.map(w => `<div class="woord-card">${w}</div>`).join('')}</div>
+                </div>
+            </body></html>`;
+
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        const doc = iframe.contentWindow.document;
+        doc.open();
+        doc.write(printHTML);
+        doc.close();
+        iframe.contentWindow.print();
+        setTimeout(() => iframe.remove(), 1000);
+    });
+});
