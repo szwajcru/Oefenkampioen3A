@@ -1007,7 +1007,7 @@ fieldset.optiegroep legend {
   max-height: 80vh;
   overflow-y: auto;
   text-align: left;
-  position: relative !important;
+  position: fixed !important;
   margin: 0 auto;
 }
 
@@ -1360,7 +1360,7 @@ tr[data-anker] button.modusBtn.active {
 }
 
 #resultatenPopup .popup-card {
-  position: relative;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -2274,3 +2274,167 @@ tr[data-anker] button.modusBtn.active {
 }
 
 /* Einde hover over de ankers sectie  */
+
+/* ================================
+   🎓 Stijl voor oefentype 'Lezen'
+   ================================ */
+
+/* Basis tabelstijl */
+#fieldset-lezen .anker-tabel {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Eerste kolom: links uitlijnen */
+#fieldset-lezen .anker-tabel th:first-child,
+#fieldset-lezen .anker-tabel td:first-child {
+  width: 85%;
+  text-align: left;
+  padding: 6px 8px;
+}
+
+/* Tweede kolom: 'Actie' gecentreerd */
+#fieldset-lezen .anker-tabel th:last-child,
+#fieldset-lezen .anker-tabel td:last-child {
+  width: 15%;
+  text-align: center;
+  vertical-align: middle;
+  padding: 6px 8px;
+}
+
+/* Cel-positionering voor pseudo-elementen (lijn & bolletje) */
+#fieldset-lezen .anker-tabel td {
+  position: relative;
+}
+
+/* Knopstijl voor vergrootglas */
+#fieldset-lezen .anker-tabel td:last-child button.btnReset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #f5f5f5;
+  border: 1px solid #d0d7de;
+  color: #01689B;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+#fieldset-lezen .anker-tabel td:last-child button.btnReset:hover {
+  background: #e0f2fe;
+  border-color: #01689B;
+}
+
+/* Kolomkop 'Actie' visueel sterker */
+#fieldset-lezen .anker-tabel th:last-child {
+  font-weight: 600;
+  color: #01689B;
+}
+
+/* Klikbare rijen */
+#fieldset-lezen .anker-tabel tr {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Hovereffect */
+#fieldset-lezen .anker-tabel tr:hover {
+  background-color: #e6f3fb;
+}
+
+/* Geselecteerde rij (blijft blauw) */
+#fieldset-lezen .anker-tabel tr.selected {
+  background-color: #d1e8ff !important;
+  transition: background-color 0.2s ease;
+}
+
+/* Blauwe lijn links — geen verschuiving meer */
+#fieldset-lezen .anker-tabel tr.selected td:first-child::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: #01689B;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+/* Bolletje links van de tekst */
+#fieldset-lezen .anker-tabel td:first-child {
+  padding-left: 24px;
+}
+
+/* Alleen tonen bij geselecteerde rij */
+#fieldset-lezen .anker-tabel tr.selected td:first-child::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background-color: #01689B;
+  border-radius: 50%;
+  opacity: 0.8;
+  box-shadow: 0 0 4px rgba(1,104,155,0.4);
+}
+
+/* Verberg radiobuttons */
+#fieldset-lezen input[type="radio"] {
+  display: none;
+}
+
+/* --- Normale blauwe lijn bij selectie --- */
+#fieldset-lezen .anker-tabel tr.selected td:first-child::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: #01689B;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+/* --- Tijdelijk geel accent tijdens klik (mousedown) --- */
+#fieldset-lezen .anker-tabel tr.selected:active td:first-child::after {
+  background-color: #f4b400; /* EBX-geel */
+}
+
+/* --- Baseline: alle rijen zonder lijntje standaard --- */
+#fieldset-lezen .anker-tabel tr td:first-child::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  transition: background-color 0.25s ease;
+}
+
+/* --- Normaal geselecteerde rij: blauw lijntje --- */
+#fieldset-lezen .anker-tabel tr.selected td:first-child::after {
+  background-color: #01689B;
+}
+
+/* --- Tijdens klikken (mousedown): geel accent met animatie --- */
+#fieldset-lezen .anker-tabel tr:active td:first-child::after {
+  background-color: #f4b400;
+  animation: yellowFlash 0.4s ease-out;
+}
+
+/* --- Keyframes voor gele flash --- */
+@keyframes yellowFlash {
+  0% { background-color: #f4b400; }
+  70% { background-color: #f4b400; }
+  100% { background-color: #01689B; }
+}
+

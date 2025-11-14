@@ -213,10 +213,10 @@
         <fieldset class="optiegroep" id="fieldset-klinkers" style="display:none;">
           <legend>Kies klanken om te oefenen</legend>
           <div class="klinker-groepen" id="klinkerChips"></div>
-          <div class="iconrow">
+          <!-- <div class="iconrow">
             <button class="iconbtn" type="button" id="btnAll">alles</button>
             <button class="iconbtn" type="button" id="btnNone">niets</button>
-          </div>
+          </div> -->
         </fieldset>
 
         <!-- Klankers submodus (na kiezen klanken) -->
@@ -233,46 +233,39 @@
         </fieldset>
 
         <!-- Lezen categorieën -->
-        <fieldset class="optiegroep" id="fieldset-lezen" style="display:none;">
-          <legend>Kies categorie (Lezen)</legend>
+<fieldset class="optiegroep" id="fieldset-lezen" style="display:none;">
+  <legend>Kies categorie (Lezen)</legend>
+  <table class="anker-tabel">
+    <thead>
+      <tr>
+        <th>Categorie 📖</th>
+        <th>Bekijk</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-lezen="functiewoorden">
+        <td>
+          Functiewoorden
+          <input type="radio" name="lezenCat" value="functiewoorden" hidden>
+        </td>
+        <td>
+          <button id="btnFunctiewoordjes" class="btnReset" title="Bekijk alle functiewoordjes">🔍</button>
+        </td>
+      </tr>
+      <tr data-lezen="zinnetjes">
+        <td>
+          Zinnetjes
+          <input type="radio" name="lezenCat" value="zinnetjes" hidden>
+        </td>
+        <td>
+          <button id="btnZinnetjes" class="btnReset" title="Bekijk alle zinnetjes">🔍</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="tip">Tip: klik op een categorie om de woordjes of zinnetjes te zien.</div>
+</fieldset>
 
-          <div class="row lezen-row" data-lezen="functiewoorden" tabindex="0">
-            <label>
-              <input type="radio" name="lezenCat" value="functiewoorden" checked>
-              Functiewoorden
-            </label>
-
-            <!-- Vergrootglas-knop -->
-            <button id="btnFunctiewoordjes" class="btnReset" title="Bekijk alle functiewoordjes">
-              <svg xmlns="https://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M10 2a8 8 0 0 1 6.32 12.906l5.387 5.388-1.414 1.414-5.388-5.387A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
-              </svg>
-            </button>
-          </div>
-
-
-          <div class="row lezen-row" data-lezen="zinnetjes" tabindex="0">
-            <label>
-              <input type="radio" name="lezenCat" value="zinnetjes">
-              Zinnetjes
-            </label>
-
-
-            <!-- Vergrootglas-knop -->
-            <button id="btnZinnetjes" class="btnReset" title="Bekijk alle zinnetjes">
-              <svg xmlns="https://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M10 2a8 8 0 0 1 6.32 12.906l5.387 5.388-1.414 1.414-5.388-5.387A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
-              </svg>
-            </button>
-
-          </div>
-
-          <div style="font-size:14px; color:#64748b;">
-            Tip: hover over een categorie om de woordjes of zinnetjes te zien.
-          </div>
-        </fieldset>
 
         <fieldset class="optiegroep" id="fieldset-anker">
           <legend>Kies een anker</legend>

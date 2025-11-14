@@ -854,14 +854,6 @@
 
     // Chips + select all/none
     renderKlinkers(false);
-    document.getElementById('btnAll').addEventListener('click', () => {
-      document.querySelectorAll('#fieldset-klinkers input[type=checkbox]').forEach(cb => cb.checked = true);
-      prepareKlinkerSubVisibility();
-    });
-    document.getElementById('btnNone').addEventListener('click', () => {
-      document.querySelectorAll('#fieldset-klinkers input[type=checkbox]').forEach(cb => cb.checked = false);
-      // Alleen deselecteren; niets verbergen.
-    });
     document.getElementById('klinkerChips').addEventListener('change', prepareKlinkerSubVisibility);
 
     // Hover functionaliteit: direct reageren op hover over Normaal / Snuffel
@@ -2667,4 +2659,27 @@ function updateIconVisibility() {
 // bij laden en bij resize uitvoeren
 updateIconVisibility();
 window.addEventListener('resize', updateIconVisibility);
+
+// ✅ Stabiele selectie zonder verschuiving
+document.addEventListener('DOMContentLoaded', function() {
+  const lezenRijen = document.querySelectorAll('#fieldset-lezen .anker-tabel tbody tr');
+
+  lezenRijen.forEach(rij => {
+    rij.addEventListener('click', (e) => {
+      // negeer klikken op knoppen
+      if (e.target.closest('button')) return;
+
+      // verwijder eerdere selectie
+      lezenRijen.forEach(r => r.classList.remove('selected'));
+
+      // markeer de huidige rij
+      rij.classList.add('selected');
+
+      // update de bijbehorende radio
+      const radio = rij.querySelector('input[type="radio"]');
+      if (radio) radio.checked = true;
+    });
+  });
+});
+
 
