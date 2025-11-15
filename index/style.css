@@ -638,6 +638,17 @@ fieldset.optiegroep legend {
   overflow-y: auto !important;
 }
 
+/* === Mobile versie: alleen width aanpassen === */
+@media (max-width: 600px) {
+  #resultatenTip {
+    width: 100% !important;
+    max-width: 100% !important;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+
 #resultatenChartContainer {
   max-width: 750px;
   height: auto;
