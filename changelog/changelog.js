@@ -2,6 +2,12 @@
 
 const changelog = [
   {
+    version: '2.02',
+    changes: [
+      { type: 'Gewijzigd', description: 'Interactieve grafieken na elk anker, zoomen mogelijk' },
+    ]
+  },
+  {
     version: '2.01',
     changes: [
       { type: 'Toegevoegd', description: 'Extra woordjes per anker toevoegen is mogelijk' },
