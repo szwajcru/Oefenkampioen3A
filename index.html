@@ -985,7 +985,7 @@
 
           // 🟢 Alles is up-to-date
           if (!reg.waiting && !reg.installing && navigator.serviceWorker.controller) {
-            toonStatusMelding(`✅ Veel plezier! (v${versie})`, '#28a745');
+            toonStatusMelding(`✅ Veel plezier!`, '#28a745');
           }
 
           // 🔁 Update detecteren
@@ -1016,7 +1016,6 @@
 
         // Force versie → Update melding
         if (event.data?.type === 'NEW_VERSION') {
-          console.log('Nieuwe versie actief:', event.data.version);
           localStorage.setItem("siteVersie", event.data.version);
           window.location.reload();
         }
@@ -1029,7 +1028,6 @@
           localStorage.setItem("siteVersie", newVersion);
 
           if (oldVersion && oldVersion !== newVersion) {
-            console.log("Nieuwe versie gedetecteerd:", newVersion);
             location.reload();
           }
         }
