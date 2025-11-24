@@ -543,8 +543,8 @@ function getBaseChartOptions(labels, data, lineColor) {
                 scale: true,
                 symbolSize: 9,
                 itemStyle: {
-                    color: lineColor,
-                    borderColor: '#000',
+                    color: 'red',
+                    borderColor: 'red',
                     borderWidth: 2
                 }
             },
@@ -618,18 +618,36 @@ function renderChartUnified(container, labels, data, mode) {
  */
 function attachDoubleClickDelete(chart) {
 
-    // Remove previous handler (avoid stacking multiple handlers)
+    // Remove previous handlers to avoid duplicates
     chart.off('dblclick');
+    chart.getZr().off('pointerdown');
 
-    // Add new handler
-    chart.on('dblclick', function (event) {
+    // Desktop: double-click
+    chart.on('dblclick', handleDeleteEvent);
 
+    // Mobile/tablet: single tap via pointerdown
+    chart.getZr().on('pointerdown', function (event) {
+
+        // Convert the pointer position to data index
+        const point = [event.offsetX, event.offsetY];
+        const dataIndex = chart.convertFromPixel({ seriesIndex: 0 }, point)[0];
+
+        if (typeof dataIndex === 'number' && dataIndex >= 0) {
+            handleDelete(dataIndex); // same delete logic as dblclick
+        }
+    });
+
+    // Handler when ECharts fires dblclick
+    function handleDeleteEvent(event) {
         if (event.componentType !== 'series') return;
+        handleDelete(event.dataIndex);
+    }
 
-        const idx = event.dataIndex;
+    // Unified delete logic
+    function handleDelete(idx) {
+
         const key = getAnchorKey();
         const arr = JSON.parse(localStorage.getItem(key) || '[]');
-
         const d = arr[idx];
         if (!d) return;
 
@@ -656,11 +674,14 @@ function attachDoubleClickDelete(chart) {
                     chart._refreshInline();
                     return;
                 }
+
+                // Popup fallback
                 loadChartData();
             }
         );
-    });
+    }
 }
+
 
 
 // =============================================================
