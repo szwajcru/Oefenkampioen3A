@@ -85,29 +85,18 @@
     })();
   </script>
 
-  <!-- 📈 Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- 📊 Nieuwe losse module voor resultaten-grafiek -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <!-- 🎨 Styles -->
+  <link rel="stylesheet" href="grafiek/anker_grafiek.css">
   <link rel="stylesheet" href="index/style.css">
   <link rel="stylesheet" href="index/hamburger.css">
-  <link rel="stylesheet" href="index/feedback.css">
+  <link rel="stylesheet" href="contact/contact.css">
   <link rel="stylesheet" href="herkansjes/herkansjes.css">
-  <link rel="stylesheet" href="index/ankerwoordjesPopup.css">
+  <link rel="stylesheet" href="ankers/ankerwoordjesPopup.css">
 
-  <!-- 📊 Nieuwe losse module voor resultaten-grafiek -->
-  <script defer src="index/resultaatGrafiek.js"></script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if (document.getElementById('resultatenChart')) {
-        window.renderResultaatGrafiekOp('resultatenChart', 'hoverChart');
-      }
-      if (document.getElementById('resultChart')) {
-        window.renderResultaatGrafiekOp('resultChart', 'resultPageChart');
-      }
-    });
-  </script>
 </head>
 
 
@@ -233,38 +222,38 @@
         </fieldset>
 
         <!-- Lezen categorieën -->
-<fieldset class="optiegroep" id="fieldset-lezen" style="display:none;">
-  <legend>Kies categorie (Lezen)</legend>
-  <table class="anker-tabel">
-    <thead>
-      <tr>
-        <th>Categorie 📖</th>
-        <th>Bekijk</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr data-lezen="functiewoorden">
-        <td>
-          Functiewoorden
-          <input type="radio" name="lezenCat" value="functiewoorden" hidden>
-        </td>
-        <td>
-          <button id="btnFunctiewoordjes" class="btnReset" title="Bekijk alle functiewoordjes">🔍</button>
-        </td>
-      </tr>
-      <tr data-lezen="zinnetjes">
-        <td>
-          Zinnetjes
-          <input type="radio" name="lezenCat" value="zinnetjes" hidden>
-        </td>
-        <td>
-          <button id="btnZinnetjes" class="btnReset" title="Bekijk alle zinnetjes">🔍</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="tip">Tip: klik op een categorie om de woordjes of zinnetjes te zien.</div>
-</fieldset>
+        <fieldset class="optiegroep" id="fieldset-lezen" style="display:none;">
+          <legend>Kies categorie (Lezen)</legend>
+          <table class="anker-tabel">
+            <thead>
+              <tr>
+                <th>Categorie 📖</th>
+                <th>Bekijk</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-lezen="functiewoorden">
+                <td>
+                  Functiewoorden
+                  <input type="radio" name="lezenCat" value="functiewoorden" hidden>
+                </td>
+                <td>
+                  <button id="btnFunctiewoordjes" class="btnReset" title="Bekijk alle functiewoordjes">🔍</button>
+                </td>
+              </tr>
+              <tr data-lezen="zinnetjes">
+                <td>
+                  Zinnetjes
+                  <input type="radio" name="lezenCat" value="zinnetjes" hidden>
+                </td>
+                <td>
+                  <button id="btnZinnetjes" class="btnReset" title="Bekijk alle zinnetjes">🔍</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="tip">Tip: klik op een categorie om de woordjes of zinnetjes te zien.</div>
+        </fieldset>
 
 
         <fieldset class="optiegroep" id="fieldset-anker">
@@ -548,24 +537,12 @@
       <div style="text-align:center; margin-top:10px;">
         <button class="btn" id="btnAgain">opnieuw beginnen</button>
       </div>
-      <div style="text-align:left; margin-top:10px;" class="reset-wrap">
-        <button id="btnReset" class="icon-only has-label" aria-label="Resultaat verwijderen">
-          <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6l-1 14H6L5 6m5-2h4a1 1 0 0 1 1 1v1H9V5a1 1 0 0 1 1-1z"></path>
-            <line x1="10" y1="11" x2="10" y2="17"></line>
-            <line x1="14" y1="11" x2="14" y2="17"></line>
-          </svg>
-          <span class="label">Resultaat verwijderen</span>
-        </button>
 
-      </div>
-      <!-- Resultaatgrafiek -->
-      <div id="chartContainer" style="display:none; text-align:center; margin-top:20px;">
-        <canvas id="resultChart"></canvas>
-      </div>
+      <div id="resultPageChart" style="width:650px; height:400px;"></div>
+      <div id="zoomHint1" class="zoomHint">Gebruik de zoom-balk om in te zoomen</div>
+
     </div>
+  </div>
   </div>
 
   <!-- Effects + Feedback overlay -->
@@ -626,12 +603,13 @@
 
   <!-- externe changelog css/js -->
   <link rel="stylesheet" href="changelog/changelog.css">
+
   <script src="changelog/changelog.js"></script>
-  <script src="index/ankers.js"></script>
-  <script src="index/klanken.js"></script>
-  <script src="index/lezen.js"></script>
-  <script defer src="index/ankerwoordjesPopup.js"></script>
-  <script src="index/feedback.js"></script>
+  <script src="database/ankers.js"></script>
+  <script src="database/klanken.js"></script>
+  <script src="database/lezen.js"></script>
+  <script defer src="ankers/ankerwoordjesPopup.js"></script>
+  <script src="contact/contact.js"></script>
   <script src="index/script.js"></script>
   <script src="index/hamburger.js"></script>
   <script src="index/oefenSessions.js"></script>
@@ -844,14 +822,120 @@
     </div>
   </div>
 
-  <!-- Popup voor resultaten per anker -->
-  <div id="resultatenPopup">
-    <div class="popup-card">
-      <button class="popup-close">×</button>
-      <div class="popupTitle">Resultaten – Anker 1</div>
-      <canvas></canvas>
+  <!-- ======================================
+     POPUP: RESULTATEN
+====================================== -->
+  <div id="resultatenPopup" class="hidden">
+    <div class="popupCard resultatenCard">
+
+      <!-- TITELBALK -->
+      <div class="popupHeader resultatenHeader">
+        <div class="popupHeaderLeft">
+          <span class="popupHeaderIcon">📊</span>
+          <span class="popupHeaderTitle" id="resultatenHeaderTitle">Resultaten</span>
+        </div>
+        <button class="popup-close">×</button>
+      </div>
+
+      <!-- TOOLBAR: MENU + ANKERS -->
+      <div class="resultatenToolbar">
+
+        <div class="actionsContainer" style="margin-right:10px;">
+          <button id="actionsBtn" class="actionsButton">☰</button>
+
+          <div id="actionsMenu" class="actionsMenu hidden">
+            <button id="printBtn">
+              <span class="menu-icon">🖨️</span>
+              Print grafiek
+            </button>
+
+            <button id="resetZoomBtn">
+              <span class="menu-icon">🔄</span>
+              Reset zoom
+            </button>
+
+            <button id="removeAllBtn">
+              <span class="menu-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                  <path d="M10 11v6"></path>
+                  <path d="M14 11v6"></path>
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                </svg>
+              </span>
+              Verwijder resultaten
+            </button>
+          </div>
+        </div>
+        <div id="anchorBar" class="anchorBar"></div>
+
+      </div>
+
+      <!-- INHOUD -->
+      <div class="resultContainer">
+
+        <!-- Modus toggle -->
+        <!-- Modus dropdown -->
+        <div class="modeToggleRow">
+          <label class="modeLabel">Modus:</label>
+
+          <div class="modeDropdown">
+            <button id="modeDropdownBtn" class="modeDropdownBtn">
+              Normaal ▾
+            </button>
+
+            <div id="modeDropdownMenu" class="modeDropdownMenu hidden">
+              <div data-mode="normaal">Normaal</div>
+              <div data-mode="snuffel">Snuffel</div>
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- Grafiek -->
+        <div class="chartWrapper">
+          <div id="grafiekEChart" class="grafiekEChart"></div>
+          <div id="zoomHint" class="zoomHint">Gebruik de zoom-balk om in te zoomen</div>
+        </div>
+
+      </div>
     </div>
   </div>
+
+
+  <!-- JOUW BESTAANDE SCRIPT -->
+  <script src="grafiek/anker_grafiek.js"></script>
+
+  <script>
+    function openPopup(anker) {
+      const popup = document.getElementById('resultatenPopup');
+
+      popup.classList.remove('hidden');
+      popup.classList.add('show');
+
+      setTimeout(() => {
+        startEmbeddedGrafiek(String(anker));
+        window.dispatchEvent(new Event('resize')); //  <-- belangrijke fix
+      }, 10);
+    }
+  </script>
+
+  <script>
+    function openAlleResultaten(anker) {
+      const popup = document.getElementById('resultatenPopup');
+
+      popup.classList.remove('hidden');
+      popup.classList.add('show');
+
+      setTimeout(() => {
+        openResultsPopupForAllAnchors();
+        window.dispatchEvent(new Event('resize')); //  <-- belangrijke fix
+      }, 10);
+    }
+  </script>
 
   <!--  Service Worker + versiebeheer -->
   <script src="version/version.js"></script>
@@ -963,7 +1047,11 @@
     }
   </script>
 
-
+  <!-- ★★★ PRINT AREA (verborgen) ★★★ -->
+  <div id="printArea" style="display:none; text-align:center; padding:20px;">
+    <h1 id="printTitle" style="font-size:26px; color:#01689B; margin-bottom:20px;"></h1>
+    <img id="printImage" style="width:100%; height:auto;" />
+  </div>
 
 </body>
 

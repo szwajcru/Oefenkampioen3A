@@ -19,17 +19,19 @@
   let toetsAfgebroken = false;
   let flitslezen = false;
   let flitsTimeoutId = null;
-  let flitsDurationMs = 500; // standaardwaarde in ms
-  let idx = 0, score = 0, startTijd = 0, getoond = 0;
-  let timerId = null, endTime = 0;
+  let flitsDurationMs = 500;                 // standaardwaarde in ms
+  let idx = 0;
+  let score = 0;
+  let startTijd = 0;
+  let getoond = 0;
+  let timerId = null;
+  let endTime = 0;
   let isHerkansing = false;
-  let lockClose = false; // true terwijl bevestiging open is
   let item = null;
-  // script.js
-  window.ankerIndexClick = false;  // globale vlag
 
+  window.ankerIndexClick = false;
 
-  // ===== Highlight helpers =====
+  // ===== Highlight helpers =====                                                                     // globale vlag
   const VOWEL_COMBOS = ['aa', 'ee', 'oo', 'uu', 'ei', 'ij', 'ui', 'oe', 'ie', 'eu', 'ou', 'au'];
   const SINGLE_VOWELS = ['a', 'e', 'i', 'o', 'u'];
   const HIGHLIGHT_COLORS = ['#ef4444'];
@@ -246,6 +248,7 @@
     const ctx = canvas.getContext('2d');
     const resize = () => { canvas.width = innerWidth; canvas.height = innerHeight; }; resize(); addEventListener('resize', resize);
     const rand = (min, max) => Math.random() * (max - min) + min;
+
     function Particle() { this.x = rand(0, canvas.width); this.y = rand(-canvas.height, 0); this.color = `hsl(${rand(0, 360)},100%,55%)`; this.size = rand(4, 9); this.speed = rand(2, 5); this.tilt = rand(-10, 10); }
     let parts = Array.from({ length: 160 }, () => new Particle());
     let active = true;
@@ -259,6 +262,7 @@
       }
       requestAnimationFrame(step);
     })();
+
     setTimeout(() => { active = false; canvas.style.display = 'none'; }, 3000);
   }
   function runFireworks() {
@@ -694,7 +698,7 @@
   function eindeToets() {
     stopTimer();
 
-    const container = document.getElementById('chartContainer');
+    const container = document.getElementById('resultPageChart');
     if (!container) return;
 
     // Toon alleen grafiek bij ankers
@@ -790,13 +794,13 @@
 
       if (ankerPadded === '09') {
         // Verberg de grafiekcontainer in plaats van verwijderen
-        const chartContainer = document.getElementById('chartContainer');
+        const chartContainer = document.getElementById(resultPageChart);
         if (chartContainer) {
           chartContainer.style.display = 'none';
         }
       } else {
         // Zorg dat de grafiekcontainer weer zichtbaar is
-        const chartContainer = document.getElementById('chartContainer');
+        const chartContainer = document.getElementById(resultPageChart);
         if (chartContainer) {
           chartContainer.style.display = '';
         }
@@ -805,7 +809,7 @@
         localStorage.setItem(perAnkerKey, JSON.stringify(perAnker));
 
         // Teken de grafiek
-        tekenResultaatGrafiek();
+        tekenResultaatGrafiek(ankerNummer, modus);
       }
     }
 
@@ -1060,73 +1064,137 @@ document.addEventListener('click', function onceResume() {
   document.removeEventListener('click', onceResume);
 }, { once: true });
 
+/**
+ * Initializes behavior for the results link, hover tooltip and "delete all results" button.
+ *
+ * - Shows all results when the results link is clicked.
+ * - Hides the mini-chart tooltip when the mouse leaves.
+ * - Asks for confirmation before deleting all stored results.
+ * - Removes local storage data and destroys the active chart instance if present.
+ *
+ * This logic is activated once the DOM is fully loaded.
+ */
 document.addEventListener('DOMContentLoaded', function () {
-  const resultatenLink = document.getElementById('resultatenLink');
-  const resultatenTip = document.getElementById('resultatenTip');
-  const wisBtn = document.getElementById('btnWisResultaten');
 
-  // Hover mini-grafiek bij link
+  // Fetch UI elements
+  const resultatenLink = document.getElementById('resultatenLink');   // "Results" link
+  const resultatenTip = document.getElementById('resultatenTip');     // Mini-chart tooltip
+  const resultatenPopup = document.getElementById('resultatenPopup'); // Results popup
+
+  /* =====================================================
+     Hover behavior and clicking the "results" link
+     ===================================================== */
   if (resultatenLink && resultatenTip) {
-    resultatenLink.addEventListener('mouseenter', () => {
-      resultatenTip.style.display = 'block';
-      tekenResultatenHoverGrafiek();
+
+    // Clicking the results link → show results for all anchors
+    resultatenLink.addEventListener('click', () => {
+      showResultsAllAnchors();
     });
 
+    // Mouse leaves the link → hide tooltip after a short delay
     resultatenLink.addEventListener('mouseleave', () => {
       window._resultatenHideTimer = setTimeout(() => {
-        // resultatenTip.style.display = 'none';
+        resultatenTip.style.display = 'none';
       }, 150);
     });
 
-    resultatenTip.addEventListener('mouseenter', () => {
-      clearTimeout(window._resultatenHideTimer);
-    });
-
+    // Mouse leaves the tooltip itself → hide immediately
     resultatenTip.addEventListener('mouseleave', () => {
       resultatenTip.style.display = 'none';
     });
-
   }
 
-  // 🗑️ Resultaten wissen met EBX-stijl bevestiging
-  if (wisBtn) {
-    wisBtn.addEventListener('click', function () {
-      toonBevestiging('Weet je zeker dat je alle resultaten wilt wissen?', (bevestig) => {
-        if (bevestig) {
-          localStorage.removeItem('resultaten');
-          if (window.resultatenChartInstance) {
-            window.resultatenChartInstance.destroy();
-          }
-          toonMelding('Alle resultaten zijn gewist.');
-          if (resultatenTip) resultatenTip.style.display = 'none';
-        }
-      });
-    });
-  }
 });
 
 
 
+document.addEventListener('DOMContentLoaded', function () {
+  const popup = document.getElementById('resultatenPopup');
+  const card = popup?.querySelector('.popupCard');
+  const resultatenBtn = document.getElementById('resultatenLink');
 
-function tekenResultatenHoverGrafiek() {
-  renderResultaatGrafiekOp('resultatenChart', 'hoverChart');
+  // Bevestigings-popup elementen
+  const confirmOverlay = document.getElementById('confirmOverlay');
+  const confirmBox = document.getElementById('confirmBox');
+
+  if (!popup || !card) return;
+
+  // Helper: is popup zichtbaar?
+  function isPopupOpen() {
+    return getComputedStyle(popup).display !== 'none';
+  }
+
+  // Resultaten popup openen via knop
+  if (resultatenBtn) {
+    resultatenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      popup.style.display = 'flex';
+    });
+  }
+
+  // Binnen de popup klikken → NIET sluiten
+  card.addEventListener('pointerdown', (e) => {
+    e.stopPropagation();
+  });
+
+  // ----------------------------------------------
+  //   DETECTEER klik BUITEN de popup om te sluiten
+  // ----------------------------------------------
+  document.addEventListener('pointerdown', (e) => {
+    if (!isPopupOpen()) return;
+
+    const meldingOverlay = document.getElementById('meldingOverlay');
+
+    const klikInPopup =
+      (popup.contains(e.target) && card.contains(e.target)) ||
+      (confirmOverlay && confirmOverlay.contains(e.target)) ||
+      (confirmBox && confirmBox.contains(e.target)) ||
+      (document.getElementById('okOnlyModal') &&
+        document.getElementById('okOnlyModal').contains(e.target)) ||
+      (meldingOverlay && meldingOverlay.contains(e.target));   // <-- DIT IS DE FIX
+
+    if (!klikInPopup) {
+      popup.style.display = 'none';
+    }
+
+  });
+
+  // Sluiten op Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isPopupOpen()) {
+      popup.style.display = 'none';
+    }
+  });
+});
+
+//1: TOON GRAFIEK, ALLE ANKERS (CLICK)
+function showResultsAllAnchors() {
+
+  const popup = document.getElementById('resultatenPopup');
+
+  popup.classList.remove('hidden');
+  popup.classList.add('show');
+
+  openResultsPopupForAllAnchors();
+
+  setTimeout(() => {
+    openResultsPopupForAllAnchors();
+    window.dispatchEvent(new Event('resize')); //  <-- belangrijke fix
+  }, 10);
+
 }
 
-function tekenResultaatGrafiek() {
+//2: TOON GRAFIEK (NA OEFENING)
+function tekenResultaatGrafiek(anker, modus) {
 
-  const gekozen = document.querySelector('#fieldset-anker input[name="anker"]:checked')?.value;
-  const ankerNummer = gekozen;
-  const gekozenMode = document.querySelector(`input[name="mode"][value="${ankerNummer}-normaal"]:checked, input[name="mode"][value="${ankerNummer}-snuffel"]:checked`);
+  const ankerNummer = anker;
 
-  const isSnuffel = gekozenMode && gekozenMode.value.endsWith('-snuffel');
-  const key = isSnuffel ? `${ankerNummer}-snuffel` : `${ankerNummer}`;
-  const mode = isSnuffel ? 'snuffel' : 'normaal';
+  console.log("📊 tekenResultaatGrafiek → anker:", ankerNummer, "modus:", modus);
 
-
-  // ✅ geef gekozen anker en modus door
-  renderResultaatGrafiekOp('resultChart', 'resultPageChart', ankerNummer, mode);
-
+  // Inline grafiek tekenen op resultaat pagina
+  renderChartInline("resultPageChart", ankerNummer, modus);
 }
+
 
 // ===== Voortgangsgrafiek tonen =====
 function toonVoortgang() {
@@ -1328,7 +1396,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 5) Container met grafiek verbergen (optioneel)
-        const chartContainer = document.getElementById('chartContainer');
+        const chartContainer = document.getElementById(resultPageChart);
         if (chartContainer) {
           chartContainer.classList.add('hidden');
         }
@@ -1373,15 +1441,24 @@ function toonOK(boodschap, onOk) {
   const overlay = document.createElement('div');
   overlay.id = 'okOnlyModal';
   overlay.style.cssText = `
-    position: fixed; inset: 0; z-index: 200;
+    position: fixed;
+    inset: 0;
+    z-index: 100000;              /* ⭐ HIER verhoogd */
     background: rgba(0,0,0,.45);
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   `;
 
   const box = document.createElement('div');
   box.style.cssText = `
-    background:#fff; border-radius:14px; padding:22px 28px; max-width:360px; width: min(90vw, 360px);
-    text-align:center; box-shadow:0 10px 30px rgba(0,0,0,.25);
+    background:#fff;
+    border-radius:14px;
+    padding:22px 28px;
+    max-width:360px;
+    width: min(90vw, 360px);
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
   `;
   box.innerHTML = `
     <p style="margin-bottom:20px;font-size:16px;">${boodschap}</p>
@@ -1406,26 +1483,35 @@ function toonOK(boodschap, onOk) {
   }
 
   okBtn.addEventListener('click', () => close(true));
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(true); });
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) close(true);
+  });
+
   window.addEventListener('keydown', keyHandler);
 
   // focus
   setTimeout(() => okBtn.focus(), 0);
 }
 
-
+// Melding tonen (OK knop)
 function toonMelding(boodschap) {
   const overlay = document.getElementById('meldingOverlay');
   const msg = document.getElementById('meldingMessage');
   const okBtn = document.getElementById('meldingOk');
 
   msg.textContent = boodschap;
+
+  // Ensure the overlay is above every popup
+  overlay.style.zIndex = '100000';    // <-- added line
+
   overlay.style.display = 'flex';
 
   okBtn.onclick = () => {
     overlay.style.display = 'none';
   };
 }
+
 
 function wisResultaten() {
   if (!confirm('Weet je zeker dat je alle resultaten wilt wissen?')) return;
@@ -1603,49 +1689,6 @@ function wisFoutWoordjes() {
   localStorage.removeItem('fout_woordjes');
   toonResultaten();
 }
-
-// Event voor “Resultaten” knop in de topbalk
-document.addEventListener('DOMContentLoaded', function () {
-  const resultatenLink = document.getElementById('resultatenLink');
-  const resultatenTip = document.getElementById('resultatenTip');
-  if (!resultatenLink || !resultatenTip) return;
-
-  // 0) Helper: staat de confirm open?
-  function isConfirmOpen() {
-    const ov = document.getElementById('confirmOverlay');
-    return ov && ov.style.display !== 'none';
-  }
-
-  // 1) Kill alle bestaande mouseleave/mouseout-sluiters (capturing phase)
-  ['mouseleave', 'mouseout'].forEach(ev => {
-    resultatenLink.addEventListener(ev, e => e.stopImmediatePropagation(), true);
-    resultatenTip.addEventListener(ev, e => e.stopImmediatePropagation(), true);
-  });
-
-  // 2) Openen: hover/focus/click op de link
-  const openTip = () => { resultatenTip.style.display = 'block'; };
-  resultatenLink.addEventListener('pointerenter', openTip);
-  resultatenLink.addEventListener('focus', openTip, true);
-  resultatenLink.addEventListener('click', (e) => { e.preventDefault(); openTip(); });
-
-  // 3) Houd open wanneer je de popup in gaat
-  resultatenTip.addEventListener('pointerenter', openTip);
-
-  // 4) Sluiten: alleen bij klik/tap buiten (niet tijdens confirm)
-  document.addEventListener('pointerdown', (e) => {
-    if (isConfirmOpen()) return;
-    const buiten = !resultatenTip.contains(e.target) && !resultatenLink.contains(e.target);
-    if (buiten) resultatenTip.style.display = 'none';
-  });
-
-  // 5) Sluiten op Escape (niet tijdens confirm)
-  document.addEventListener('keydown', (e) => {
-    if (isConfirmOpen()) return;
-    if (e.key === 'Escape') resultatenTip.style.display = 'none';
-  });
-});
-
-
 
 /**
  * Formatteert een ISO-datum naar 'dd-MM-yyyy HH:mm:ss' (lokale tijd).
@@ -1885,7 +1928,9 @@ function initAnkerResultaatGrafieken() {
     td.appendChild(btn);
 
     // Klikactie
-    btn.addEventListener('click', () => openResultatenPopupVoorAnker(ankerNummer));
+    btn.addEventListener('click', () =>
+      openResultatenPopupVoorAnker(ankerNummer)
+    );
 
     // Tooltip bij hover (maak onderscheid tussen Start en andere ankers)
     btn.addEventListener('mouseenter', e => {
@@ -1964,391 +2009,33 @@ document.querySelectorAll('label[for$="s"]').forEach(label => {
 
 
 function openResultatenPopupVoorAnker(nr) {
-  const overlay = ensureResultatenPopup();
-  const card = overlay.querySelector('.popup-card');
-  const canvas = overlay.querySelector('canvas');
-  const titel = overlay.querySelector('.popupTitle');
-  const closeBtn = overlay.querySelector('.popup-close');
-
-  if (!canvas) { console.error('Canvas ontbreekt'); return; }
-  const ctx = canvas.getContext('2d');
-  if (!ctx) { console.error('Geen 2D context'); return; }
-  if (typeof Chart === 'undefined') { alert('Chart.js niet geladen'); return; }
-
-  // ▼ Vernietig altijd een eventuele vorige chart op dit canvas
-  if (window.ankerResultChart) {
-    try { window.ankerResultChart.destroy(); } catch { }
-    window.ankerResultChart = null;
-  }
-
   const nrStr = String(nr).padStart(2, '0');
-  titel.textContent = `Resultaten – Anker ${nrStr}`;
 
-  const keyNormaal = `resultaten_anker_${nrStr}_normaal`;
-  const keySnuffel = `resultaten_anker_${nrStr}_snuffel`;
+  const popup = document.getElementById('resultatenPopup');
 
-  const read = (key) => {
-    try {
-      const raw = localStorage.getItem(key);
-      const arr = raw ? JSON.parse(raw) : [];
-      return Array.isArray(arr) ? arr : [];
-    } catch (e) {
-      console.warn('Fout bij lezen van', key, e);
-      return [];
-    }
-  };
-
-  let normaalAll = read(keyNormaal).sort((a, b) => new Date(a.datum) - new Date(b.datum)).slice(-80);
-  let snuffelAll = read(keySnuffel).sort((a, b) => new Date(a.datum) - new Date(b.datum)).slice(-80);
-
-  // ✅ Extra veiligheid: filter records op ankerNummer (indien ingevuld)
-  const sameAnker = (r) => {
-    if (r == null) return false;
-    // als geen ankerNummer in record → toestaan (achterwaartse compatibiliteit)
-    return (r.ankerNummer == null) || (String(r.ankerNummer).padStart(2, '0') === nrStr);
-  };
-  normaalAll = normaalAll.filter(sameAnker);
-  snuffelAll = snuffelAll.filter(sameAnker);
-
-  // Debug-info naar console
-  console.info('[Anker popup]', {
-    anker: nrStr,
-    keyNormaal, keySnuffel,
-    len: { normaal: normaalAll.length, snuffel: snuffelAll.length },
-    voorbeeldNormaal: normaalAll[0],
-    voorbeeldSnuffel: snuffelAll[0],
-  });
-
-  // popup zichtbaar vóór render (hitbox/layout ok)
-  overlay.style.display = 'flex';
-
-  // --- GEEN DATA PAD ---
-  if (!normaalAll.length && !snuffelAll.length) {
-    // ▼ extra zekerheid: zorg dat er géén chart meer leeft
-    if (window.ankerResultChart) {
-      try { window.ankerResultChart.destroy(); } catch { }
-      window.ankerResultChart = null;
-    }
-
-    // ▼ (optioneel) leeg ook de modeBar zodat er geen oude knoppen blijven staan
-    let modeBarEmpty = card.querySelector('.modeBar');
-    if (modeBarEmpty) modeBarEmpty.replaceChildren();
-
-    // Canvas schoon en boodschap tekenen
-    const w = canvas.width, h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-    ctx.font = '14px Arial';
-    ctx.fillStyle = '#444';
-    ctx.textAlign = 'center';
-    ctx.fillText(`Nog geen resultaten beschikbaar voor anker ${nrStr}`, w / 2, h / 2);
-
-    overlay.onclick = e => {
-      if (!card.contains(e.target) || e.target === closeBtn) overlay.style.display = 'none';
-    };
-    return;
-  }
-
-  // Gauge-icoon (blauw) met label in de SVG — tekst past altijd binnen viewBox
-  const ICON = 24; // zet op 32/48 als je groter wilt
-  const svgGaugeBase = `
-      <svg class="gauge" width="${ICON}" height="${ICON}" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-        <!-- halve boog / bezel -->
-        <path d="M12 3a9 9 0 0 1 9 9v2a1 1 0 0 1-2 0v-2a7 7 0 1 0-14 0v2a1 1 0 1 1-2 0v-2a9 9 0 0 1 9-9Z"/>
-        <!-- as + naald -->
-        <circle cx="12" cy="14" r="1.8" />
-        <path class="needle" d="M12 13.8V7.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <!-- label onder de meter: altijd passend binnen de viewBox -->
-        <text class="glabel"
-              x="12" y="22" text-anchor="middle"
-              textLength="20" lengthAdjust="spacingAndGlyphs">—</text>
-      </svg>
-    `;
-  const setGaugeVisual = (btn, mode) => {
-    const needle = btn.querySelector('.needle');
-    const t = btn.querySelector('.glabel');
-    if (needle) needle.style.transform = `rotate(${mode === 'snuffel' ? 35 : 0}deg)`;
-    if (t) t.textContent = (mode === 'snuffel') ? 'Snuffel' : 'Normaal';
-  };
-
-  // ModeBar altijd opnieuw opbouwen (voorkomt state-lek tussen ankers)
-  let modeBar = card.querySelector('.modeBar');
-  if (!modeBar) {
-    modeBar = document.createElement('div');
-    modeBar.className = 'modeBar';
-    titel.insertAdjacentElement('afterend', modeBar);
+  if (popup.classList.contains('show')) {
+    // van show → hidden
+    popup.style.display = 'flex';
+    popup.classList.remove('hidden');
+    popup.classList.add('show');
   } else {
-    modeBar.replaceChildren();
+    // van hidden OR display:none → show
+    popup.classList.remove('hidden');
+    popup.classList.add('show');
   }
 
-  const mkIconBtn = (mode, active) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.dataset.mode = mode;  // 'normaal' | 'snuffel'
-    b.className = 'icon';
-    b.title = mode === 'snuffel' ? 'Snuffel' : 'Normaal';
-    b.setAttribute('aria-label', b.title);
-    b.innerHTML = svgGaugeBase;
-    if (active) b.dataset.active = 'true';
-    return b;
-  };
 
-  const btnNormaal = mkIconBtn('normaal', true);
-  const btnSnuffel = mkIconBtn('snuffel', false);
-  setGaugeVisual(btnNormaal, 'normaal');
-  setGaugeVisual(btnSnuffel, 'snuffel');
-  modeBar.appendChild(btnNormaal);
-  modeBar.appendChild(btnSnuffel);
+  const btn = document.getElementById("modeDropdownBtn");
+  btn.textContent = "Normaal ▾";
 
-  // --- STATE OBJECT ipv currentMode (voorkomt redeclare-conflict) ---
-  const ankerState = { mode: 'normaal' };
+  window.startEmbeddedGrafiek(nrStr);
 
-  const updateButtons = () => {
-    modeBar.querySelectorAll('button.icon[data-mode]').forEach(b => {
-      const active = b.dataset.mode === ankerState.mode;
-      b.dataset.active = active ? 'true' : 'false';
-      setGaugeVisual(b, b.dataset.mode);
-    });
-  };
+  setTimeout(() => {
+    startEmbeddedGrafiek(String(nrStr));
+    window.dispatchEvent(new Event('resize')); //  <-- belangrijke fix
+  }, 10);
 
-  function buildDataFor(mode) {
-    const isSnuf = (mode === 'snuffel');
-    const src = isSnuf ? snuffelAll : normaalAll;
-    const labels = src.map((_, i) => i + 1);
-    const active = src.map(d => d.ipm);
-    const inactive = Array(labels.length).fill(null);
-    const hidden = isSnuf ? { ds0: true, ds1: false } : { ds0: false, ds1: true };
-    return {
-      labels,
-      indexToData: src,
-      dataNormaalSet: isSnuf ? inactive : active,
-      dataSnuffelSet: isSnuf ? active : inactive,
-      hidden
-    };
-  }
-
-  function renderChart(mode) {
-    if (window.ankerResultChart) {
-      try { window.ankerResultChart.destroy(); } catch { }
-      window.ankerResultChart = null;
-    }
-
-    const { labels, indexToData, dataNormaalSet, dataSnuffelSet, hidden } = buildDataFor(mode);
-
-    const chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Snelheid (IPM)',
-            data: dataNormaalSet,
-            borderColor: '#01689B',
-            backgroundColor: 'rgba(1,104,155,0.15)',
-            fill: true,
-            tension: 0.4,
-            hidden: hidden.ds0,
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            pointHitRadius: 12,
-            pointBackgroundColor: '#01689B',
-            pointHoverBackgroundColor: '#e74c3c',
-            pointHoverBorderColor: '#ff6666',
-            pointHoverBorderWidth: 3
-          },
-          {
-            label: 'Snuffel (IPM)',
-            data: dataSnuffelSet,
-            borderColor: '#f59e0b',
-            backgroundColor: 'rgba(245,158,11,0.15)',
-            fill: true,
-            tension: 0.4,
-            hidden: hidden.ds1,
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            pointHitRadius: 12,
-            pointBackgroundColor: '#f59e0b',
-            pointHoverBackgroundColor: '#e74c3c',
-            pointHoverBorderColor: '#ff6666',
-            pointHoverBorderWidth: 3
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: { mode: 'nearest', intersect: true, axis: 'xy' },
-        scales: {
-          x: { title: { display: true, text: 'Meetmoment #' }, grid: { display: false } },
-          y: { beginAtZero: true, title: { display: true, text: 'Woordjes per minuut' }, grid: { color: 'rgba(0,0,0,0.05)' } }
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            mode: 'index',
-            intersect: false,
-            backgroundColor: '#01689B',
-            titleColor: '#fff',
-            bodyColor: '#fff',
-            callbacks: {
-              title: (items) => {
-                const c = items?.[0]?.chart;
-                const d = c?.indexToData?.[items[0].dataIndex];
-                return d ? d.datum : '';
-              },
-              label: (ctx) => {
-                const d = ctx.chart.indexToData?.[ctx.dataIndex];
-
-                if (!d) return '';
-                const goed = d.goed ?? 0;
-                const fout = d.fout ?? 0;
-                const totaal = goed + fout;
-                const ipm = d.ipm ?? 0;
-                const perc = totaal > 0 ? Math.round((goed / totaal) * 100) : 0;
-                return [
-                  `Woordjes per minuut: ${ipm}`,
-                  `Juist: ${goed}`,
-                  `Fout: ${fout}`,
-                  `Totaal: ${totaal}`,
-                  `Percentage: ${perc}%`
-                ];
-
-
-              },
-              afterBody: () => ['Klik om meting te verwijderen']
-            }
-          }
-        },
-        onHover: (evt, activeEls, c) => {
-          c.canvas.style.cursor = activeEls?.length ? 'pointer' : 'default';
-        },
-        onClick: (evt, activeEls, c) => {
-          if (!activeEls?.length) return;
-          const idx = activeEls[0].index;
-          const d = c.indexToData?.[idx];
-          if (!d) return;
-
-          // klik alleen op punt in de actieve dataset
-          const dsIndexActive = (ankerState.mode === 'snuffel') ? 1 : 0;
-          const valueHere = c.data.datasets[dsIndexActive].data[idx];
-          if (valueHere == null) return;
-
-          toonBevestiging(
-            `Weet je zeker dat je meting #${idx + 1} (${d.datum}, ${d.ipm} wpm) wilt verwijderen?`,
-            (ok) => {
-              if (!ok) return;
-
-              const key = (ankerState.mode === 'snuffel') ? keySnuffel : keyNormaal;
-              const lijst = JSON.parse(localStorage.getItem(key) || '[]');
-              const i = lijst.findIndex(r =>
-                String(r.datum) === String(d.datum) &&
-                Number(r.ipm) === Number(d.ipm) &&
-                Number(r.goed) === Number(d.goed) &&
-                Number(r.fout) === Number(d.fout)
-              );
-              if (i >= 0) {
-                lijst.splice(i, 1);
-                localStorage.setItem(key, JSON.stringify(lijst));
-              }
-
-              // optioneel ook uit 'resultaten'
-              const alle = JSON.parse(localStorage.getItem('resultaten') || '[]');
-              const j = alle.findIndex(r =>
-                String(r.datum) === String(d.datum) &&
-                Number(r.ipm) === Number(d.ipm) &&
-                Number(r.goed) === Number(d.goed) &&
-                Number(r.fout) === Number(d.fout) &&
-                String(r.ankerNummer || nr) === String(nr) &&
-                Boolean(r.snuffel) === Boolean(ankerState.mode === 'snuffel')
-              );
-              if (j >= 0) {
-                alle.splice(j, 1);
-                localStorage.setItem('resultaten', JSON.stringify(alle));
-              }
-
-              // UI bijwerken
-              c.data.labels.splice(idx, 1);
-              c.data.datasets.forEach(ds => ds.data.splice(idx, 1));
-              c.indexToData.splice(idx, 1);
-              c.update();
-
-              toonOK(`Meting van ${d.datum} is verwijderd.`);
-
-              // bron opnieuw inlezen (+ filter)
-              if (ankerState.mode === 'snuffel') {
-                snuffelAll = read(keySnuffel)
-                  .sort((a, b) => new Date(a.datum) - new Date(b.datum))
-                  .slice(-80).filter(sameAnker);
-              } else {
-                normaalAll = read(keyNormaal)
-                  .sort((a, b) => new Date(a.datum) - new Date(b.datum))
-                  .slice(-80).filter(sameAnker);
-              }
-
-              safeResizeChart(c, overlay);
-              setTimeout(() => renderChart(ankerState.mode), 100);
-            }
-          );
-        }
-      }
-    });
-
-    chart.indexToData = indexToData;
-    window.ankerResultChart = chart;
-    safeResizeChart(chart, overlay);
-  }
-
-  // init
-  renderChart(ankerState.mode);
-  updateButtons();
-
-  // wisselen
-  modeBar.addEventListener('click', (e) => {
-    const btn = e.target.closest('button.icon[data-mode]');
-    if (!btn) return;
-    const nextMode = btn.dataset.mode;
-    if (nextMode === ankerState.mode) return;
-    ankerState.mode = nextMode;
-    updateButtons();
-    renderChart(ankerState.mode);
-  });
-
-  // sluiten
-  overlay.onclick = e => {
-    if (!card.contains(e.target) || e.target === closeBtn) overlay.style.display = 'none';
-  };
-
-  function ensureResultatenPopup() {
-    let overlay = document.getElementById('resultatenPopup');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'resultatenPopup';
-      overlay.style.cssText = `
-        position: fixed; inset: 0; display: none;
-        align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.35); z-index: 9999;
-      `;
-      overlay.innerHTML = `
-        <div class="popup-card" style="
-          width: clamp(320px, 90vw, 980px);
-          height: clamp(300px, 82vh, 660px);
-          background: #fff; border-radius: 14px; padding: 14px 14px 10px;
-          box-shadow: 0 10px 30px rgba(0,0,0,.25); position: relative; display:flex; flex-direction:column;">
-          <button class="popup-close" aria-label="Sluiten" title="Sluiten" style="
-            position:absolute; top:8px; right:8px; border:none; background:transparent;
-            font-size:20px; line-height:1; cursor:pointer;">×</button>
-          <h3 class="popupTitle" style="margin:0 0 8px 0; font-weight:700;">Resultaten</h3>
-          <div class="popup-toolbar"></div>
-          <div style="flex:1; min-height: 220px; position:relative;">
-            <canvas></canvas>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(overlay);
-    }
-    return overlay;
-  }
 }
-
 
 // ===============================
 // Helpers
@@ -2661,7 +2348,7 @@ updateIconVisibility();
 window.addEventListener('resize', updateIconVisibility);
 
 // ✅ Stabiele selectie zonder verschuiving
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const lezenRijen = document.querySelectorAll('#fieldset-lezen .anker-tabel tbody tr');
 
   lezenRijen.forEach(rij => {

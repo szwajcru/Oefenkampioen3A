@@ -1,0 +1,541 @@
+/* =======================================================================
+   RESULTATEN POPUP — LAYOUT A (CLEAN VERSION)
+   ======================================================================= */
+
+/* --- Overlay ---------------------------------------------------------- */
+#resultatenPopup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    /* Wordt aan/uit gezet in JS */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#resultatenPopup.show {
+    display: flex;
+}
+
+/* --- Popup Card ------------------------------------------------------- */
+.popupCard.resultatenCard {
+    background: #fff;
+    width: 70vw;
+    max-width: 690px;
+    max-height: 85vh;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+}
+
+
+@keyframes fadeInPopup {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =======================================================================
+   TITELBALK (blauwe EBX-stijl header)
+   ======================================================================= */
+
+.popupHeader.resultatenHeader {
+    background: #01689B;
+    color: #fff;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popupHeaderLeft {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.popupHeaderIcon {
+    font-size: 20px;
+}
+
+.popupHeaderTitle {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* --- Sluitknop -------------------------------------------------------- */
+/* Close-button rechtsboven in resultaten-popup */
+.resultatenHeader .popup-close {
+    background: var(--ebx) !important;
+    color: white !important;
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 8px !important;
+    font-size: 20px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: normal !important;
+    top: 4px !important;
+    right: 2px !important;
+
+    position: absolute !important;
+}
+
+.resultatenHeader .popup-close:hover {
+    font-weight: bold;
+}
+
+.popupHeader.resultatenHeader {
+    position: relative;
+}
+
+/* =======================================================================
+   POPUP INHOUD
+   ======================================================================= */
+
+.resultContainer {
+    padding: 16px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* =======================================================================
+   ACTIONS / HAMBURGER
+   ======================================================================= */
+
+.actionsContainer {
+    position: relative;
+}
+
+.actionsButton {
+    background: #01689B;
+    color: #fff;
+    border: none;
+    padding: 4px 10px;
+    font-size: 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.actionsButton:hover {
+    background: #005a85;
+}
+
+.actionsMenu {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    background: #fff;
+    border: 1px solid #d0d7df;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    z-index: 20;
+    overflow: hidden;
+    width: 180px;
+}
+
+.actionsMenu.hidden {
+    display: none;
+}
+
+.actionsMenu button {
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #015a8c;
+    transition: background 0.15s;
+}
+
+.actionsMenu button:hover {
+    background: #eef6fb;
+}
+
+/* =======================================================================
+   ANKERKNOPPEN
+   ======================================================================= */
+
+.anchorBar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.anchorButton {
+    padding: 6px 10px;
+    min-width: 36px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid #cfd6de;
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+    font-size: 14px;
+    color: #014F75;
+}
+
+.anchorButton:hover {
+    background: #f1f8fd;
+}
+
+.anchorButton.active {
+    background: #dceef8;
+    border-color: #9ac7df;
+    box-shadow: 0 0 0 2px #b7dbec inset;
+}
+
+/* Anchor buttons */
+.anchorBar .nb {
+    padding: 6px 12px;
+    font-size: 15px;
+    background: #fff;
+    border: 1px solid #01689B;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 4px;
+    transition: background .15s;
+}
+
+.anchorBar .nb.active {
+    background: #01689B;
+    color: #fff;
+}
+
+.titleRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+}
+
+
+/* =======================================================================
+   MODUS-TOGGLE
+   ======================================================================= */
+
+.modeToggleRow {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 100px;
+}
+
+.modeLabel {
+    font-size: 14px;
+    color: #014F75;
+    font-weight: 600;
+}
+
+.modeToggle {
+    background: #01689B;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.modeToggle:hover {
+    background: #005a85;
+}
+
+/* =======================================================================
+   GRAFIEK (ECHARTS)
+   ======================================================================= */
+
+.chartWrapper {
+    width: 100%;
+    height: 350px;
+}
+
+.grafiekEChart {
+    width: 100%;
+    height: 100%;
+}
+
+/* =======================================================================
+   ZOOM HINT
+   ======================================================================= */
+
+.zoomHint {
+    text-align: center;
+    color: #777;
+    font-size: 12px;
+    margin-top: -1px;
+}
+
+.zoomHint1 {
+    text-align: center;
+    color: #777;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* =======================================================================
+   MOBILE OPTIMALISATIE
+   ======================================================================= */
+
+@media (max-width: 768px) {
+
+    .popupCard.resultatenCard {
+        width: 72vw;
+        max-width: 72vw;
+        max-height: 88vh;
+    }
+
+    .popupHeader.resultatenHeader {
+        padding: 12px 14px;
+    }
+
+    .popupHeaderTitle {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .chartWrapper {
+        height: 300px;
+    }
+
+    .modeToggle {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
+
+/* =======================================================================
+   PRINT-WEERGAVE — 1 PAGINA MET TITEL + GRAFIEK
+   ======================================================================= */
+
+@media print {
+
+    body * {
+        visibility: hidden !important;
+    }
+
+    #grafiekEChart,
+    #grafiekEChart * {
+        visibility: visible !important;
+    }
+
+    #grafiekEChart {
+        position: fixed !important;
+        top: 30mm !important;
+        left: 0;
+        width: 100vw !important;
+        height: calc(100vh - 40mm) !important;
+    }
+
+    #printTitle,
+    .popupHeaderTitle,
+    .popupHeaderIcon {
+        visibility: visible !important;
+        position: fixed !important;
+        top: 10mm !important;
+        left: 0;
+        width: 100%;
+        text-align: center !important;
+        color: #01689B !important;
+        font-size: 22px !important;
+    }
+
+    @page {
+        size: A4 portrait;
+        margin: 10mm;
+    }
+}
+
+
+/* Rij met menu-knop en ankerknoppen */
+.toolbarRow {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    /* ruimte tussen menu-knop en ankerknoppen */
+    margin: 12px 0 4px 0;
+}
+
+/* Menu-knop links */
+#actionsBtn,
+.hamburgerBtn {
+    flex-shrink: 0;
+}
+
+/* Ankerknoppen direct naast het menu */
+.anchorBar {
+    display: flex;
+    gap: 1px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+
+/* ===== POPUP TOOLBAR ===== */
+.resultatenToolbar {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    /* ruimte menu ↔ ankers */
+    padding: 12px 20px;
+    flex-wrap: wrap;
+    /* zodat het op mobiel mooi afbreekt */
+}
+
+/* hamburger knop */
+.actionsButton {
+    background: #01689B;
+    color: white;
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ankerbuttons */
+.anchorButton {
+    min-width: 38px;
+    height: 38px;
+    padding: 6px 10px;
+    border: 2px solid #01689B;
+    border-radius: 8px;
+    background: white;
+    color: #01689B;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+.anchorButton.active {
+    background: #01689B;
+    color: white;
+}
+
+/* titel rechts boven */
+.popup-close {
+    background: #dc2626;
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+
+/* ===========================
+   MODE DROPDOWN
+   =========================== */
+
+.modeDropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.modeDropdownBtn {
+    background: #fff;
+    border: none;
+    padding: 2px 7px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #01689B;
+}
+
+.modeDropdownBtn:hover {
+    background: #f1f8ff;
+}
+
+.modeDropdownMenu {
+    position: absolute;
+    top: 28px;
+    left: 0;
+    background: #fff;
+    border: 1px solid #01689B;
+    border-radius: 8px;
+    width: 140px;
+    z-index: 50;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modeDropdownMenu div {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Algemeen hover-effect */
+.modeDropdownMenu div:hover {
+    background: #e8f4ff;
+}
+
+/* Eerste item (top rounded corners) */
+.modeDropdownMenu div:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+/* Laatste item (bottom rounded corners) */
+.modeDropdownMenu div:last-child {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* Optioneel: betere uitstraling voor alle items */
+.modeDropdownMenu div {
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+
+/* verbergen */
+.hidden {
+    display: none !important;
+}
+
+#resultatenTip {
+  position: fixed;
+  top: 350px;
+  left: 50%;
+  background: #fff;
+  border: 2px solid var(--ebx);
+  display: none;
+}
+
+
+#grafiekEChart {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.chartWrapper {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 !important;
+}

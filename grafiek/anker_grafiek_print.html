@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Grafiek printen</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20mm;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            color: #01689B;
+            font-weight: bold;
+        }
+
+        #printGrafiek {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        @media print {
+            body {
+                margin: 10mm;
+            }
+
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 id="printTitle">Grafiek</h1>
+
+    <img id="printGrafiek" alt="Grafiek">
+
+    <script>
+        let hasPrinted = false;
+
+        // Printpagina meldt zich als "klaar"
+        window.onload = function () {
+            if (window.opener) {
+                window.opener.postMessage({ type: 'printReady' }, '*');
+            }
+        };
+
+        // Grafiekgegevens ontvangen
+        window.addEventListener('message', function (event) {
+            if (event.data.type === 'printGrafiek' && !hasPrinted) {
+
+                hasPrinted = true;
+
+                const titleEl = document.getElementById('printTitle');
+                const imgEl = document.getElementById('printGrafiek');
+
+                titleEl.innerText = event.data.title;
+
+                // Wacht tot de afbeelding echt geladen is
+                imgEl.onload = () => {
+                    setTimeout(() => {
+                        window.print();
+                    }, 100);
+                };
+
+                imgEl.src = event.data.image;
+            }
+        });
+
+        // voorkomen dat herfocussen opnieuw print triggert
+        window.addEventListener('focus', () => {
+            hasPrinted = true;
+        });
+    </script>
+
+    
+
+</body>
+</html>

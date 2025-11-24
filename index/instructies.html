@@ -26,6 +26,44 @@
       font-weight: 500;
     }
 
+
+    .howto-header {
+      position: relative;
+      background-color: #01689B;
+      color: white;
+      padding: 10px 18px;
+      /* veel kleiner */
+      font-size: 1.25em;
+      /* iets kleiner zodat hij mooi oogt */
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      /* verticaal centreren */
+      justify-content: center;
+      min-height: 48px;
+      /* gelijk aan popup headers */
+    }
+
+
+    .howto-header .howto-close {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      font-size: 28px;
+      color: white;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0 6px;
+    }
+
+    .howto-header .howto-close:hover {
+      opacity: 0.75;
+    }
+
+
     main {
       max-width: 900px;
       margin: 2em auto;
@@ -99,7 +137,7 @@
     }
 
     figure img {
-      width: 100%;
+      width: 65%;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
@@ -138,7 +176,10 @@
 </head>
 
 <body>
-  <header>Hoe werkt het?</header>
+  <header class="howto-header">
+    <span>Hoe werkt het?</span>
+    <button class="howto-close">×</button>
+  </header>
 
   <main>
     <h2>Over deze oefensite</h2>
@@ -261,9 +302,13 @@
     </p>
   </main>
 
-  <footer>
-    © 2025 Oefensite – Samen leren lezen in groep 3
-  </footer>
+  <!-- Sluiten -->
+  <script>
+    document.querySelector(".howto-close")?.addEventListener("click", () => {
+      window.history.back();
+    });
+  </script>
+
 </body>
 
 </html>

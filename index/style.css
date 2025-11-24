@@ -554,10 +554,6 @@ fieldset.optiegroep legend {
   color: #000 !important;
 }
 
-#resultChart {
-  height: 300px;
-}
-
 .btn.secondary {
   background-color: #475569;
   box-shadow: 0 6px 0 rgba(0, 0, 0, .18);
@@ -584,20 +580,6 @@ fieldset.optiegroep legend {
   transition: transform 0.15s ease-in-out;
 }
 
-#chartContainer:empty {
-  display: none;
-}
-
-#chartContainer {
-  height: auto;
-  margin-top: 20px;
-  text-align: center;
-}
-
-#chartContainer.hidden {
-  display: none !important;
-}
-
 .icon-only {
   background: none;
   border: none;
@@ -618,57 +600,6 @@ fieldset.optiegroep legend {
   color: #fff;
   background-color: white;
   opacity: 0.75;
-}
-
-#resultatenTip {
-  position: fixed;
-  top: 350px;
-  left: 50%;
-  background: #fff;
-  border: 2px solid var(--ebx);
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  z-index: 100;
-  display: none;
-  width: 60%;
-  max-width: 600px;
-  height: 80vh;
-  max-height: 60vh !important;
-  overflow-y: auto !important;
-}
-
-/* === Mobile versie: alleen width aanpassen === */
-@media (max-width: 600px) {
-  #resultatenTip {
-    width: 100% !important;
-    max-width: 100% !important;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-}
-
-
-#resultatenChartContainer {
-  max-width: 750px;
-  height: auto;
-  margin-top: 10px;
-  width: 100%;
-  margin-bottom: 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: stretch;
-  max-height: 75vh;
-  min-height: 342px;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-#resultatenTip h2 {
-  margin-top: 0;
-  color: var(--ebx);
-  text-align: left;
 }
 
 #versionTopGlobal span#resultatenLink {
@@ -1022,32 +953,6 @@ fieldset.optiegroep legend {
   margin: 0 auto;
 }
 
-.resultaten-acties .icon-only {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #3391c3;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s ease;
-}
-
-.resultaten-acties .icon-only:hover {
-  background-color: rgba(51, 145, 195, 0.08);
-  border-radius: 6px;
-  color: #3391c3;
-}
-
-.resultaten-acties .icon-only svg {
-  stroke: #3391c3;
-}
-
-.resultaten-acties .icon-only:hover svg {
-  stroke: #3391c3;
-}
-
 #mijnHerkansjesLink {
   text-decoration: underline;
   cursor: pointer;
@@ -1370,246 +1275,12 @@ tr[data-anker] button.modusBtn.active {
   padding: 4px 10px;
 }
 
-#resultatenPopup .popup-card {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 5100;
-  background: #fff;
-  border: 3px solid var(--ebx);
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  width: clamp(320px, 92vw, 640px);
-  max-height: 86vh;
-  display: flex;
-  flex-direction: column;
-  padding: 18px 20px;
-}
-
-#resultatenPopup canvas {
-  width: 100% !important;
-  height: auto !important;
-  margin-top: 10px;
-  aspect-ratio: 16 / 9;
-  max-height: 360px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-}
-
-.resultaten-popup {
-  display: inline-block;
-  flex-direction: column;
-  align-items: center;
-  background: #fff;
-  border-radius: 16px;
-  padding: 20px 24px;
-  width: clamp(340px, 80vw, 640px);
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
-  position: relative;
-  opacity: 0;
-  transform: translate(-50%, -50%);
-  animation: fadeInPopup 0.25s ease forwards;
-  vertical-align: middle;
-  left: 50%;
-  top: 50%;
-}
-
-#resultatenPopup {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-#resultatenPopup .popupTitle {
-  font-size: 1.25em;
-  font-weight: 700;
-  color: var(--ebx);
-  margin-bottom: 10px;
-  text-align: center;
-  margin: 0 0 12px;
-}
-
-#resultatenPopup .popup-close {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  border: none;
-  background: #dc2626;
-  color: #fff;
-  font-size: 18px;
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  line-height: 28px;
-}
-
-#resultatenPopup .popup-close:hover {
-  background: #b91c1c;
-}
-
 #confirmOverlay {
   position: fixed;
   inset: 0;
   z-index: 99999;
   background: rgba(15, 23, 42, .45);
   pointer-events: auto;
-}
-
-.resultToolbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin: 0 0 10px 0;
-}
-
-.resultFooter {
-  margin-top: 10px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.resultToolbar .numberBar {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.resultToolbar .numberBar .nb {
-  width: 36px;
-  height: 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  border: 1px solid #cfd6de;
-  background: #fff;
-  color: #0A4B68;
-  font: 600 15px/1 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  cursor: pointer;
-  user-select: none;
-  transition: background .15s ease, box-shadow .15s ease, transform .05s ease;
-}
-
-.resultToolbar .numberBar .nb:hover {
-  background: #f5f9fc;
-}
-
-.resultToolbar .numberBar .nb:active {
-  transform: translateY(1px);
-}
-
-.resultToolbar .numberBar .nb.active {
-  background: #eef6fb;
-  box-shadow: 0 0 0 2px rgba(1, 104, 155, .25) inset;
-  border-color: #cfe4ef;
-}
-
-.resultToolbar .spacer {
-  flex: 1;
-}
-
-.resultToolbar .modeBar {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.resultToolbar .modeBar button.icon {
-  background: none;
-  border: none;
-  padding: 6px 8px;
-  border-radius: 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #01689B;
-  transition: background-color .15s ease, transform .04s ease;
-}
-
-.resultToolbar .modeBar button.icon:hover {
-  background: rgba(1, 104, 155, .08);
-}
-
-.resultToolbar .modeBar button.icon[data-active="true"] {
-  background: rgba(1, 104, 155, .12);
-}
-
-.resultToolbar .modeBar button.icon:active {
-  transform: scale(.97);
-}
-
-.gauge .needle {
-  transition: transform 180ms ease;
-  transform-origin: 12px 14px;
-}
-
-.gauge .glabel {
-  font: 700 8px/1 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  letter-spacing: .2px;
-  user-select: none;
-}
-
-#resultatenChartContainer canvas {
-  flex: 1 1 auto;
-  width: 100% !important;
-  height: 30vh !important;
-  box-sizing: border-box;
-}
-
-#resultatenChart {
-  height: 342px !important;
-  width: 100% !important;
-  display: block;
-  box-sizing: border-box;
-}
-
-#btnReset:visited {
-  color: #01689B !important;
-}
-
-#btnReset:focus {
-  color: #01689B !important;
-}
-
-#btnReset:active {
-  color: #01689B !important;
-}
-
-#btnReset svg {
-  stroke: currentColor !important;
-}
-
-#btnReset[data-tooltip]::before {
-  content: none !important;
-  display: none !important;
-}
-
-#btnReset[data-tooltip]::after {
-  content: none !important;
-  display: none !important;
-}
-
-.resultaten-popup .resultFooter button::before {
-  content: none !important;
-  display: none !important;
-}
-
-.resultaten-popup .resultFooter button::after {
-  content: none !important;
-  display: none !important;
 }
 
 #functiewoordjesPopup .popup-content.popup-functiewoordjes {
@@ -2013,14 +1684,6 @@ tr[data-anker] button.modusBtn.active {
 
 }
 
-@media (max-width: 768px) {
-  #resultatenChartContainer {
-    height: 75vh;
-    min-height: 250px;
-  }
-
-}
-
 @keyframes bijtjeVliegtAan {
   0% {
     transform: translateX(90px) rotate(0deg);
@@ -2142,28 +1805,6 @@ tr[data-anker] button.modusBtn.active {
     min-width: 32px;
     padding-left: 6px;
     padding-right: 6px;
-  }
-
-}
-
-@media (max-width: 720px) {
-  #resultatenPopup .popup-card {
-    width: 94vw;
-    padding: 14px 16px;
-  }
-
-  #resultatenPopup canvas {
-    aspect-ratio: 4 / 3;
-    max-height: 300px;
-  }
-
-}
-
-@media (max-width: 560px) {
-  html body #resultatenTip {
-    max-height: 98vh !important;
-    overflow-y: auto !important;
-    height: 62vh;
   }
 
 }
