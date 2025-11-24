@@ -620,65 +620,22 @@ function attachDoubleClickDelete(chart) {
 
     chart.off('dblclick');
     chart.off('click');
-    chart.getZr().off('pointerdown');
-    chart.getZr().off('zr:tap');
 
-    let lastTapTime = 0;
-
-    /* ------------------------------------------
-       1. Desktop → dubbelklik
-       ------------------------------------------ */
+    // Desktop → dubbele klik
     chart.on('dblclick', (event) => {
+        if (!isDesktop()) return;
         if (event.componentType !== 'series') return;
         handleDelete(event.dataIndex);
     });
 
-    /* ------------------------------------------
-       2. Phones → double-tap via click
-       ------------------------------------------ */
+    // iPad / iPhone / Android tablets → enkele tik
     chart.on('click', (event) => {
-
-        if (isTablet()) return;       // iPad/tablets → skip
-        if (!isMobilePhone()) return; // desktop → skip
-
+        if (!isTouchDevice()) return;   // desktop negeren
         if (event.componentType !== 'series') return;
-
-        const now = Date.now();
-        const delta = now - lastTapTime;
-
-        if (delta > 50 && delta < 300) {
-            handleDelete(event.dataIndex);
-        }
-
-        lastTapTime = now;
-    });
-
-    /* ------------------------------------------
-       3. iPadOS / tablets → double-tap via ZRender TAP
-       ------------------------------------------ */
-    chart.getZr().on('zr:tap', (ev) => {
-
-        if (!isTablet()) return;
-
-        const point = [ev.offsetX, ev.offsetY];
-        const dataIndex = chart.convertFromPixel({ seriesIndex: 0 }, point)[0];
-
-        if (typeof dataIndex !== 'number' || dataIndex < 0) return;
-
-        const now = Date.now();
-        const delta = now - lastTapTime;
-
-        if (delta > 50 && delta < 300) {
-            handleDelete(dataIndex);
-        }
-
-        lastTapTime = now;
+        handleDelete(event.dataIndex);  // directe delete
     });
 
 
-    /* ------------------------------------------
-       Delete logic
-       ------------------------------------------ */
     function handleDelete(idx) {
         const key = getAnchorKey();
         const arr = JSON.parse(localStorage.getItem(key) || '[]');
@@ -688,7 +645,6 @@ function attachDoubleClickDelete(chart) {
         toonBevestiging(
             `Weet je zeker dat je meting #${idx + 1} (${d.datum}, ${d.ipm} ipm) wilt verwijderen?`,
             (ok) => {
-
                 if (!ok) return;
 
                 const realIdx = arr.findIndex(r =>
@@ -703,33 +659,29 @@ function attachDoubleClickDelete(chart) {
 
                 toonOK(`Meting van ${d.datum} is verwijderd.`);
 
-                if (chart._refreshInline) chart._refreshInline();
-                else loadChartData();
+                if (chart._refreshInline) {
+                    chart._refreshInline();
+                } else {
+                    loadChartData();
+                }
             }
         );
     }
 
-    /* ------------------------------------------
-       Detectie
-       ------------------------------------------ */
-    function isMobilePhone() {
-        return /iPhone|Android/.test(navigator.userAgent);
+    // ECHT betrouwbaar
+    function isTouchDevice() {
+        return (
+            ('ontouchstart' in window) ||
+            navigator.maxTouchPoints > 0 ||
+            navigator.msMaxTouchPoints > 0
+        );
     }
 
-    function isTablet() {
-        const ua = navigator.userAgent;
-
-        // iPadOS 13+ (Mac UA + touch)
-        if (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) return true;
-
-        if (/iPad/.test(ua)) return true;
-
-        // Android tablets
-        if (/Android/.test(ua) && !/Mobile/.test(ua)) return true;
-
-        return false;
+    function isDesktop() {
+        return !isTouchDevice();
     }
 }
+
 
 
 
