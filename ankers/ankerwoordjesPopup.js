@@ -428,14 +428,13 @@
         }
     }
 
-    function openAnkerWoordjes(ankerNaam, woordenNormaal = [], woordenSnuffel = []) {
+    function openAnkerWoordjes(ankerNaam, woordenNormaal = [], woordenSnuffel = [], nr) {
         ensureStyleOnce();
         window.huidigAnkerNaam = ankerNaam;
         window.huidigAnker = { normaal: woordenNormaal, snuffel: woordenSnuffel };
-
         const titleEl = document.getElementById('testTitle');
         if (titleEl) {
-            const cleanName = ankerNaam.replace(/^[^\w\d]+/, '').trim();
+            const cleanName = 'anker '  + getAnchorNormalized(nr);
             titleEl.textContent = `📚 Woordenlijst van ${cleanName}`;
         }
 

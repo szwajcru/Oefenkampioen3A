@@ -30,8 +30,18 @@ function getAnchorLabel() {
 
 //   ANCHOR LABEL
 function getAnchorNormalized(anchor) {
-    return (anchor === 'S') ? 'start' : anchor;
+
+    if (anchor === 'S' || anchor === '0' || anchor === '00') {
+        return 'start';
+    }
+
+    // Verwijder voorloopnullen: "03" → "3"
+    const normalized = String(parseInt(anchor, 10));
+
+    // parseInt() kan NaN geven → fallback naar originele anchor
+    return isNaN(normalized) ? anchor : normalized;
 }
+
 
 // STORAGE OBJECT KEY RESULTS PER ANCHOR + MODE   
 function getAnchorKey() {
