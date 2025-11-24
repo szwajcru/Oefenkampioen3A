@@ -1,7 +1,9 @@
 // sw.js — versie-consistente precache + bot-vriendelijk
 // Geen importScripts nodig, versie staat nu hier:
-const SITE_VERSION = '2025-11-24-1423';
+const SITE_VERSION = '2025-11-24-1500';
 const CACHE_NAME = 'site-cache-' + SITE_VERSION;
+
+
 
 // Alle sourcer per release die consistent moeten zijn
 const FILES = [
@@ -136,4 +138,23 @@ self.addEventListener('fetch', (event) => {
 // Messages van clients
 self.addEventListener('message', (e) => {
   if (e.data === 'SKIP_WAITING') self.skipWaiting();
+});
+
+// -----------------------------------------------
+// Nieuwe versie melden aan alle open clients
+// -----------------------------------------------
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const clients = await self.clients.matchAll({
+      includeUncontrolled: true,
+      type: "window"
+    });
+
+    for (const client of clients) {
+      client.postMessage({
+        type: "SET_SITE_VERSION",
+        version: SITE_VERSION
+      });
+    }
+  })());
 });
