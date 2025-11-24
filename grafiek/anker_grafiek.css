@@ -218,7 +218,10 @@
 .anchorBar .nb.active {
     background: #01689B;
     color: #fff;
+    padding: 6px 12px !important;
+    border-color: #01689B !important;
 }
+
 
 .titleRow {
     display: flex;
@@ -300,9 +303,9 @@
 @media (max-width: 768px) {
 
     .popupCard.resultatenCard {
-        width: 72vw;
-        max-width: 72vw;
-        max-height: 88vh;
+        width: 95vw;
+        max-width: 95vw;
+        max-height: 85vh;
     }
 
     .popupHeader.resultatenHeader {
@@ -321,6 +324,40 @@
     .modeToggle {
         padding: 6px 12px;
         font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* Kleinere hamburger-knop */
+    .actionsButton,
+    #actionsBtn,
+    .hamburgerBtn {
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 16px !important;
+        padding: 0 !important;
+    }
+
+    /* Kleinere ankerknoppen */
+    .anchorBar .nb,
+    .anchorButton {
+        min-width: 30px !important;
+        height: 30px !important;
+        padding: 3px 5px !important;
+        font-size: 12px !important;
+        border-radius: 6px !important;
+    }
+
+    /* Zet toolbar compacter bij elkaar */
+    .resultatenToolbar {
+        gap: 9px !important;
+        padding: 10px 2px !important;
+    }
+
+    /* Zorg dat anchorBar niet te wijd wordt */
+    .anchorBar {
+        gap: 1px !important;
     }
 }
 
@@ -519,12 +556,12 @@
 }
 
 #resultatenTip {
-  position: fixed;
-  top: 350px;
-  left: 50%;
-  background: #fff;
-  border: 2px solid var(--ebx);
-  display: none;
+    position: fixed;
+    top: 350px;
+    left: 50%;
+    background: #fff;
+    border: 2px solid var(--ebx);
+    display: none;
 }
 
 
@@ -534,8 +571,18 @@
     padding: 0 !important;
     margin: 0 !important;
 }
+
 .chartWrapper {
     width: 100% !important;
     max-width: none !important;
     padding: 0 !important;
+}
+
+/* INLINE grafiek container — vaste, correcte hoogte */
+#resultPageChart {
+    width: 100% !important;
+    height: 340px !important;
+    max-height: 320px !important;
+    min-height: 320px !important;
+    box-sizing: border-box;
 }

@@ -2,10 +2,9 @@
 document.addEventListener('DOMContentLoaded', function () {
   const feedbackLink = document.getElementById('feedbackBtn');
   const feedbackForm = document.getElementById('feedbackForm');
-  const closeBtn = document.getElementById('btnCloseFeedback');
   const form = document.getElementById('formFeedback');
 
-  if (!feedbackLink || !feedbackForm || !closeBtn || !form) {
+  if (!feedbackLink || !feedbackForm || !form) {
     console.warn('Feedback-elementen niet gevonden in DOM.');
     return;
   }
@@ -14,11 +13,9 @@ document.addEventListener('DOMContentLoaded', function () {
   feedbackLink.addEventListener('click', e => {
     e.preventDefault();
     feedbackForm.style.display = 'block';
-  });
 
-  // === Popup sluiten ===
-  closeBtn.addEventListener('click', () => {
-    feedbackForm.style.display = 'none';
+    // X-knop zoals ankerwoordjes-popup
+    injectContactCloseX();
   });
 
   // === Formulier verzenden ===
@@ -76,3 +73,47 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(() => melding.remove(), 3400);
   }
 });
+
+
+// === Injecteer X-knop (identiek aan ankerwoordjes popup) ===
+function injectContactCloseX() {
+  const popup = document.getElementById('feedbackForm');
+  if (!popup) return;
+
+  // oude X verwijderen (voorkomt duplicaten)
+  const old = popup.querySelector('#closeContactX');
+  if (old) old.remove();
+
+  // nieuwe X-knop
+  const closeBtn = document.createElement('button');
+  closeBtn.id = 'closeContactX';
+  closeBtn.innerHTML = '×';
+  closeBtn.title = 'Sluiten';
+
+  // exacte styling zoals JIJ wilde
+  closeBtn.style.position = 'absolute';
+  closeBtn.style.top = '8px';
+  closeBtn.style.right = '10px';
+  closeBtn.style.background = 'none';
+  closeBtn.style.border = 'none';
+  closeBtn.style.color = 'white';
+  closeBtn.style.fontSize = '18px';
+  closeBtn.style.lineHeight = '1';
+  closeBtn.style.fontWeight = '300';
+  closeBtn.style.cursor = 'pointer';
+  closeBtn.style.opacity = '0.9';
+  closeBtn.style.zIndex = '9999';
+
+  // toevoegen aan titelbalk
+  const titleCell = popup.querySelector('thead th[colspan]');
+  if (titleCell) {
+    titleCell.style.position = 'relative';
+    titleCell.appendChild(closeBtn);
+  }
+
+  closeBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    popup.style.display = 'none';
+  });
+}

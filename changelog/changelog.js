@@ -166,3 +166,33 @@ changelog.forEach(entry => {
     tbody.appendChild(tr);
   });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const popup = document.getElementById('changelogTip');
+  const closeBtn = document.getElementById('closeChangelogX');
+  const trigger = document.getElementById('releaseNotesBtn');
+
+  if (!popup || !closeBtn || !trigger) return;
+
+  // Popup openen (jouw bestaande code!)
+  trigger.addEventListener('click', () => {
+    popup.classList.add('show');
+    popup.style.pointerEvents = 'auto';
+  });
+
+  // X sluit popup
+  closeBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    popup.classList.remove('show');
+    popup.style.pointerEvents = 'none';
+  });
+
+  // Klik buiten popup sluit ook
+  document.addEventListener('click', (e) => {
+    if (!popup.contains(e.target) && !trigger.contains(e.target)) {
+      popup.classList.remove('show');
+      popup.style.pointerEvents = 'none';
+    }
+  });
+});

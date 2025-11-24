@@ -424,6 +424,7 @@ function renderChartInline(containerId, anker, mode) {
     const container = document.getElementById(containerId);
 
     const chartInstance = renderChartUnified(container, labels, data, mode);
+    setTimeout(() => chartInstance.resize(), 50)
 
     if (results.length === 0) {
         showNoDataMessage(chartInstance, getAnchorNormalized(anker), true);

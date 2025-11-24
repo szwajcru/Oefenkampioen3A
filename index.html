@@ -101,6 +101,18 @@
 
 
 <body>
+
+  <script>
+    const siteVersie = localStorage.getItem("siteVersie") || "onbekend";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const tagBox = document.getElementById("menuTag");
+      if (tagBox) {
+        tagBox.textContent = versieTag;
+      }
+    });
+  </script>
+
   <div id="versionTopGlobal">
     📚📖&nbsp;<span id="mijnHerkansjesLink" tabindex="0" title="Bekijk woordjes die je lastig vond">Mijn
       herkansjes</span> ·
@@ -165,6 +177,7 @@
       <div class="menu-item has-sub">🧩 Versie
         <div class="submenu hidden">
           <div class="submenu-item">ℹ️ Versie: <strong>2.01</strong></div>
+          <div class="submenu-item">⚙️ Build: <strong id="siteVersieTag"></strong></div>
           <div class="submenu-item" id="releaseNotesBtn">📝 Release notes</div>
         </div>
       </div>
@@ -538,7 +551,7 @@
         <button class="btn" id="btnAgain">opnieuw beginnen</button>
       </div>
 
-      <div id="resultPageChart" style="width:650px; height:400px;"></div>
+      <div id="resultPageChart"></div>
       <div id="zoomHint1" class="zoomHint">Gebruik de zoom-balk om in te zoomen</div>
 
     </div>
@@ -552,21 +565,44 @@
     <div class="badge"></div>
   </div>
 
-  <div id="changelogTip">
-    <table id="changelogTable" class="tg">
-      <thead>
-        <tr>
-          <th>Versie</th>
-          <th>Type</th>
-          <th>Omschrijving</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Wordt door JS gevuld -->
-      </tbody>
-    </table>
-  </div>
+<div id="changelogTip">
+  <table id="changelogTable" class="tg">
+    <thead>
+      <tr>
+        <th>Versie</th>
+        <th>Type</th>
 
+        <!-- X-knop in de Omschrijving-header -->
+        <th style="position: relative;">
+          Omschrijving
+
+          <button id="closeChangelogX" title="Sluiten" style="
+              position:absolute;
+              top:50%;
+              transform:translateY(-50%);
+              right:10px;
+              background:none;
+              border:none;
+              color:white;
+              font-size:18px;
+              line-height:1;
+              font-weight:300;
+              cursor:pointer;
+              opacity:0.9;
+            ">
+            ×
+          </button>
+        </th>
+
+      </tr>
+    </thead>
+
+    <tbody>
+      <!-- Wordt door JS gevuld -->
+    </tbody>
+
+  </table>
+</div>
 
   <!-- Resultaten hover popup -->
   <div id="resultatenTip" class="resultaten-popup">
@@ -692,7 +728,10 @@
         <table id="feedbackTable" class="feedback-table">
           <thead>
             <tr>
-              <th colspan="2">Contact 💬</th>
+              <th colspan="2" class="contact-header">
+                <span>Contact 💬</span>
+                <button id="closeContactX" class="contact-close">✕</button>
+              </th>
             </tr>
             <tr>
               <td colspan="2" class="intro-text">
@@ -720,7 +759,6 @@
             <tr>
               <td colspan="2" class="button-row">
                 <button type="submit" class="btn">Versturen</button>
-                <button type="button" id="btnCloseFeedback" class="btn">Sluiten</button>
               </td>
             </tr>
           </tbody>
@@ -923,148 +961,145 @@
     }
   </script>
 
-  <script>
-    function openAlleResultaten(anker) {
-      const popup = document.getElementById('resultatenPopup');
+<script>
+  const siteVersieTag = localStorage.getItem("siteVersie") || "onbekend";
 
-      popup.classList.remove('hidden');
-      popup.classList.add('show');
+  document.addEventListener("DOMContentLoaded", () => {
+    const tagBox = document.getElementById("siteVersieTag");
+    if (tagBox) {
+      tagBox.textContent = siteVersie;
+    }
+  });
+</script>
+
+
+  <!--  Service Worker + versiebeheer -->
+  <script>
+    if ('serviceWorker' in navigator) {
+
+      navigator.serviceWorker.register('sw.js?v=2025-11-25', { updateViaCache: 'none' })
+        .then(reg => {
+          console.log('Service Worker geregistreerd:', reg.scope);
+
+          const versie = localStorage.getItem("siteVersie") || "onbekend";
+
+          // 🟢 Alles is up-to-date
+          if (!reg.waiting && !reg.installing && navigator.serviceWorker.controller) {
+            toonStatusMelding(`✅ Veel plezier! (v${versie})`, '#28a745');
+          }
+
+          // 🔁 Update detecteren
+          reg.addEventListener('updatefound', () => {
+            const nieuweSW = reg.installing;
+            if (!nieuweSW) return;
+
+            nieuweSW.addEventListener('statechange', () => {
+              if (nieuweSW.state === 'installed' && navigator.serviceWorker.controller) {
+                toonUpdateMelding(nieuweSW);
+              }
+            });
+          });
+        })
+        .catch(err => console.error('❌ Fout bij Service Worker:', err));
+
+      // 🔃 Automatische refresh bij nieuwe SW
+      let __swRefreshed = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!__swRefreshed) {
+          __swRefreshed = true;
+          window.location.reload();
+        }
+      });
+
+      // 🆕 Updates vanuit SW
+      navigator.serviceWorker.addEventListener('message', (event) => {
+
+        // Force versie → Update melding
+        if (event.data?.type === 'NEW_VERSION') {
+          console.log('Nieuwe versie actief:', event.data.version);
+          localStorage.setItem("siteVersie", event.data.version);
+          window.location.reload();
+        }
+
+        // "SET_SITE_VERSION" (fallback)
+        if (event.data?.type === "SET_SITE_VERSION") {
+          const newVersion = event.data.version;
+          const oldVersion = localStorage.getItem("siteVersie");
+
+          localStorage.setItem("siteVersie", newVersion);
+
+          if (oldVersion && oldVersion !== newVersion) {
+            console.log("Nieuwe versie gedetecteerd:", newVersion);
+            location.reload();
+          }
+        }
+      });
+    }
+
+    /**
+     * 🔵 Melding bij nieuwe versie
+     */
+    function toonUpdateMelding(nieuweSW) {
+      const versie = localStorage.getItem("siteVersie") || "onbekend";
+
+      const div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.bottom = '0';
+      div.style.left = '0';
+      div.style.width = '100%';
+      div.style.background = '#01689B';
+      div.style.color = 'white';
+      div.style.textAlign = 'center';
+      div.style.padding = '10px';
+      div.style.fontFamily = 'sans-serif';
+      div.style.fontSize = '15px';
+      div.style.zIndex = '102000';
+      div.style.opacity = '0';
+      div.style.transition = 'opacity 0.5s ease-in';
+
+      div.innerHTML =
+        `Nieuwe versie beschikbaar — ` +
+        '<button id="refreshBtn" style="background:white;color:#01689B;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;">Klik om te verversen</button>';
+
+      document.body.appendChild(div);
+      requestAnimationFrame(() => (div.style.opacity = '1'));
+
+      document.getElementById('refreshBtn').addEventListener('click', () => {
+        nieuweSW.postMessage('SKIP_WAITING');
+      });
 
       setTimeout(() => {
-        openResultsPopupForAllAnchors();
-        window.dispatchEvent(new Event('resize')); //  <-- belangrijke fix
-      }, 10);
+        div.style.opacity = '0';
+        setTimeout(() => div.remove(), 600);
+      }, 8000);
+    }
+
+    /**
+     * 🟢 Statusmelding
+     */
+    function toonStatusMelding(tekst, kleur) {
+      const div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.bottom = '0';
+      div.style.left = '0';
+      div.style.width = '100%';
+      div.style.background = kleur;
+      div.style.color = 'white';
+      div.style.textAlign = 'center';
+      div.style.padding = '8px';
+      div.style.fontFamily = 'sans-serif';
+      div.style.fontSize = '14px';
+      div.style.zIndex = '102000';
+      div.style.opacity = '0';
+      div.style.transition = 'opacity 0.5s ease-in';
+
+      div.innerText = tekst;
+      document.body.appendChild(div);
+
+      requestAnimationFrame(() => (div.style.opacity = '1'));
+      setTimeout(() => div.remove(), 5000);
     }
   </script>
-
-<!--  Service Worker + versiebeheer -->
-<!--  Service Worker + versiebeheer -->
-<script>
-  if ('serviceWorker' in navigator) {
-
-    navigator.serviceWorker.register('sw.js?v=2025-11-25', { updateViaCache: 'none' })
-      .then(reg => {
-        console.log('Service Worker geregistreerd:', reg.scope);
-
-        const versie = localStorage.getItem("siteVersie") || "onbekend";
-
-        // 🟢 Alles is up-to-date
-        if (!reg.waiting && !reg.installing && navigator.serviceWorker.controller) {
-          toonStatusMelding(`✅ Veel plezier! (v${versie})`, '#28a745');
-        }
-
-        // 🔁 Update detecteren
-        reg.addEventListener('updatefound', () => {
-          const nieuweSW = reg.installing;
-          if (!nieuweSW) return;
-
-          nieuweSW.addEventListener('statechange', () => {
-            if (nieuweSW.state === 'installed' && navigator.serviceWorker.controller) {
-              toonUpdateMelding(nieuweSW);
-            }
-          });
-        });
-      })
-      .catch(err => console.error('❌ Fout bij Service Worker:', err));
-
-    // 🔃 Automatische refresh bij nieuwe SW
-    let __swRefreshed = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!__swRefreshed) {
-        __swRefreshed = true;
-        window.location.reload();
-      }
-    });
-
-    // 🆕 Updates vanuit SW
-    navigator.serviceWorker.addEventListener('message', (event) => {
-
-      // Force versie → Update melding
-      if (event.data?.type === 'NEW_VERSION') {
-        console.log('Nieuwe versie actief:', event.data.version);
-        localStorage.setItem("siteVersie", event.data.version);
-        window.location.reload();
-      }
-
-      // "SET_SITE_VERSION" (fallback)
-      if (event.data?.type === "SET_SITE_VERSION") {
-        const newVersion = event.data.version;
-        const oldVersion = localStorage.getItem("siteVersie");
-
-        localStorage.setItem("siteVersie", newVersion);
-
-        if (oldVersion && oldVersion !== newVersion) {
-          console.log("Nieuwe versie gedetecteerd:", newVersion);
-          location.reload();
-        }
-      }
-    });
-  }
-
-  /**
-   * 🔵 Melding bij nieuwe versie
-   */
-  function toonUpdateMelding(nieuweSW) {
-    const versie = localStorage.getItem("siteVersie") || "onbekend";
-
-    const div = document.createElement('div');
-    div.style.position = 'fixed';
-    div.style.bottom = '0';
-    div.style.left = '0';
-    div.style.width = '100%';
-    div.style.background = '#01689B';
-    div.style.color = 'white';
-    div.style.textAlign = 'center';
-    div.style.padding = '10px';
-    div.style.fontFamily = 'sans-serif';
-    div.style.fontSize = '15px';
-    div.style.zIndex = '102000';
-    div.style.opacity = '0';
-    div.style.transition = 'opacity 0.5s ease-in';
-
-    div.innerHTML =
-      `Nieuwe versie beschikbaar (v${versie}) — ` +
-      '<button id="refreshBtn" style="background:white;color:#01689B;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;">Klik om te verversen</button>';
-
-    document.body.appendChild(div);
-    requestAnimationFrame(() => (div.style.opacity = '1'));
-
-    document.getElementById('refreshBtn').addEventListener('click', () => {
-      nieuweSW.postMessage('SKIP_WAITING');
-    });
-
-    setTimeout(() => {
-      div.style.opacity = '0';
-      setTimeout(() => div.remove(), 600);
-    }, 8000);
-  }
-
-  /**
-   * 🟢 Statusmelding
-   */
-  function toonStatusMelding(tekst, kleur) {
-    const div = document.createElement('div');
-    div.style.position = 'fixed';
-    div.style.bottom = '0';
-    div.style.left = '0';
-    div.style.width = '100%';
-    div.style.background = kleur;
-    div.style.color = 'white';
-    div.style.textAlign = 'center';
-    div.style.padding = '8px';
-    div.style.fontFamily = 'sans-serif';
-    div.style.fontSize = '14px';
-    div.style.zIndex = '102000';
-    div.style.opacity = '0';
-    div.style.transition = 'opacity 0.5s ease-in';
-
-    div.innerText = tekst;
-    document.body.appendChild(div);
-
-    requestAnimationFrame(() => (div.style.opacity = '1'));
-    setTimeout(() => div.remove(), 5000);
-  }
-</script>
 
 
 

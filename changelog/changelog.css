@@ -178,5 +178,42 @@ stroke='%2301689B' stroke-width='2' stroke-linecap='round' fill='none'/></svg>")
   }
 }
 
+/* Titelbalk changelog met X-knop */
+.changelog-header {
+  position: sticky;
+  top: 0;
+  background: var(--ebx);
+  color: white;
+  padding: 12px 16px;
+  font-size: 17px;
+  font-weight: 600;
+  z-index: 20;
+}
 
+/* X-knop rechtsboven */
+#closeChangelogX {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 300;
+  cursor: pointer;
+  opacity: 0.9;
+  z-index: 9999;
+}
+
+/* De ‘echte’ header-rij eronder */
+.header-row th {
+  background: #fff !important;
+  color: var(--ebx) !important;
+  border-bottom: 2px solid var(--ebx);
+}
+
+#closeChangelogX {
+  color: white !important;
+}
 
