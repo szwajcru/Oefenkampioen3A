@@ -618,50 +618,47 @@ function renderChartUnified(container, labels, data, mode) {
  */
 function attachDoubleClickDelete(chart) {
 
-    // Remove old handlers
     chart.off('dblclick');
     chart.off('click');
     chart.getZr().off('pointerdown');
+    chart.getZr().off('zr:tap');
 
     let lastTapTime = 0;
 
     /* ------------------------------------------
        1. Desktop → dubbelklik
        ------------------------------------------ */
-    chart.on('dblclick', function (event) {
+    chart.on('dblclick', (event) => {
         if (event.componentType !== 'series') return;
         handleDelete(event.dataIndex);
     });
 
-
     /* ------------------------------------------
-       2. iPhone / Android phones → double tap via click
-          (iPad stuurt géén click-events op canvas!)
+       2. Phones → double-tap via click
        ------------------------------------------ */
-    chart.on('click', function (event) {
+    chart.on('click', (event) => {
 
-        if (isTablet()) return;            // ignore for iPad/tablets
-        if (!isMobileDevice()) return;     // ignore for desktops
+        if (isTablet()) return;       // iPad/tablets → skip
+        if (!isMobilePhone()) return; // desktop → skip
 
         if (event.componentType !== 'series') return;
 
         const now = Date.now();
         const delta = now - lastTapTime;
 
-        if (delta > 50 && delta < 300) {   // double-tap
+        if (delta > 50 && delta < 300) {
             handleDelete(event.dataIndex);
         }
 
         lastTapTime = now;
     });
 
-
     /* ------------------------------------------
-       3. iPadOS / Android tablets → double tap via pointerdown
+       3. iPadOS / tablets → double-tap via ZRender TAP
        ------------------------------------------ */
-    chart.getZr().on('pointerdown', function (ev) {
+    chart.getZr().on('zr:tap', (ev) => {
 
-        if (!isTablet()) return; // only tablets/ipads
+        if (!isTablet()) return;
 
         const point = [ev.offsetX, ev.offsetY];
         const dataIndex = chart.convertFromPixel({ seriesIndex: 0 }, point)[0];
@@ -680,10 +677,9 @@ function attachDoubleClickDelete(chart) {
 
 
     /* ------------------------------------------
-       Shared delete logic
+       Delete logic
        ------------------------------------------ */
     function handleDelete(idx) {
-
         const key = getAnchorKey();
         const arr = JSON.parse(localStorage.getItem(key) || '[]');
         const d = arr[idx];
@@ -692,9 +688,9 @@ function attachDoubleClickDelete(chart) {
         toonBevestiging(
             `Weet je zeker dat je meting #${idx + 1} (${d.datum}, ${d.ipm} ipm) wilt verwijderen?`,
             (ok) => {
+
                 if (!ok) return;
 
-                // Remove exact match
                 const realIdx = arr.findIndex(r =>
                     (r.datum || '').trim() === (d.datum || '').trim() &&
                     Number(r.ipm) === Number(d.ipm)
@@ -707,49 +703,34 @@ function attachDoubleClickDelete(chart) {
 
                 toonOK(`Meting van ${d.datum} is verwijderd.`);
 
-                // Inline grafiek
-                if (chart._refreshInline) {
-                    chart._refreshInline();
-                } else {
-                    loadChartData();
-                }
+                if (chart._refreshInline) chart._refreshInline();
+                else loadChartData();
             }
         );
     }
 
-
     /* ------------------------------------------
-       DEVICE DETECTION
+       Detectie
        ------------------------------------------ */
-
-    // Phone detection (iPhone/Android phones)
-    function isMobileDevice() {
-        const ua = navigator.userAgent;
-        const hasTouch = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
-
-        const isSmallScreen = window.matchMedia("(max-width: 900px)").matches;
-
-        const isNotWindows = !ua.includes("Windows");
-
-        return hasTouch && isSmallScreen && isNotWindows;
+    function isMobilePhone() {
+        return /iPhone|Android/.test(navigator.userAgent);
     }
 
-    // Tablet detection → iPadOS & Android tablets
     function isTablet() {
         const ua = navigator.userAgent;
 
         // iPadOS 13+ (Mac UA + touch)
         if (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) return true;
 
-        // Ältere iPads
         if (/iPad/.test(ua)) return true;
 
-        // Android tablets (Android maar niet Mobile)
+        // Android tablets
         if (/Android/.test(ua) && !/Mobile/.test(ua)) return true;
 
         return false;
     }
 }
+
 
 
 

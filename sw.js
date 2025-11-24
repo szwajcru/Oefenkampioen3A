@@ -1,7 +1,6 @@
-// sw.js — versie-consistente precache + bot-vriendelijk (geen fallback/redirect voor crawlers)
-importScripts('version/version.js?v=' + Date.now()); // altijd actuele versie laden
-
-const CACHE_NAME = 'site-cache-' + self.SITE_VERSION;
+// sw.js — versie-consistente precache + bot-vriendelijk
+const SITE_VERSION = '2025-11-24-1423';
+const CACHE_NAME = 'site-cache-' + SITE_VERSION;
 
 // Alle sourcer per release die consistent moeten zijn
 const FILES = [
