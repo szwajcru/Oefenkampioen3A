@@ -1,4 +1,5 @@
 // sw.js — versie-consistente precache + bot-vriendelijk
+// Geen importScripts nodig, versie staat nu hier:
 const SITE_VERSION = '2025-11-24-1423';
 const CACHE_NAME = 'site-cache-' + SITE_VERSION;
 
@@ -23,12 +24,12 @@ const FILES = [
   'ankers/ankerwoordjesPopup.js',
   'index/hamburger.js',
   'index/hamburger.css',
-  'index/oefenSessions.js',
+  'index/oefenSessions.js'
 ];
 
 // Helper: vers ophalen met cache-bust, opslaan onder SCHONE URL
 async function fetchFreshAndPut(cache, path) {
-  const bust = path + (path.includes('?') ? '&' : '?') + 'v=' + encodeURIComponent(self.SITE_VERSION);
+  const bust = path + (path.includes('?') ? '&' : '?') + 'v=' + encodeURIComponent(SITE_VERSION);
   const res = await fetch(new Request(bust, { cache: 'reload' }));
   if (!res.ok) throw new Error(`Precache faalde: ${path} (${res.status})`);
   await cache.put(path, res.clone());
@@ -48,23 +49,32 @@ self.addEventListener('install', (event) => {
     const cache = await caches.open(CACHE_NAME);
     await Promise.all(FILES.map(p => fetchFreshAndPut(cache, p)));
   })());
-  self.skipWaiting();
+  self.skipWaiting(); // direct activeren
 });
 
-// Activate: oude caches weg; geen client-redirect voor bots
+// Activate: oude caches weg — bots NIET re-directen
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.map(k => (k !== CACHE_NAME) ? caches.delete(k) : Promise.resolve()));
+    await Promise.all(
+      keys.map(k => (k !== CACHE_NAME ? caches.delete(k) : Promise.resolve()))
+    );
+
     await self.clients.claim();
 
-    // Informeer alleen normale clients (niet de bots) dat er een nieuwe versie is
-    const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-    for (const c of clients) c.postMessage({ type: 'NEW_VERSION', version: self.SITE_VERSION });
+    // Informeer alleen normale clients (geen bots!)
+    const clients = await self.clients.matchAll({
+      type: 'window',
+      includeUncontrolled: true
+    });
+
+    for (const c of clients) {
+      c.postMessage({ type: 'NEW_VERSION', version: SITE_VERSION });
+    }
   })());
 });
 
-// Fetch-logica
+// Fetch-logica (met bot-bypass)
 self.addEventListener('fetch', (event) => {
   const req = event.request;
 
@@ -77,10 +87,11 @@ self.addEventListener('fetch', (event) => {
     req.url.startsWith('blob:')
   ) return;
 
-  // BOTS: volledig bypassen (belangrijk voor SEO)
   const ua = req.headers.get('user-agent') || '';
+
+  // Bots → geen SW gedrag (SEO!)
   if (isBotUA(ua)) {
-    event.respondWith(fetch(req)); // geen caching/rewrites/fallbacks
+    event.respondWith(fetch(req));
     return;
   }
 
@@ -91,24 +102,28 @@ self.addEventListener('fetch', (event) => {
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
 
+    // Precached file → serve from cache
     if (isPrecached) {
       const hit = await cache.match(req, { ignoreSearch: true });
       if (hit) return hit;
-      // herstel precache indien leeg
+
+      // Niet gevonden → probeer opnieuw te precachen
       await fetchFreshAndPut(cache, path);
       return cache.match(req, { ignoreSearch: true });
     }
 
+    // Niet-precached: network first → cache fallback
     try {
-      const fresh = new Request(req.url, { cache: 'reload', mode: req.mode, credentials: req.credentials });
-      const net = await fetch(fresh);
-      if (net && net.ok) cache.put(req, net.clone());
-      return net;
+      const fresh = await fetch(
+        new Request(req.url, { cache: 'reload', mode: req.mode, credentials: req.credentials })
+      );
+      if (fresh && fresh.ok) cache.put(req, fresh.clone());
+      return fresh;
     } catch {
       const fallback = await cache.match(req);
       if (fallback) return fallback;
 
-      // Navigatie fallback ALLEEN voor mensen (bots vallen hierboven al buiten)
+      // Navigatie fallback naar index.html
       if (req.mode === 'navigate') {
         const index = await cache.match('index.html');
         if (index) return index;
