@@ -938,38 +938,36 @@
   </script>
 
 <!--  Service Worker + versiebeheer -->
+<!--  Service Worker + versiebeheer -->
 <script>
   if ('serviceWorker' in navigator) {
 
-    // 🔧 Belangrijk: SW altijd vers ophalen → voorkomt oude gecachte versies
-    // do not change the version number here, it is managed automatically
-    navigator.serviceWorker.register('sw.js?v=2025-11-24', { updateViaCache: 'none' })  
+    navigator.serviceWorker.register('sw.js?v=2025-11-25', { updateViaCache: 'none' })
       .then(reg => {
         console.log('Service Worker geregistreerd:', reg.scope);
 
-        // 🟢 Als de huidige SW al actief is en alles is up-to-date
+        const versie = localStorage.getItem("siteVersie") || "onbekend";
+
+        // 🟢 Alles is up-to-date
         if (!reg.waiting && !reg.installing && navigator.serviceWorker.controller) {
-          toonStatusMelding('✅ Veel plezier!', '#28a745');
+          toonStatusMelding(`✅ Veel plezier! (v${versie})`, '#28a745');
         }
 
-        // 🔁 Detecteer updates
+        // 🔁 Update detecteren
         reg.addEventListener('updatefound', () => {
           const nieuweSW = reg.installing;
           if (!nieuweSW) return;
 
           nieuweSW.addEventListener('statechange', () => {
-            // SW is geïnstalleerd maar nog niet actief
             if (nieuweSW.state === 'installed' && navigator.serviceWorker.controller) {
               toonUpdateMelding(nieuweSW);
             }
           });
         });
       })
-      .catch(err => {
-        console.error('❌ Fout bij registreren Service Worker:', err);
-      });
+      .catch(err => console.error('❌ Fout bij Service Worker:', err));
 
-    // 🔃 Eénmalige refresh wanneer een nieuwe SW de controle overneemt
+    // 🔃 Automatische refresh bij nieuwe SW
     let __swRefreshed = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (!__swRefreshed) {
@@ -978,21 +976,23 @@
       }
     });
 
-    // 🆕 Luister naar versie-signalen vanuit sw.js
+    // 🆕 Updates vanuit SW
     navigator.serviceWorker.addEventListener('message', (event) => {
+
+      // Force versie → Update melding
       if (event.data?.type === 'NEW_VERSION') {
         console.log('Nieuwe versie actief:', event.data.version);
+        localStorage.setItem("siteVersie", event.data.version);
         window.location.reload();
       }
-      if (event.data?.type === "SET_SITE_VERSION") {
 
+      // "SET_SITE_VERSION" (fallback)
+      if (event.data?.type === "SET_SITE_VERSION") {
         const newVersion = event.data.version;
         const oldVersion = localStorage.getItem("siteVersie");
 
-        // Wegschrijven
         localStorage.setItem("siteVersie", newVersion);
 
-        // Refresh wanneer versie verandert
         if (oldVersion && oldVersion !== newVersion) {
           console.log("Nieuwe versie gedetecteerd:", newVersion);
           location.reload();
@@ -1002,9 +1002,11 @@
   }
 
   /**
-   * 🔵 Toont melding bij beschikbare update
+   * 🔵 Melding bij nieuwe versie
    */
   function toonUpdateMelding(nieuweSW) {
+    const versie = localStorage.getItem("siteVersie") || "onbekend";
+
     const div = document.createElement('div');
     div.style.position = 'fixed';
     div.style.bottom = '0';
@@ -1019,9 +1021,11 @@
     div.style.zIndex = '102000';
     div.style.opacity = '0';
     div.style.transition = 'opacity 0.5s ease-in';
+
     div.innerHTML =
-      'Nieuwe versie beschikbaar — ' +
+      `Nieuwe versie beschikbaar (v${versie}) — ` +
       '<button id="refreshBtn" style="background:white;color:#01689B;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;">Klik om te verversen</button>';
+
     document.body.appendChild(div);
     requestAnimationFrame(() => (div.style.opacity = '1'));
 
@@ -1029,15 +1033,14 @@
       nieuweSW.postMessage('SKIP_WAITING');
     });
 
-      // ⏳ Nieuw: automatische fade-out na 8 seconden
     setTimeout(() => {
       div.style.opacity = '0';
-      setTimeout(() => div.remove(), 600); // wachten tot fade-out klaar is
-    }, 2000); // 8 seconden zichtbaar
+      setTimeout(() => div.remove(), 600);
+    }, 8000);
   }
 
   /**
-   * 🟢 Toont statusmelding (“alles up-to-date”)
+   * 🟢 Statusmelding
    */
   function toonStatusMelding(tekst, kleur) {
     const div = document.createElement('div');
@@ -1054,13 +1057,15 @@
     div.style.zIndex = '102000';
     div.style.opacity = '0';
     div.style.transition = 'opacity 0.5s ease-in';
+
     div.innerText = tekst;
     document.body.appendChild(div);
-    requestAnimationFrame(() => (div.style.opacity = '1'));
-    setTimeout(() => div.remove(), 4000);
-  }
 
+    requestAnimationFrame(() => (div.style.opacity = '1'));
+    setTimeout(() => div.remove(), 5000);
+  }
 </script>
+
 
 
   <!-- ★★★ PRINT AREA (verborgen) ★★★ -->

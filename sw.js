@@ -2,7 +2,7 @@
 // iPad-PROOF SERVICE WORKER
 // Versie + cachebundel
 // -----------------------------------------------------
-const SITE_VERSION = '2025-11-24-1600';
+const SITE_VERSION = '2025-11-24-16450';
 const CACHE_NAME = 'site-cache-' + SITE_VERSION;
 
 const FILES = [
