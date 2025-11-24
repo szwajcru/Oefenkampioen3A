@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
       e.stopPropagation();
 
       const nummer = item.getAttribute('data-anker');
-      const titel = item.textContent.trim(); // bijv. "📚 Anker 3"
+      const titel = item.textContent.trim();
 
       const woordenNormaal = window.ankers?.[String(nummer)] || [];
       const woordenSnuffel = window.ankers?.[`${nummer}-snuffel`] || [];
@@ -213,7 +213,7 @@ const hoeWerktHetBtn = document.getElementById('hoeWerktHetBtn');
 if (hoeWerktHetBtn) {
   hoeWerktHetBtn.addEventListener('click', () => {
 
-    // ✅ Sluit het hamburger-menu vóór openen popup
+    // Sluit het hamburger-menu vóór openen popup
     const menuDropdown = document.getElementById('menuDropdown');
     if (menuDropdown) menuDropdown.classList.add('hidden');
 
@@ -247,12 +247,13 @@ if (hoeWerktHetBtn) {
     const base = window.location.protocol === 'file:' ? 'index/' : '/index/';
 
     popup.innerHTML = `
-      <button id="btnCloseHoeWerktHet" style="
-        position:absolute; top:10px; right:10px;
-        background:#01689B; color:white;
-        border:none; border-radius:6px;
-        padding:6px 12px; cursor:pointer;
-        z-index: 10000;">Sluiten</button>
+      <button id="btnCloseInstructies" class="popup-close" style="
+        position:absolute;
+        top:10px;
+        right:10px;
+        z-index:10000;
+      ">×</button>
+
       <iframe src="${base}instructies.html" style="
         width:100%; height:80vh; border:none;"></iframe>
     `;
@@ -260,12 +261,14 @@ if (hoeWerktHetBtn) {
     overlay.appendChild(popup);
     document.body.appendChild(overlay);
 
-    const closeBtn = document.getElementById('btnCloseHoeWerktHet');
-    closeBtn.addEventListener('click', () => overlay.remove());
+    // Sluiten met eigen X-knop
+    document.getElementById('btnCloseInstructies').addEventListener('click', () => {
+      overlay.remove();
+    });
+
+    // Sluiten door te klikken buiten popup
     overlay.addEventListener('click', e => {
       if (e.target === overlay) overlay.remove();
     });
   });
 }
-
-

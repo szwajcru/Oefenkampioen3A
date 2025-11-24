@@ -1172,22 +1172,23 @@ html {
 
 .popup-close {
   position: absolute;
-  top: 8px;
-  right: 12px;
-  border: none;
-  background: #dc2626;
-  color: #fff;
-  font-size: 20px;
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-  line-height: 28px;
+    top: 30px;
+    right: 30px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 400;
+    cursor: pointer;
+    opacity: 0.9;
+    z-index: 200;
+    /* 🔥 hoger dan titel */
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .popup-close:hover {
-  background: #b91c1c;
+  font-weight: bold;
 }
 
 #woordenPopup {
