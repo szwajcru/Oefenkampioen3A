@@ -942,7 +942,8 @@
   if ('serviceWorker' in navigator) {
 
     // 🔧 Belangrijk: SW altijd vers ophalen → voorkomt oude gecachte versies
-    navigator.serviceWorker.register('sw.js?v=2025-02-01', { updateViaCache: 'none' })
+    // do not change the version number here, it is managed automatically
+    navigator.serviceWorker.register('sw.js?v=2025-02-01', { updateViaCache: 'none' })  
       .then(reg => {
         console.log('Service Worker geregistreerd:', reg.scope);
 
@@ -1027,6 +1028,12 @@
     document.getElementById('refreshBtn').addEventListener('click', () => {
       nieuweSW.postMessage('SKIP_WAITING');
     });
+
+      // ⏳ Nieuw: automatische fade-out na 8 seconden
+    setTimeout(() => {
+      div.style.opacity = '0';
+      setTimeout(() => div.remove(), 600); // wachten tot fade-out klaar is
+    }, 2000); // 8 seconden zichtbaar
   }
 
   /**
