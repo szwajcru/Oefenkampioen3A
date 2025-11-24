@@ -1,6 +1,6 @@
 // sw.js — versie-consistente precache + bot-vriendelijk
 // Geen importScripts nodig, versie staat nu hier:
-const SITE_VERSION = '2025-11-24-1500';
+const SITE_VERSION = '2025-11-24-1520';
 const CACHE_NAME = 'site-cache-' + SITE_VERSION;
 
 
