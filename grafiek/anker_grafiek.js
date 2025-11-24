@@ -4,12 +4,12 @@ var echarts;
 /* ======================================================
    STATE
    ====================================================== */
-let currentMode   = 'normaal';
+let currentMode = 'normaal';
 let currentAnchor = null;
-let fullLabels    = [];
-let fullData      = [];
-let chart         = null;
-let fixedAnchor   = null;       //Vast anker bij individueel anker rapport
+let fullLabels = [];
+let fullData = [];
+let chart = null;
+let fixedAnchor = null;       //Vast anker bij individueel anker rapport
 
 /* =======
    HELPERS
@@ -618,34 +618,39 @@ function renderChartUnified(container, labels, data, mode) {
  */
 function attachDoubleClickDelete(chart) {
 
-    // Remove previous handlers to avoid duplicates
+    // Remove all old handlers
     chart.off('dblclick');
-    chart.getZr().off('pointerdown');
+    chart.off('click');
 
-    // Desktop: double-click
-    chart.on('dblclick', handleDeleteEvent);
-
-    // Mobile/tablet: single tap via pointerdown
-    chart.getZr().on('pointerdown', function (event) {
-
-        // Convert the pointer position to data index
-        const point = [event.offsetX, event.offsetY];
-        const dataIndex = chart.convertFromPixel({ seriesIndex: 0 }, point)[0];
-
-        if (typeof dataIndex === 'number' && dataIndex >= 0) {
-            handleDelete(dataIndex); // same delete logic as dblclick
-        }
-    });
-
-    // Handler when ECharts fires dblclick
-    function handleDeleteEvent(event) {
+    // Desktop double-click
+    chart.on('dblclick', function (event) {
         if (event.componentType !== 'series') return;
         handleDelete(event.dataIndex);
-    }
+    });
 
-    // Unified delete logic
+    // Mobile: single tap equals delete
+    let lastTapTime = 0;
+
+    chart.on('click', function (event) {
+
+        // Desktop → ignore single click
+        if (!isMobileDevice()) return;
+
+        if (event.componentType !== 'series') return;
+
+        const now = Date.now();
+        const delta = now - lastTapTime;
+
+        // ≤ 300ms → double tap!
+        if (delta > 50 && delta < 300) {
+            handleDelete(event.dataIndex);
+        }
+
+        lastTapTime = now;
+    });
+
+
     function handleDelete(idx) {
-
         const key = getAnchorKey();
         const arr = JSON.parse(localStorage.getItem(key) || '[]');
         const d = arr[idx];
@@ -656,7 +661,7 @@ function attachDoubleClickDelete(chart) {
             (ok) => {
                 if (!ok) return;
 
-                // Remove exact match (date + ipm)
+                // Remove exact match
                 const realIdx = arr.findIndex(r =>
                     (r.datum || '').trim() === (d.datum || '').trim() &&
                     Number(r.ipm) === Number(d.ipm)
@@ -669,17 +674,32 @@ function attachDoubleClickDelete(chart) {
 
                 toonOK(`Meting van ${d.datum} is verwijderd.`);
 
-                // Inline grafiek: refresh direct
+                // Inline refresh
                 if (chart._refreshInline) {
                     chart._refreshInline();
-                    return;
+                } else {
+                    loadChartData();
                 }
-
-                // Popup fallback
-                loadChartData();
             }
         );
     }
+
+    function isMobileDevice() {
+        // 1. Heeft touch?
+        const hasTouch = (
+            'ontouchstart' in window ||
+            navigator.maxTouchPoints > 0
+        );
+
+        // 2. Is de viewport klein / compact? (Chrome DevTools geeft juiste waarde)
+        const isSmallScreen = window.matchMedia("(max-width: 900px)").matches;
+
+        // 3. Detecteer geen laptop met touchscreen
+        const isNotDesktopLike = !navigator.userAgent.includes("Windows");
+
+        return hasTouch && isSmallScreen && isNotDesktopLike;
+    }
+
 }
 
 
