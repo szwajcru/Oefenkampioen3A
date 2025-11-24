@@ -36,24 +36,6 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # ✅ Genereer automatisch nieuw versienummer
-      - name: Genereer versie
-        run: |
-          mkdir -p version
-          echo "self.SITE_VERSION = 'v$(date +%Y-%m-%d-%H%M%S)';" > version/version.js
-          echo "Gegenereerde versie:"
-          cat version/version.js
-
-      # ✅ Commit & push de nieuwe versie (met veilige rebase + force)
-      - name: Commit nieuwe versie
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add version/version.js
-          git commit -m "Auto-update version.js [skip ci]" || echo "Geen wijzigingen om te committen"
-          git pull --rebase origin main || true
-          git push --force-with-lease
-
       # ✅ Upload artifact (overschrijft automatisch)
       - name: Upload website artifact
         uses: actions/upload-pages-artifact@v3
