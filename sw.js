@@ -61,7 +61,11 @@ self.addEventListener('activate', (event) => {
 
     // Informeer alleen normale clients (niet de bots) dat er een nieuwe versie is
     const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-    for (const c of clients) c.postMessage({ type: 'NEW_VERSION', version: self.SITE_VERSION });
+    for (const c of clients) {
+      if (c.controller) { // alleen als er een oudere SW actief was
+        c.postMessage({ type: 'NEW_VERSION', version: self.SITE_VERSION });
+      }
+    }
   })());
 });
 

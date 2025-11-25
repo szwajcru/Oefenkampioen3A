@@ -248,8 +248,12 @@ function loadChartData() {
    NO-DATA MESSAGE, (when there is no data to display)
    =================================================== */
 function showNoDataMessage(chartInstance, anchorText, isInline) {
+    
+    // ❗ CRASH FIX
+    if (!chartInstance) {
+        chartInstance = ensureChartInitialized();
+    }
 
-    // Zoom hint alleen verbergen in popup-modus
     if (!isInline) {
         const hint = document.getElementById('zoomHint');
         if (hint) hint.style.display = 'none';
@@ -282,6 +286,14 @@ function showNoDataMessage(chartInstance, anchorText, isInline) {
             }
         }
     }, { notMerge: true });
+}
+
+function ensureChartInitialized() {
+    if (!chart) {
+        const el = document.getElementById("grafiekEChart");
+        if (el) chart = echarts.init(el);
+    }
+    return chart
 }
 
 
