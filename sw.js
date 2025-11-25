@@ -1,10 +1,9 @@
-// -----------------------------------------------------
-// iPad-PROOF SERVICE WORKER
-// Versie + cachebundel
-// -----------------------------------------------------
-const SITE_VERSION = '2025.1124.2350';
-const CACHE_NAME = 'site-cache-' + SITE_VERSION;
+// sw.js — versie-consistente precache + bot-vriendelijk (geen fallback/redirect voor crawlers)
+importScripts('version/version.js?v=' + Date.now()); // altijd actuele versie laden
 
+const CACHE_NAME = 'site-cache-' + self.SITE_VERSION;
+
+// Alle sourcer per release die consistent moeten zijn
 const FILES = [
   'index.html',
   'index/style.css',
@@ -25,79 +24,52 @@ const FILES = [
   'ankers/ankerwoordjesPopup.js',
   'index/hamburger.js',
   'index/hamburger.css',
-  'index/oefenSessions.js'
+  'index/oefenSessions.js',
 ];
 
-// -----------------------------------------------------
-// Helpers
-// -----------------------------------------------------
-function isBotUA(ua) {
-  ua = (ua || '').toLowerCase();
-  return ua.includes('googlebot') ||
-    ua.includes('bingbot') ||
-    ua.includes('duckduckbot') ||
-    ua.includes('yandexbot') ||
-    ua.includes('baiduspider');
-}
-
+// Helper: vers ophalen met cache-bust, opslaan onder SCHONE URL
 async function fetchFreshAndPut(cache, path) {
-  const bust = path + (path.includes('?') ? '&' : '?') + 'v=' + encodeURIComponent(SITE_VERSION);
+  const bust = path + (path.includes('?') ? '&' : '?') + 'v=' + encodeURIComponent(self.SITE_VERSION);
   const res = await fetch(new Request(bust, { cache: 'reload' }));
   if (!res.ok) throw new Error(`Precache faalde: ${path} (${res.status})`);
   await cache.put(path, res.clone());
 }
 
-// -----------------------------------------------------
-// INSTALL
-// -----------------------------------------------------
-self.addEventListener('install', event => {
+// Eenvoudige botdetectie (genoeg voor SEO-doeleinden)
+function isBotUA(ua) {
+  ua = (ua || '').toLowerCase();
+  return ua.includes('googlebot') || ua.includes('bingbot') ||
+    ua.includes('duckduckbot') || ua.includes('yandexbot') ||
+    ua.includes('baiduspider');
+}
+
+// Install: volledige bundel vers binnenhalen
+self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
     await Promise.all(FILES.map(p => fetchFreshAndPut(cache, p)));
   })());
-
-  // SW onmiddelijk actief
   self.skipWaiting();
 });
 
-// -----------------------------------------------------
-// ACTIVATE — éénmalige versiepush + cache cleanup
-// -----------------------------------------------------
-self.addEventListener('activate', event => {
+// Activate: oude caches weg; geen client-redirect voor bots
+self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
-
-    // oude caches verwijderen
     const keys = await caches.keys();
-    await Promise.all(keys.map(k =>
-      (k !== CACHE_NAME ? caches.delete(k) : Promise.resolve())
-    ));
-
+    await Promise.all(keys.map(k => (k !== CACHE_NAME) ? caches.delete(k) : Promise.resolve()));
     await self.clients.claim();
 
-    // -----------------------------------------------------
-    // 🔥 iPad FIX: Forceer altijd een versie-update-signaal
-    // -----------------------------------------------------
-    const clients = await self.clients.matchAll({
-      type: 'window',
-      includeUncontrolled: true
-    });
-
-    for (const c of clients) {
-      c.postMessage({
-        type: 'NEW_VERSION',
-        version: SITE_VERSION
-      });
-    }
+    // Informeer alleen normale clients (niet de bots) dat er een nieuwe versie is
+    const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const c of clients) c.postMessage({ type: 'NEW_VERSION', version: self.SITE_VERSION });
   })());
 });
 
-// -----------------------------------------------------
-// FETCH
-// -----------------------------------------------------
-self.addEventListener('fetch', event => {
+// Fetch-logica
+self.addEventListener('fetch', (event) => {
   const req = event.request;
 
-  // compleet negeren van bepaalde requests
+  // Requests die we sowieso negeren
   if (
     req.method !== 'GET' ||
     req.url.startsWith('chrome-extension://') ||
@@ -106,10 +78,10 @@ self.addEventListener('fetch', event => {
     req.url.startsWith('blob:')
   ) return;
 
-  // bots → geen service worker
+  // BOTS: volledig bypassen (belangrijk voor SEO)
   const ua = req.headers.get('user-agent') || '';
   if (isBotUA(ua)) {
-    event.respondWith(fetch(req));
+    event.respondWith(fetch(req)); // geen caching/rewrites/fallbacks
     return;
   }
 
@@ -120,31 +92,24 @@ self.addEventListener('fetch', event => {
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
 
-    // precached
     if (isPrecached) {
       const hit = await cache.match(req, { ignoreSearch: true });
       if (hit) return hit;
-
-      // herstel precache indien nodig
+      // herstel precache indien leeg
       await fetchFreshAndPut(cache, path);
       return cache.match(req, { ignoreSearch: true });
     }
 
-    // network-first
     try {
-      const netRes = await fetch(
-        new Request(req.url, {
-          cache: 'reload',
-          mode: req.mode,
-          credentials: req.credentials
-        })
-      );
-      if (netRes && netRes.ok) cache.put(req, netRes.clone());
-      return netRes;
+      const fresh = new Request(req.url, { cache: 'reload', mode: req.mode, credentials: req.credentials });
+      const net = await fetch(fresh);
+      if (net && net.ok) cache.put(req, net.clone());
+      return net;
     } catch {
       const fallback = await cache.match(req);
       if (fallback) return fallback;
 
+      // Navigatie fallback ALLEEN voor mensen (bots vallen hierboven al buiten)
       if (req.mode === 'navigate') {
         const index = await cache.match('index.html');
         if (index) return index;
@@ -154,9 +119,7 @@ self.addEventListener('fetch', event => {
   })());
 });
 
-// -----------------------------------------------------
-// MESSAGES
-// -----------------------------------------------------
-self.addEventListener('message', e => {
+// Messages van clients
+self.addEventListener('message', (e) => {
   if (e.data === 'SKIP_WAITING') self.skipWaiting();
 });

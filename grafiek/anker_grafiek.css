@@ -586,3 +586,16 @@
     min-height: 320px !important;
     box-sizing: border-box;
 }
+
+/* Buitenste frame: GEEN clipping */
+.popupCard.resultatenCard {
+    max-height: 85vh;
+    overflow: visible !important;
+    position: relative;
+}
+
+/* Binnenste content wel scrollen → GEEN clipping voor tooltip */
+.popupInner {
+    max-height: 85vh;
+    overflow-y: auto;
+}

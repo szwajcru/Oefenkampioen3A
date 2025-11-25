@@ -849,3 +849,12 @@ async function generateLandscapePDF(title, imgData) {
     // ---------------------------
     pdf.save("grafiek_landscape.pdf");
 }
+
+// Tooltip terugplaatsen naar popup zodat hij niet achter overlay valt
+const popup = document.querySelector('.popupCard.resultatenCard');
+
+setTimeout(() => {
+    document.querySelectorAll('.echarts-tooltip').forEach(tip => {
+        popup.appendChild(tip);
+    });
+}, 50);
