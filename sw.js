@@ -25,6 +25,7 @@ const FILES = [
   'index/hamburger.js',
   'index/hamburger.css',
   'index/oefenSessions.js',
+  'index/flitsStyle.css',
 ];
 
 // Helper: vers ophalen met cache-bust, opslaan onder SCHONE URL

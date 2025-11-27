@@ -461,6 +461,10 @@ function getBaseChartOptions(labels, data, lineColor) {
     let startVal = (total > visibleCount) ? total - visibleCount : 0;
     let endVal = total - 1;
 
+    const minValue = Math.min(...data);
+    const minYAxis = Math.floor((minValue - 1) / 10) * 10;
+    const abc = null;
+
     return {
         animation: false,
 
@@ -514,7 +518,7 @@ function getBaseChartOptions(labels, data, lineColor) {
 
         yAxis: {
             type: 'value',
-            min: 10,
+            min: minYAxis,
             name: 'Woordjes per minuut',
             nameLocation: 'middle',
             nameGap: 28,
