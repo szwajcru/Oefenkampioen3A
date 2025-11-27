@@ -92,6 +92,7 @@
   <!-- 🎨 Styles -->
   <link rel="stylesheet" href="grafiek/anker_grafiek.css">
   <link rel="stylesheet" href="index/style.css">
+  <link rel="stylesheet" href="index/flitsStyle.css">
   <link rel="stylesheet" href="index/hamburger.css">
   <link rel="stylesheet" href="contact/contact.css">
   <link rel="stylesheet" href="herkansjes/herkansjes.css">
@@ -519,19 +520,40 @@
   <!-- Pagina 2: Oefenen -->
   <div id="page2" class="page">
     <div class="card">
-      <button class="quit" id="btnQuit" title="Afbreken">✕</button>
-      <h1 class="champion-title" id="page2Title">Lees dit woordje hardop</h1>
-      <div id="woord" aria-live="polite">Item</div>
-      <div id="subInfo" class="subline"></div>
-      <div class="answers" style="text-align:center;">
-        <button id="btnJuist" class="btn btn-antwoord" title="Juist">✓</button>
-        <button id="btnOnjuist" class="btn btn-antwoord" title="Onjuist">✗</button>
+
+      <div class="modal-header">
+        <button id="btnSpell" class="abc-btn2" type="button" title="Spellen (S)" aria-label="Spellen">
+          <span class="abc-badge" aria-hidden="true">Abc</span>
+        </button>
+
+        <div class="modal-title" id="page2Title">Lees dit woordje hardop</div>
+
+        <button class="modal-close" id="btnQuit" title="Afbreken" aria-label="Afbreken"
+          style="position: absolute; top: 12px; right: 5px; background: none; border: none; color: white; font-size: 12px; line-height: 1; font-weight: 300; cursor: pointer; opacity: 0.8; z-index: 9999;">✕</button>
       </div>
-      <div class="kb-hint" style="text-align:center;">Sneltoetsen: <kbd>J</kbd> = Juist, <kbd>F</kbd> = Fout,
-        <kbd>Esc</kbd> = Afbreken
+
+
+      <div class="modal-body">
+        <div id="woord" aria-live="polite">Item</div>
+        <div id="subInfo" class="subline"></div>
       </div>
+
+      <div class="modal-footer">
+        <div class="footer-row footer-row--buttons">
+          <div class="answers">
+            <button id="btnJuist" class="btn btn-antwoord" title="Juist (J)" aria-label="Juist">✓</button>
+            <button id="btnOnjuist" class="btn btn-antwoord" title="Fout (F)" aria-label="Fout">✗</button>
+          </div>
+        </div>
+        <div class="kb-hint">
+          Sneltoetsen: <kbd>J</kbd> = Juist, <kbd>F</kbd> = Fout, <kbd>S</kbd> = Spellen, <kbd>Esc</kbd> = Afbreken
+        </div>
+      </div>
+
     </div>
   </div>
+
+
 
   <!-- Pagina 3: Resultaat -->
   <div id="page3" class="page">
@@ -565,18 +587,18 @@
     <div class="badge"></div>
   </div>
 
-<div id="changelogTip">
-  <table id="changelogTable" class="tg">
-    <thead>
-      <tr>
-        <th>Versie</th>
-        <th>Type</th>
+  <div id="changelogTip">
+    <table id="changelogTable" class="tg">
+      <thead>
+        <tr>
+          <th>Versie</th>
+          <th>Type</th>
 
-        <!-- X-knop in de Omschrijving-header -->
-        <th style="position: relative;">
-          Omschrijving
+          <!-- X-knop in de Omschrijving-header -->
+          <th style="position: relative;">
+            Omschrijving
 
-          <button id="closeChangelogX" title="Sluiten" style="
+            <button id="closeChangelogX" title="Sluiten" style="
               position:absolute;
               top:50%;
               transform:translateY(-50%);
@@ -590,19 +612,19 @@
               cursor:pointer;
               opacity:0.9;
             ">
-            ×
-          </button>
-        </th>
+              ×
+            </button>
+          </th>
 
-      </tr>
-    </thead>
+        </tr>
+      </thead>
 
-    <tbody>
-      <!-- Wordt door JS gevuld -->
-    </tbody>
+      <tbody>
+        <!-- Wordt door JS gevuld -->
+      </tbody>
 
-  </table>
-</div>
+    </table>
+  </div>
 
   <!-- Resultaten hover popup -->
   <div id="resultatenTip" class="resultaten-popup">
@@ -961,16 +983,16 @@
     }
   </script>
 
-<script>
-  const siteVersieTag = localStorage.getItem("siteVersie") || "onbekend";
+  <script>
+    const siteVersieTag = localStorage.getItem("siteVersie") || "onbekend";
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const tagBox = document.getElementById("siteVersieTag");
-    if (tagBox) {
-      tagBox.textContent = siteVersie;
-    }
-  });
-</script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const tagBox = document.getElementById("siteVersieTag");
+      if (tagBox) {
+        tagBox.textContent = siteVersie;
+      }
+    });
+  </script>
 
 
   <!--  Service Worker + versiebeheer -->

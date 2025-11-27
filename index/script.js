@@ -28,6 +28,8 @@
   let endTime = 0;
   let isHerkansing = false;
   let item = null;
+  const KLANK_AFTER_MODE = 'keep';
+  let klankModus = false;
 
   window.ankerIndexClick = false;
 
@@ -106,6 +108,19 @@
     }
     return html;
   }
+
+  // Woord opdelen in klankblokken voor weergave
+  function naarKlankblokken(woord) {
+    // Voorbeeldregel: splits na elke klinkercombinatie of letter
+    const klanken = woord
+      .replace(/(aa|ee|oo|uu|ui|oe|ie|eu|ei|ij|ou|au)/gi, '|$1|')
+      .replace(/([aeiou])/gi, '|$1|')
+      .split('|')
+      .filter(k => k.length > 0);
+
+    return klanken.join(' · ');
+  }
+
 
   // ===== UI utils =====
   window.showPage = function (n) {
@@ -364,6 +379,9 @@
   }
 
   function toonItem() {
+
+    klankModus = false;
+
     const el = document.getElementById('woord');
     const woordEl = document.getElementById('woord');
     const card = document.querySelector('#page2 .card');
@@ -416,8 +434,14 @@
     }
 
     // --- Toon het woord ---
-    woordEl.textContent = item;
-    el.innerHTML = item;
+    if (!klankModus) {
+      woordEl.textContent = item;
+      el.innerHTML = item;
+    } else {
+      woordEl.textContent = item;
+      el.innerHTML = item;s
+    }
+
 
     // --- Kleur en stijl per oefentype ---
     if (oefentype === 'ankers') {
@@ -899,6 +923,7 @@
     document.getElementById('btnAgain').addEventListener('click', () => showPage(1));
     document.getElementById('btnJuist').addEventListener('click', () => klikAntwoord(true));
     document.getElementById('btnOnjuist').addEventListener('click', () => klikAntwoord(false));
+    document.getElementById('btnSpell').addEventListener('click', () => benadrukKlanken(item)());
 
     // Keys
     window.addEventListener('keydown', (e) => {
@@ -920,6 +945,140 @@
         }
       }
     });
+
+    let klankblokModus = false;
+    document.addEventListener('keydown', function (e) {
+      if (e.key.toLowerCase() === 's') {
+        benadrukKlanken(item);
+      }
+    });
+
+    function startSpellingAnimatie() {
+      const woord = item;
+      if (!woord) return;
+
+      const target = document.getElementById('woord');
+      target.innerHTML = '';
+
+      // Woord opsplitsen in losse letters
+      const letters = woord.split('');
+
+      letters.forEach((l, i) => {
+        const span = document.createElement('span');
+        span.textContent = l;
+        span.style.display = 'inline-block';
+        span.style.margin = '0 4px';
+        span.style.fontSize = 'clamp(64px, 14vw, 132px)';
+        span.style.fontWeight = '800';
+
+        // Kleine pop-in animatie
+        span.style.opacity = 0;
+        span.style.transform = 'scale(0.3)';
+        span.style.transition = 'all 0.25s ease-out';
+
+        setTimeout(() => {
+          span.style.opacity = 1;
+          span.style.transform = 'scale(1)';
+        }, i * 180);
+
+        target.appendChild(span);
+      });
+    }
+
+    function slimmeKlankblokken(woord) {
+      const w = (woord || '').toLowerCase();
+
+      const VOWEL_COMBOS = ['aa', 'ee', 'oo', 'uu', 'oe', 'ui', 'ie', 'eu', 'ei', 'ij', 'ou', 'au'];
+      const VOWELS = ['a', 'e', 'i', 'o', 'u'];
+      const CONS_CLUSTERS = ['ng', 'nk', 'ch', 'sj', 'tj', 'tr', 'dr', 'br', 'pl', 'pr', 'kl', 'gr', 'sl', 'sm', 'sn'];
+
+      const clusters = [...CONS_CLUSTERS].sort((a, b) => b.length - a.length);
+      const combos = [...VOWEL_COMBOS].sort((a, b) => b.length - a.length);
+
+      const blokken = [];
+      let i = 0;
+
+      while (i < w.length) {
+        const rest = w.slice(i);
+
+        const c = clusters.find(x => rest.startsWith(x));
+        if (c) { blokken.push(rest.substr(0, c.length)); i += c.length; continue; }
+
+        const v = combos.find(x => rest.startsWith(x));
+        if (v) { blokken.push(rest.substr(0, v.length)); i += v.length; continue; }
+
+        blokken.push(w[i]);
+        i++;
+      }
+
+      return blokken;
+    }
+
+
+
+    const KLANK_AFTER_MODE = 'keep';
+    // opties: 'keep' of 'dots'
+
+    function toonSlimmeKlankblokken(woord) {
+      const blokken = slimmeKlankblokken(woord);
+      const el = document.getElementById('woord');
+
+      el.innerHTML = '';
+
+      const klinkers = ['a', 'e', 'i', 'o', 'u', 'ee', 'aa', 'oo', 'uu', 'ij', 'ei', 'oe', 'ui', 'eu', 'ou', 'au'];
+      const slideDur = 0.45;
+      const stagger = 0.25;
+
+      blokken.forEach((klank, index) => {
+        const wrap = document.createElement('span');
+        wrap.className = 'klankblok-wrap';
+        wrap.style.animationDelay = String(index * stagger) + 's';
+
+        const txt = document.createElement('span');
+        txt.className = 'klankblok-txt ' + (klinkers.includes(klank.toLowerCase()) ? 'klank-klinker' : 'klank-medeklinker');
+        txt.textContent = klank;
+
+        // pop start NA slide-in van dit blok
+        txt.style.animationDelay = String((index * stagger) + slideDur) + 's';
+
+        wrap.appendChild(txt);
+        el.appendChild(wrap);
+      });
+    }
+
+    function benadrukKlanken(woord) {
+      const blokken = slimmeKlankblokken(woord);
+      const el = document.getElementById('woord');
+
+      // leegmaken
+      el.innerHTML = '';
+
+      const klinkers = ['a', 'e', 'i', 'o', 'u',
+        'aa', 'ee', 'oo', 'uu', 'oe', 'ui', 'ie', 'eu', 'ei', 'ij', 'ou', 'au'
+      ];
+
+      // blokken tonen + kleuren
+      blokken.forEach((klank, index) => {
+        const span = document.createElement('span');
+        span.classList.add('klankblok');
+
+        if (klinkers.includes(klank.toLowerCase())) {
+          span.classList.add('klank-klinker');   // rood
+        } else {
+          span.classList.add('klank-medeklinker'); // donkerblauw
+        }
+
+        span.textContent = klank;
+        el.appendChild(span);
+
+        // POP animatie met vertraging per blok
+        setTimeout(() => {
+          span.style.animation = 'emphasize 0.35s ease-out';
+        }, index * 400); // elke 0.4 sec volgende klank
+      });
+    }
+
+
 
     // Initial view
     updateTypeUI();
@@ -1883,12 +2042,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 })();
 
-// ==================== EBX-tooltips voor grafiekknoppen ====================
-
-// Tooltip helpers
-// Dynamische tooltip die altijd correct blijft bij scroll
-
-
 function initAnkerResultaatGrafieken() {
   document.querySelectorAll('tr[data-anker]').forEach(tr => {
     const ankerNummer = tr.getAttribute('data-anker');
@@ -1948,11 +2101,8 @@ function initAnkerResultaatGrafieken() {
   });
 }
 
-
-
 // Start na DOM load
 document.addEventListener('DOMContentLoaded', initAnkerResultaatGrafieken);
-
 
 /**
  * Verbergt de 'Snuffel'-optie bij elk anker als er geen snuffelwoorden bestaan.
@@ -2089,31 +2239,6 @@ function ensureResultatenPopup() {
   return overlay;
 }
 
-// éénmalig styles voor de gauge-knoppen
-(function ensureGaugeStyles() {
-  if (document.getElementById('gauge-blue-inline-label-style')) return;
-  const st = document.createElement('style');
-  st.id = 'gauge-blue-inline-label-style';
-  st.textContent = `
-      .modeBar{display:flex;gap:8px;align-items:center;margin:6px 0 8px;}
-      .modeBar button.icon{
-        background:none;border:none;padding:6px 8px;border-radius:10px;
-        display:inline-flex;align-items:center;justify-content:center;
-        cursor:pointer;color:#01689B;transition:background-color .15s ease, transform .04s ease;
-      }
-      .modeBar button.icon:hover{background:rgba(1,104,155,.08)}
-      .modeBar button.icon[data-active="true"]{background:rgba(1,104,155,.12)}
-      .modeBar button.icon:active{transform:scale(.97)}
-      .gauge .needle{transition:transform 180ms ease; transform-origin:12px 14px}
-      .gauge .glabel{
-        font: 700 8px/1 ui-sans-serif,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-        letter-spacing:.2px; user-select:none;
-      }
-    `;
-  document.head.appendChild(st);
-})();
-
-
 // ───────────────────────────────
 // Tooltipfunctie voor Snuffelknoppen
 // ───────────────────────────────
@@ -2189,51 +2314,6 @@ function isConfirmOpen() {
   const ov = document.getElementById('confirmOverlay');
   return ov && ov.style.display !== 'none';
 }
-
-// --- MIGRATIE: alleen uitvoeren als 'resultaten' bestaat en
-// 'resultaten_anker_01_normaal' nog NIET bestaat. Draait idempotent. ---
-(function migrateAnker01IfNeeded() {
-  const OLD_KEY = 'resultaten';
-  const NEW_N_KEY = 'resultaten_anker_01_normaal';
-  const NEW_S_KEY = 'resultaten_anker_01_snuffel';
-
-  if (!localStorage.getItem(OLD_KEY)) return;
-  if (localStorage.getItem(NEW_N_KEY)) {
-    return;
-  }
-
-  try {
-    const raw = localStorage.getItem(OLD_KEY);
-    const old = raw ? JSON.parse(raw) : [];
-    if (!Array.isArray(old) || !old.length) return;
-
-    // eenmalige backup
-    if (!localStorage.getItem('backup_resultaten_voor_migratie_anker01')) {
-      localStorage.setItem('backup_resultaten_voor_migratie_anker01', raw);
-    }
-
-    // filter uitsluitend ANKER 01
-    const isAnker01 = (r) => {
-      if (!r) return false;
-      if (r.anker != null) return String(r.anker).padStart(2, '0') === '01';
-      // fallback op oude structuur
-      return r.type === 'ankers';
-    };
-
-    const anker01Data = old.filter(isAnker01);
-    if (!anker01Data.length) return;
-
-    const normaal = anker01Data.filter(r => !r?.snuffel);
-    const snuffel = anker01Data.filter(r => !!r?.snuffel);
-
-    localStorage.setItem(NEW_N_KEY, JSON.stringify(normaal));
-    localStorage.setItem(NEW_S_KEY, JSON.stringify(snuffel));
-
-    console.log('Migratie anker 01 voltooid ✅');
-  } catch (e) {
-    console.error('Migratie anker 01 mislukt:', e);
-  }
-})();
 
 function updateWoordLog(anker, woord) {
   const key = 'woordlog';
