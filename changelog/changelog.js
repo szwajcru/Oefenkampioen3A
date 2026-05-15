@@ -2,6 +2,13 @@
 
 const changelog = [
   {
+    version: '2.03',
+    changes: [
+      { type: 'Toegevoegd', description: 'Snuffelwoordjes anker 7' },
+      { type: 'Gewijzigd', description: 'Flashcards groeien dynamisch met de tekst mee' },
+    ]
+  },
+  {
     version: '2.02',
     changes: [
       { type: 'Gewijzigd', description: 'Interactieve grafieken na elk anker, zoomen mogelijk' },

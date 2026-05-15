@@ -24,7 +24,7 @@
 
     box-shadow: 0 10px 30px rgba(0, 0, 0, .12);
     max-width: 700px;
-    width: clamp(360px, 84vw, 690px);
+    width: clamp(300px, calc(100vw - 32px), 690px);
 
     display: flex;
     flex-direction: column;
@@ -32,7 +32,7 @@
 
 #page2 .card.zin-card {
     max-width: 840px !important;
-    width: clamp(340px, 90vw, 840px);
+    width: clamp(300px, calc(100vw - 32px), 840px);
 }
 
 /* =========================
@@ -134,6 +134,8 @@
     flex-direction: column;
     gap: 8px;
     flex: 1 1 auto;
+    min-height: 200px;
+    justify-content: center;
 }
 
 #page2 .champion-title {
@@ -150,6 +152,14 @@
     line-height: 1.05;
     letter-spacing: 1px;
     text-align: center;
+    padding: 0 12px;
+    box-sizing: border-box;
+    width: 100%;
+    white-space: nowrap;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #page2 .subline {
@@ -343,7 +353,7 @@
         right: 8px;
         font-size: 12px;
 
-    background: var(--ebx) !important;
+        background: var(--ebx) !important;
         color: white !important;
         width: 34px !important;
         height: 34px !important;
@@ -356,14 +366,14 @@
         font-weight: normal !important;
         top: 4px !important;
         right: 2px !important;
-    
+
         position: absolute !important;
 
     }
 
-        #page2 .modal-close:hover {
-            opacity: 1;
-        }
+    #page2 .modal-close:hover {
+        opacity: 1;
+    }
 
     #page2 .modal-header #btnSpell.abc-btn2 {
         width: 40px;
@@ -398,7 +408,59 @@
 /* =========================
    iPAD / tablets (custom sectie)
    ========================= */
-@media (hover: none) and (pointer: coarse) and (min-width: 700px) and (max-width: 1024px) {
+@media (hover: none) and (pointer: coarse) and (min-width: 700px) and (max-width: 1100px) {
+    #page2 .modal-title {
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        text-align: center;
+        margin: 0;
+        width: 100%;
+    }
+
+    /* Zorg dat header/footer altijd in beeld blijven */
+    #page2 .card.zin-card {
+        max-width: 840px !important;
+        width: clamp(340px, 90vw, 840px);
+
+        /* iPad: card blijft binnen schermhoogte */
+        max-height: 85vh;
+        height: auto;
+
+        display: flex;
+        flex-direction: column;
+    }
+
+    #page2 .modal-body {
+        flex: 1 1 auto;
+        overflow: auto;
+        min-height: 250px;
+    }
+
+    #page2 .modal-header,
+    #page2 .modal-footer {
+        flex: 0 0 auto;
+    }
+
+    /* Alleen body mag scrollen/krimpen */
+    #page2 .modal-body {
+        flex: 1 1 auto;
+        overflow: auto;
+    }
+
+    #page2 #woord.zin-woord {
+        color: #000 !important;
+
+        /* Niet 100% height forceren, anders duw je footer weg */
+        height: auto;
+
+        font-size: 90px !important;
+        align-content: center !important;
+
+        /* lange zinnen netjes breken */
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
 
     #page2 .answers {
         gap: 40px;

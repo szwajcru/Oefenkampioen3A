@@ -378,6 +378,31 @@
     setTimeout(() => tf.classList.remove('show'), 220);
   }
 
+  // ===== Auto-fit: verklein lettergrootte zodat woord altijd op één regel past =====
+  function autoFitWoord() {
+    const woordEl = document.getElementById('woord');
+    const card = document.querySelector('#page2 .card');
+    if (!woordEl || !card) return;
+
+    requestAnimationFrame(() => {
+      // Zinnetjes mogen wel wrappen — alleen losse woorden op één regel houden
+      if (woordEl.classList.contains('zin-woord')) return;
+
+      // Forceer één regel zodat scrollWidth klopt
+      woordEl.style.whiteSpace = 'nowrap';
+
+      const beschikbaar = card.clientWidth - 32;
+      let fs = parseFloat(window.getComputedStyle(woordEl).fontSize);
+      const minFs = 20;
+
+      // Stap voor stap verkleinen totdat het past
+      while (woordEl.scrollWidth > beschikbaar && fs > minFs) {
+        fs = Math.max(minFs, fs - 4);
+        woordEl.style.fontSize = fs + 'px';
+      }
+    });
+  }
+
   function toonItem() {
 
     klankModus = false;
@@ -406,6 +431,7 @@
     woordEl.style.letterSpacing = '1px';
     woordEl.style.textAlign = 'center';
     woordEl.style.color = '#0f172a';
+    woordEl.style.whiteSpace = 'nowrap';
 
     // --- Ophalen van het juiste item ---
     if (oefentype === 'ankers') {
@@ -423,8 +449,6 @@
         item = SessieManager.volgendWoord(ankerNummer, key);
       }
 
-      //const items = getWoordenVoorAnker(ankerNummer, key);
-
     } else {
       if (idx >= items.length) {
         items = shuffle(items);
@@ -435,19 +459,25 @@
 
     // --- Toon het woord ---
     if (!klankModus) {
-      woordEl.textContent = item;
-      el.innerHTML = item;
+      //woordEl.textContent = item;
+      //el.innerHTML = item;
     } else {
       woordEl.textContent = item;
-      el.innerHTML = item;s
+      el.innerHTML = item;
     }
 
 
     // --- Kleur en stijl per oefentype ---
     if (oefentype === 'ankers') {
       const gekozenAnker = parseInt(document.querySelector('input[name="anker"]:checked').value);
-      if (gekozenAnker < 5 || gekozenAnker === 9) {
-        el.innerHTML = kleurMetAlleKlinkers(item);
+      if (gekozenAnker < 5 || gekozenAnker === 9 || gekozenAnker === 10) {
+        
+        benadrukKlanken(item);
+
+        //woordEl.textContent = item;
+        //el.innerHTML = item;
+
+        //el.innerHTML = kleurMetAlleKlinkers(item);
       } else {
         el.innerHTML = item;
       }
@@ -480,6 +510,9 @@
         el.innerHTML = `<span style="color:var(--ebx);">${item}</span>`;
       }
     }
+
+    // --- Auto-fit: zorg dat het woord altijd binnen de kaart past ---
+    autoFitWoord();
 
     // --- Flitsmodus (woord tijdelijk tonen) ---
     const byWords = document.querySelector('input[name="modus"]:checked')?.value === 'woorden';
@@ -984,101 +1017,6 @@
         target.appendChild(span);
       });
     }
-
-    function slimmeKlankblokken(woord) {
-      const w = (woord || '').toLowerCase();
-
-      const VOWEL_COMBOS = ['aa', 'ee', 'oo', 'uu', 'oe', 'ui', 'ie', 'eu', 'ei', 'ij', 'ou', 'au'];
-      const VOWELS = ['a', 'e', 'i', 'o', 'u'];
-      const CONS_CLUSTERS = ['ng', 'nk', 'ch', 'sj', 'tj', 'tr', 'dr', 'br', 'pl', 'pr', 'kl', 'gr', 'sl', 'sm', 'sn'];
-
-      const clusters = [...CONS_CLUSTERS].sort((a, b) => b.length - a.length);
-      const combos = [...VOWEL_COMBOS].sort((a, b) => b.length - a.length);
-
-      const blokken = [];
-      let i = 0;
-
-      while (i < w.length) {
-        const rest = w.slice(i);
-
-        const c = clusters.find(x => rest.startsWith(x));
-        if (c) { blokken.push(rest.substr(0, c.length)); i += c.length; continue; }
-
-        const v = combos.find(x => rest.startsWith(x));
-        if (v) { blokken.push(rest.substr(0, v.length)); i += v.length; continue; }
-
-        blokken.push(w[i]);
-        i++;
-      }
-
-      return blokken;
-    }
-
-
-
-    const KLANK_AFTER_MODE = 'keep';
-    // opties: 'keep' of 'dots'
-
-    function toonSlimmeKlankblokken(woord) {
-      const blokken = slimmeKlankblokken(woord);
-      const el = document.getElementById('woord');
-
-      el.innerHTML = '';
-
-      const klinkers = ['a', 'e', 'i', 'o', 'u', 'ee', 'aa', 'oo', 'uu', 'ij', 'ei', 'oe', 'ui', 'eu', 'ou', 'au'];
-      const slideDur = 0.45;
-      const stagger = 0.25;
-
-      blokken.forEach((klank, index) => {
-        const wrap = document.createElement('span');
-        wrap.className = 'klankblok-wrap';
-        wrap.style.animationDelay = String(index * stagger) + 's';
-
-        const txt = document.createElement('span');
-        txt.className = 'klankblok-txt ' + (klinkers.includes(klank.toLowerCase()) ? 'klank-klinker' : 'klank-medeklinker');
-        txt.textContent = klank;
-
-        // pop start NA slide-in van dit blok
-        txt.style.animationDelay = String((index * stagger) + slideDur) + 's';
-
-        wrap.appendChild(txt);
-        el.appendChild(wrap);
-      });
-    }
-
-    function benadrukKlanken(woord) {
-      const blokken = slimmeKlankblokken(woord);
-      const el = document.getElementById('woord');
-
-      // leegmaken
-      el.innerHTML = '';
-
-      const klinkers = ['a', 'e', 'i', 'o', 'u',
-        'aa', 'ee', 'oo', 'uu', 'oe', 'ui', 'ie', 'eu', 'ei', 'ij', 'ou', 'au'
-      ];
-
-      // blokken tonen + kleuren
-      blokken.forEach((klank, index) => {
-        const span = document.createElement('span');
-        span.classList.add('klankblok');
-
-        if (klinkers.includes(klank.toLowerCase())) {
-          span.classList.add('klank-klinker');   // rood
-        } else {
-          span.classList.add('klank-medeklinker'); // donkerblauw
-        }
-
-        span.textContent = klank;
-        el.appendChild(span);
-
-        // POP animatie met vertraging per blok
-        setTimeout(() => {
-          span.style.animation = 'emphasize 0.35s ease-out';
-        }, index * 400); // elke 0.4 sec volgende klank
-      });
-    }
-
-
 
     // Initial view
     updateTypeUI();
@@ -2449,4 +2387,95 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
+function benadrukKlanken(woord) {
+  const blokken = slimmeKlankblokken(woord);
+  const el = document.getElementById('woord');
 
+  // leegmaken
+  el.innerHTML = '';
+
+  const klinkers = ['a', 'e', 'i', 'o', 'u',
+    'aa', 'ee', 'oo', 'uu', 'oe', 'ui', 'ie', 'eu', 'ei', 'ij', 'ou', 'au'
+  ];
+
+  // blokken tonen + kleuren
+  blokken.forEach((klank, index) => {
+    const span = document.createElement('span');
+    span.classList.add('klankblok');
+
+    if (klinkers.includes(klank.toLowerCase())) {
+      span.classList.add('klank-klinker');   // rood
+    } else {
+      span.classList.add('klank-medeklinker'); // donkerblauw
+    }
+
+    span.textContent = klank;
+    el.appendChild(span);
+
+    // POP animatie met vertraging per blok
+ /*    setTimeout(() => {
+      span.style.animation = 'emphasize 0.35s ease-out';
+    }, index * 400); // elke 0.4 sec volgende klank
+ */  });
+}
+
+function slimmeKlankblokken(woord) {
+  const w = (woord || '').toLowerCase();
+
+  const VOWEL_COMBOS = ['aa', 'ee', 'oo', 'uu', 'oe', 'ui', 'ie', 'eu', 'ei', 'ij', 'ou', 'au'];
+  const VOWELS = ['a', 'e', 'i', 'o', 'u'];
+  const CONS_CLUSTERS = ['ng', 'nk', 'ch', 'sj', 'tj', 'tr', 'dr', 'br', 'pl', 'pr', 'kl', 'gr', 'sl', 'sm', 'sn'];
+
+  const clusters = [...CONS_CLUSTERS].sort((a, b) => b.length - a.length);
+  const combos = [...VOWEL_COMBOS].sort((a, b) => b.length - a.length);
+
+  const blokken = [];
+  let i = 0;
+
+  while (i < w.length) {
+    const rest = w.slice(i);
+
+    const c = clusters.find(x => rest.startsWith(x));
+    if (c) { blokken.push(rest.substr(0, c.length)); i += c.length; continue; }
+
+    const v = combos.find(x => rest.startsWith(x));
+    if (v) { blokken.push(rest.substr(0, v.length)); i += v.length; continue; }
+
+    blokken.push(w[i]);
+    i++;
+  }
+
+  return blokken;
+}
+
+
+
+const KLANK_AFTER_MODE = 'keep';
+// opties: 'keep' of 'dots'
+
+function toonSlimmeKlankblokken(woord) {
+  const blokken = slimmeKlankblokken(woord);
+  const el = document.getElementById('woord');
+
+  el.innerHTML = '';
+
+  const klinkers = ['a', 'e', 'i', 'o', 'u', 'ee', 'aa', 'oo', 'uu', 'ij', 'ei', 'oe', 'ui', 'eu', 'ou', 'au'];
+  const slideDur = 0.45;
+  const stagger = 0.25;
+
+  blokken.forEach((klank, index) => {
+    const wrap = document.createElement('span');
+    wrap.className = 'klankblok-wrap';
+    wrap.style.animationDelay = String(index * stagger) + 's';
+
+    const txt = document.createElement('span');
+    txt.className = 'klankblok-txt ' + (klinkers.includes(klank.toLowerCase()) ? 'klank-klinker' : 'klank-medeklinker');
+    txt.textContent = klank;
+
+    // pop start NA slide-in van dit blok
+    txt.style.animationDelay = String((index * stagger) + slideDur) + 's';
+
+    wrap.appendChild(txt);
+    el.appendChild(wrap);
+  });
+}
